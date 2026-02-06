@@ -15,6 +15,9 @@ async function bootstrap() {
   // Create the NestJS application instance using the root AppModule.
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS
+  app.enableCors({ origin: '*' });
+
   // Enable global validation pipe with strict options:
   // - `whitelist` removes unexpected properties
   // - `forbidNonWhitelisted` throws on unexpected properties
