@@ -1,0 +1,107 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: ID!
+  employeeId: String
+  name: String!
+  phoneNumber: String!
+  email: String!
+  role: UserRole!
+  department: Department
+}
+
+enum UserRole {
+  DIRECTOR
+  HR
+  PROJECT_MANAGER
+  TEAM_LEADER
+  EMPLOYEE
+}
+
+enum Department {
+  SHOPIFY
+  WORDPRESS
+  CUSTOM
+}
+
+type ValidationErrorItem {
+  field: String!
+  messages: [String!]!
+}
+
+type UserResponse {
+  statusCode: Int!
+  success: Boolean!
+  message: String
+  timestamp: String!
+  errors: [ValidationErrorItem!]
+  data: User
+}
+
+type UsersResponse {
+  statusCode: Int!
+  success: Boolean!
+  message: String
+  timestamp: String!
+  errors: [ValidationErrorItem!]
+  data: [User!]
+}
+
+type CreateUserResponse {
+  statusCode: Int!
+  success: Boolean!
+  message: String
+  timestamp: String!
+  errors: [ValidationErrorItem!]
+  data: User
+}
+
+type Query {
+  users: UsersResponse!
+  user(id: ID!): UserResponse
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): CreateUserResponse!
+  updateUser(updateUserInput: UpdateUserInput!): UserResponse!
+  removeUser(id: ID!): UserResponse!
+}
+
+input CreateUserInput {
+  """Employee ID of the user"""
+  employeeId: String
+
+  """Name of the user"""
+  name: String
+
+  """Phone number of the user"""
+  phoneNumber: String
+
+  """Email address of the user"""
+  email: String
+
+  """Password for the user"""
+  password: String
+}
+
+input UpdateUserInput {
+  """Employee ID of the user"""
+  employeeId: String
+
+  """Name of the user"""
+  name: String
+
+  """Phone number of the user"""
+  phoneNumber: String
+
+  """Email address of the user"""
+  email: String
+
+  """Password for the user"""
+  password: String
+
+  """Unique identifier for the user to be updated"""
+  id: ID!
+}

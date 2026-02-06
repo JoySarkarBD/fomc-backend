@@ -1,0 +1,32 @@
+""" GraphQL schema for User entity """
+type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+""" Input type for creating a new user """
+input CreateUserInput {
+  name: String!
+  email: String!
+}
+
+""" Input type for updating an existing user """
+input UpdateUserInput {
+  id: ID!
+  name: String
+  email: String
+}
+
+""" Query type for fetching users """
+type Query {
+  users: [User]!
+  user(id: ID!): User
+}
+
+""" Mutation type for creating, updating, and deleting users """
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: ID!): User
+}
