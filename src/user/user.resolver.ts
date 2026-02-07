@@ -40,9 +40,6 @@ export class UserResolver {
       createUserInput,
     );
 
-    console.log(input);
-    console.log(errors);
-
     if (errors.length > 0) {
       return buildResponse({
         statusCode: 400,
