@@ -62,6 +62,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
         }
       }
     }
+
+    if (status === HttpStatus.NOT_FOUND) {
+      message = 'Path not found';
+      data = null;
+    }
     // Construct the response payload according to the ServiceResponse structure, including success status, message, method, endpoint, status code, timestamp, and any additional error data
     const payload: ServiceResponse = {
       success: false,

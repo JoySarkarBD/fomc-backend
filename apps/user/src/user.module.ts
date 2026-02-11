@@ -9,7 +9,7 @@ import { UserService } from './user.service';
     MongooseModule.forRoot(
       process.env.MONGO_URI ??
         process.env.MONGODB_URI ??
-        'mongodb://127.0.0.1:27017/office',
+        'mongodb://127.0.0.1:27017/office-management',
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
