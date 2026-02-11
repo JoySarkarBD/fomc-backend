@@ -1,9 +1,9 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import 'dotenv/config';
-import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/http-exception.filter';
-import { ResponseInterceptor } from './common/response.interceptor';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import "dotenv/config";
+import { AppModule } from "./app.module";
+import { HttpExceptionFilter } from "./common/http-exception.filter";
+import { ResponseInterceptor } from "./common/response.interceptor";
 
 /**
  * Bootstrap function
@@ -25,7 +25,7 @@ async function bootstrap(): Promise<void> {
    * Set global API route prefix.
    * Example: http://localhost:3000/api/*
    */
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix("api");
 
   /**
    * Apply global validation pipe.
