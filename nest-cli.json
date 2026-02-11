@@ -1,31 +1,40 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/fb-international-bd/src",
+  "sourceRoot": "apps/micro-service/src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/fb-international-bd/tsconfig.app.json"
+    "tsConfigPath": "apps/micro-service/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/fb-international-bd",
+  "root": "apps/micro-service",
   "projects": {
-    "fb-international-bd": {
+    "micro-service": {
       "type": "application",
-      "root": "apps/fb-international-bd",
+      "root": "apps/micro-service",
       "entryFile": "main",
-      "sourceRoot": "apps/fb-international-bd/src",
+      "sourceRoot": "apps/micro-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/fb-international-bd/tsconfig.app.json"
+        "tsConfigPath": "apps/micro-service/tsconfig.app.json"
       }
     },
-    "user-service": {
+    "post": {
       "type": "application",
-      "root": "apps/user-service",
+      "root": "apps/post",
       "entryFile": "main",
-      "sourceRoot": "apps/user-service/src",
+      "sourceRoot": "apps/post/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/user-service/tsconfig.app.json"
+        "tsConfigPath": "apps/post/tsconfig.app.json"
+      }
+    },
+    "user": {
+      "type": "application",
+      "root": "apps/user",
+      "entryFile": "main",
+      "sourceRoot": "apps/user/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/user/tsconfig.app.json"
       }
     }
   }
