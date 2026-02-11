@@ -33,8 +33,6 @@ export class AuthController {
   }
 
   @Post("reset-password")
-  @UseGuards(ThrottlerGuard)
-  @Throttle(PASSWORD_THROTTLE)
   async reset(@Body() data: ResetPasswordDto) {
     return this.authService.resetPassword(data.otp, data.newPassword);
   }
