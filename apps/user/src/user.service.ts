@@ -1,51 +1,53 @@
-import { Injectable } from '@nestjs/common';
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-  ];
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+  ) {}
 
   async getUsers(): Promise<User[]> {
-    return this.users;
+    return this.userModel.find().exec();
   }
 
-  async getUser(id: number): Promise<User | null> {
-    const user = this.users.find((u) => u.id === id);
-    if (!user) return null;
+  async getUser(id: string): Promise<User> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
-  async createUser(data: { name: string; email: string }): Promise<User> {
-    const nextId =
-      this.users.reduce((maxId, user) => Math.max(maxId, user.id), 0) + 1;
-    const newUser: User = { id: nextId, ...data };
-    this.users.push(newUser);
-    return newUser;
+  async createUser(data: CreateUserDto): Promise<User> {
+    try {
+      const createdUser = new this.userModel(data);
+      return await createdUser.save();
+    } catch (error: any) {
+      if (error?.code === 11000) {
+        throw new ConflictException('Email already exists');
+      }
+      throw error;
+    }
   }
 
-  async updateUser(
-    id: number,
-    data: { name: string; email: string },
-  ): Promise<User | null> {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1) return null;
-    const updatedUser: User = { ...this.users[index], ...data };
-    this.users[index] = updatedUser;
+  async updateUser(id: string, data: UpdateUserDto): Promise<User> {
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .exec();
+    if (!updatedUser) throw new NotFoundException('User not found');
     return updatedUser;
   }
 
-  async deleteUser(id: number): Promise<User | null> {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1) return null;
-    const [deletedUser] = this.users.splice(index, 1);
-    return deletedUser ?? null;
+  async deleteUser(id: string): Promise<User> {
+    const deletedUser = await this.userModel.findByIdAndDelete(id).exec();
+    if (!deletedUser) throw new NotFoundException('User not found');
+    return deletedUser;
   }
 }

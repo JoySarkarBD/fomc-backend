@@ -1,6 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,24 +14,31 @@ export class UserService {
     return firstValueFrom(this.userClient.send({ cmd: 'get_users' }, {}));
   }
 
-  async getUser(id: number): Promise<any> {
-    return firstValueFrom(this.userClient.send({ cmd: 'get_user' }, id));
+  async getUser(id: string): Promise<any> {
+    const user = await firstValueFrom(
+      this.userClient.send({ cmd: 'get_user' }, id),
+    );
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
-  async createUser(data: { name: string; email: string }): Promise<any> {
+  async createUser(data: CreateUserDto): Promise<any> {
     return firstValueFrom(this.userClient.send({ cmd: 'create_user' }, data));
   }
 
-  async updateUser(
-    id: number,
-    data: { name: string; email: string },
-  ): Promise<any> {
-    return firstValueFrom(
+  async updateUser(id: string, data: UpdateUserDto): Promise<any> {
+    const updatedUser = await firstValueFrom(
       this.userClient.send({ cmd: 'update_user' }, { id, ...data }),
     );
+    if (!updatedUser) throw new NotFoundException('User not found');
+    return updatedUser;
   }
 
-  async deleteUser(id: number): Promise<any> {
-    return firstValueFrom(this.userClient.send({ cmd: 'delete_user' }, id));
+  async deleteUser(id: string): Promise<any> {
+    const deletedUser = await firstValueFrom(
+      this.userClient.send({ cmd: 'delete_user' }, id),
+    );
+    if (!deletedUser) throw new NotFoundException('User not found');
+    return deletedUser;
   }
 }
