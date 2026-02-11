@@ -76,40 +76,40 @@ export class UserService {
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel
       .findOne({ email })
-      .select("+password +resetToken +resetTokenExpiry")
+      .select("+password +otp +otpExpiry")
       .exec();
   }
 
   /**
-   * Set reset token and expiry for a user identified by email
+   * Set OTP and expiry for a user identified by email
    */
-  async setResetToken(
+  async setResetPasswordOtp(
     email: string,
-    token: string,
+    otp: string,
     expiry: Date,
   ): Promise<boolean> {
     const res = await this.userModel
       .findOneAndUpdate(
         { email },
-        { resetToken: token, resetTokenExpiry: expiry },
-        { new: true },
+        { otp: otp, otpExpiry: expiry },
+        { returnDocument: "after" },
       )
       .exec();
     return !!res;
   }
 
   /**
-   * Reset password using a valid token
+   * Reset password using a valid OTP
    */
-  async resetPassword(token: string, newPassword: string): Promise<boolean> {
+  async resetPassword(otp: string, newPassword: string): Promise<boolean> {
     const user = await this.userModel
-      .findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } })
+      .findOne({ otp: otp, otpExpiry: { $gt: new Date() } })
       .exec();
     if (!user) return false;
     const hashed = await bcrypt.hash(newPassword, 10);
     user.password = hashed;
-    user.resetToken = null as any;
-    user.resetTokenExpiry = null as any;
+    user.otp = null as any;
+    user.otpExpiry = null as any;
     await user.save();
     return true;
   }

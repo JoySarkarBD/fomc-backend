@@ -5,7 +5,7 @@ export const USER_COMMANDS = {
   UPDATE_USER: { cmd: "update_user" },
   DELETE_USER: { cmd: "delete_user" },
   FIND_BY_EMAIL: { cmd: "find_user_by_email" },
-  SET_RESET_TOKEN: { cmd: "set_reset_token" },
+  SET_RESET_PASSWORD_OTP: { cmd: "set_reset_password_otp" },
   RESET_PASSWORD: { cmd: "reset_password" },
   CHANGE_PASSWORD: { cmd: "change_password" },
 } as const;
@@ -17,7 +17,7 @@ export const USER_COMMAND_NAMES = {
   UPDATE_USER: "update_user",
   DELETE_USER: "delete_user",
   FIND_BY_EMAIL: "find_user_by_email",
-  SET_RESET_TOKEN: "set_reset_token",
+  SET_RESET_PASSWORD_OTP: "set_reset_password_otp",
   RESET_PASSWORD: "reset_password",
   CHANGE_PASSWORD: "change_password",
 } as const;

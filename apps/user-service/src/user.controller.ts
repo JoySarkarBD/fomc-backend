@@ -89,7 +89,7 @@ export class UserController {
    * Find user by email
    * Message Pattern: { cmd: 'find_user_by_email' }
    */
-  @MessagePattern({ cmd: "find_user_by_email" })
+  @MessagePattern(USER_COMMANDS.FIND_BY_EMAIL)
   findByEmail(email: string) {
     return this.userService.findByEmail(email);
   }
@@ -98,19 +98,19 @@ export class UserController {
    * Set a password reset token for a user
    * Message Pattern: { cmd: 'set_reset_token' }
    */
-  @MessagePattern({ cmd: "set_reset_token" })
-  setResetToken(payload: { email: string; token: string; expiry: string }) {
-    const { email, token, expiry } = payload;
-    return this.userService.setResetToken(email, token, new Date(expiry));
+  @MessagePattern(USER_COMMANDS.SET_RESET_PASSWORD_OTP)
+  setResetPasswordOtp(payload: { email: string; otp: string; expiry: string }) {
+    const { email, otp, expiry } = payload;
+    return this.userService.setResetPasswordOtp(email, otp, new Date(expiry));
   }
 
   /**
    * Reset password using token
    * Message Pattern: { cmd: 'reset_password' }
    */
-  @MessagePattern({ cmd: "reset_password" })
-  resetPassword(payload: { token: string; newPassword: string }) {
-    return this.userService.resetPassword(payload.token, payload.newPassword);
+  @MessagePattern(USER_COMMANDS.RESET_PASSWORD)
+  resetPassword(payload: { otp: string; newPassword: string }) {
+    return this.userService.resetPassword(payload.otp, payload.newPassword);
   }
 
   /**

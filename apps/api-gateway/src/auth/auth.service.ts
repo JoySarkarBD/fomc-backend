@@ -31,8 +31,8 @@ export class AuthService {
     // preserve id for token, then remove sensitive fields
     const id = user.id ?? user._id ?? null;
     delete user.password;
-    delete user.resetToken;
-    delete user.resetTokenExpiry;
+    delete user.otp;
+    delete user.otpExpiry;
 
     const payload = { sub: id, email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload);
@@ -41,31 +41,33 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    const token = Math.random().toString(36).slice(2, 10);
-    const expiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+    // Generate 6-digit numeric OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = new Date(Date.now() + 1000 * 60 * 15); // 15 minutes
     return firstValueFrom(
-      this.userClient.send(USER_COMMANDS.SET_RESET_TOKEN, {
+      this.userClient.send(USER_COMMANDS.SET_RESET_PASSWORD_OTP, {
         email,
-        token,
+        otp: otp,
         expiry: expiry.toISOString(),
       }),
     ).then((ok) => {
       if (ok) {
-        const resetLink = `https://your-app.com/reset-password?token=${token}`;
+        // send OTP by email
         this.mailService.sendMail({
           to: email,
-          subject: "Reset Your Password",
-          html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
+          subject: "Your password reset OTP",
+          html: `<p>Your password reset code is <strong>${otp}</strong>. It expires in 15 minutes.</p>`,
+          text: `Your password reset code is ${otp}. It expires in 15 minutes.`,
         });
       }
-      return { ok, token };
+      return { ok };
     });
   }
 
-  async resetPassword(token: string, newPassword: string) {
+  async resetPassword(otp: string, newPassword: string) {
     return firstValueFrom(
       this.userClient.send(USER_COMMANDS.RESET_PASSWORD, {
-        token,
+        otp,
         newPassword,
       }),
     );

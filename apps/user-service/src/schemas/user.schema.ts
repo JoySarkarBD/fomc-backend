@@ -62,13 +62,13 @@ export class User extends Document {
   @Prop({ required: true, select: false })
   password?: string;
 
-  /** Token for password reset flows */
-  @Prop({ type: String, default: null })
-  resetToken?: string | null;
+  /** OTP for password reset flows */
+  @Prop({ type: String, default: null, maxlength: 6, minlength: 6 })
+  otp?: string | null;
 
-  /** Expiry date for the password reset token */
+  /** Expiry date for the OTP */
   @Prop({ type: Date, default: null })
-  resetTokenExpiry?: Date | null;
+  otpExpiry?: Date | null;
 
   /** Role of the user in the organization */
   @Prop({ default: UserRole.EMPLOYEE, enum: UserRole })
@@ -91,3 +91,5 @@ export const UserSchema = SchemaFactory.createForClass(User);
  * - department
  */
 UserSchema.index({ employeeId: 1, phoneNumber: 1, department: 1 });
+// Optional index to quickly find user by OTP during password reset
+UserSchema.index({ otp: 1 });

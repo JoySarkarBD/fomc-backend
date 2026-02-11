@@ -25,8 +25,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       );
       if (!user) return null;
       delete user.password;
-      delete user.resetToken;
-      delete user.resetTokenExpiry;
+      delete user.otp;
+      delete user.otpExpiry;
       return user;
     } catch (err) {
       return null;
