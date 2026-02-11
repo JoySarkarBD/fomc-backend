@@ -9,41 +9,41 @@ import {
 import { Department, UserRole } from '../schemas/user.schema';
 
 export class UpdateUserDto {
-  @IsString()
+  @IsString({ message: 'Name must be a string' })
   @IsOptional()
   name?: string;
 
-  @IsString()
+  @IsString({ message: 'Employee ID must be a string' })
   @IsOptional()
   employeeId?: string;
 
-  @IsString()
+  @IsString({ message: 'Phone number must be a string' })
   @IsOptional()
   phoneNumber?: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: 'Email must be a valid email address' })
   @IsOptional()
   email?: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: 'Secondary email must be a valid email address' })
   @IsOptional()
   secondaryEmail?: string;
 
-  @IsString()
-  @MinLength(6)
+  @IsString({ message: 'Password must be a string' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long' })
   @IsOptional()
   password?: string;
 
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, { message: 'Role must be a valid UserRole' })
   @IsOptional()
   role?: UserRole;
 
-  @IsEnum(Department)
+  @IsEnum(Department, { message: 'Department must be a valid Department' })
   @IsOptional()
   department?: Department;
 }
 
 export class UpdateUserMessageDto extends UpdateUserDto {
-  @IsMongoId()
+  @IsMongoId({ message: 'ID must be a valid Mongo ID' })
   id!: string;
 }
