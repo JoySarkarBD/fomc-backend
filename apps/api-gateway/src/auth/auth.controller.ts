@@ -1,8 +1,10 @@
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import type { AuthUser } from "../common/interfaces/auth-user.interface";
 import { AuthService } from "./auth.service";
+import { PASSWORD_THROTTLE } from "./constants/auth-throttle.constants";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -24,11 +26,15 @@ export class AuthController {
   }
 
   @Post("forgot-password")
+  @UseGuards(ThrottlerGuard)
+  @Throttle(PASSWORD_THROTTLE)
   async forgot(@Body() data: ForgotPasswordDto) {
     return this.authService.forgotPassword(data.email);
   }
 
   @Post("reset-password")
+  @UseGuards(ThrottlerGuard)
+  @Throttle(PASSWORD_THROTTLE)
   async reset(@Body() data: ResetPasswordDto) {
     return this.authService.resetPassword(data.otp, data.newPassword);
   }

@@ -2,16 +2,21 @@ import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { PassportModule } from "@nestjs/passport";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { jwtConfig } from "../common/jwt.config";
 import { MailModule } from "../utils/mail.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { PASSWORD_THROTTLER } from "./constants/auth-throttle.constants";
 import { JwtStrategy } from "./jwt.strategy";
 
 @Module({
   imports: [
     JwtModule.register(jwtConfig),
     PassportModule.register({ defaultStrategy: "jwt" }),
+    ThrottlerModule.forRoot({
+      throttlers: [PASSWORD_THROTTLER],
+    }),
     MailModule,
     ClientsModule.register([
       {
