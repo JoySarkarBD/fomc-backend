@@ -45,10 +45,20 @@ export class ResponseInterceptor implements NestInterceptor {
       map((data) => {
         // If response is already a ServiceResponse, return as-is
         if (data?.success !== undefined && data?.timestamp) {
+          if (typeof data.statusCode !== "number") {
+            const currentStatus = httpRes?.statusCode ?? 200;
+            return { ...data, statusCode: currentStatus };
+          }
           return data;
         }
 
-        const statusCode = httpRes?.statusCode ?? 200;
+        const statusCode =
+          typeof data?.statusCode === "number"
+            ? data.statusCode
+            : (httpRes?.statusCode ?? 200);
+        if (httpRes?.statusCode !== statusCode) {
+          httpRes?.status(statusCode);
+        }
         const isEnvelope =
           data &&
           typeof data === "object" &&
