@@ -1,10 +1,16 @@
 import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import { PassportModule } from "@nestjs/passport";
+import { jwtConfig } from "../common/jwt.config";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { JwtStrategy } from "./jwt.strategy";
 
 @Module({
   imports: [
+    JwtModule.register(jwtConfig),
+    PassportModule.register({ defaultStrategy: "jwt" }),
     ClientsModule.register([
       {
         name: "USER_SERVICE",
@@ -17,6 +23,7 @@ import { AuthService } from "./auth.service";
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
+  exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}

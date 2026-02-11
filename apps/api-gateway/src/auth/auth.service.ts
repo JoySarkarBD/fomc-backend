@@ -1,4 +1,5 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { ClientProxy } from "@nestjs/microservices";
 import * as bcrypt from "bcrypt";
 import { firstValueFrom } from "rxjs";
@@ -8,6 +9,7 @@ import { USER_COMMANDS } from "../user/constants/user.constants";
 export class AuthService {
   constructor(
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(data: any) {
@@ -23,11 +25,16 @@ export class AuthService {
     if (!user) throw new NotFoundException("Invalid credentials");
     const match = await bcrypt.compare(password, user.password as string);
     if (!match) throw new NotFoundException("Invalid credentials");
-    // remove sensitive fields
+    // preserve id for token, then remove sensitive fields
+    const id = user.id ?? user._id ?? null;
     delete user.password;
     delete user.resetToken;
     delete user.resetTokenExpiry;
-    return user;
+
+    const payload = { sub: id, email: user.email, role: user.role };
+    const accessToken = this.jwtService.sign(payload);
+
+    return { accessToken, user };
   }
 
   async forgotPassword(email: string) {
