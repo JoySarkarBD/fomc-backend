@@ -124,17 +124,24 @@ export class UserService {
     id: string,
     currentPassword: string,
     newPassword: string,
-  ): Promise<boolean> {
+  ): Promise<{ success: boolean; message: string }> {
     const user = await this.userModel.findById(id).select("+password").exec();
     if (!user) throw new NotFoundException("User not found");
     const match = await bcrypt.compare(
       currentPassword,
       user.password as string,
     );
-    if (!match) return false;
+    if (!match)
+      return {
+        success: false,
+        message: "Current password is incorrect",
+      };
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
-    return true;
+    return {
+      success: true,
+      message: "Password changed successfully",
+    };
   }
 
   /**

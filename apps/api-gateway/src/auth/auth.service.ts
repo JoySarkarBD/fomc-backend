@@ -162,13 +162,18 @@ export class AuthService {
     currentPassword: string,
     newPassword: string,
   ) {
-    await firstValueFrom(
+    const result = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.CHANGE_PASSWORD, {
         id,
         currentPassword,
         newPassword,
       }),
     );
+    if (!result || !result.success) {
+      throw new UnauthorizedException(
+        result?.message ?? "Password change failed",
+      );
+    }
     return buildResponse("Password changed successfully", null);
   }
 }

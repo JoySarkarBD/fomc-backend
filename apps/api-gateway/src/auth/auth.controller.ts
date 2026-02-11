@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Put, UseGuards } from "@nestjs/common";
 import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
@@ -83,11 +83,11 @@ export class AuthController {
    * @param {ChangePasswordDto} data - Contains current and new password
    * @returns {Promise<any>} Service response indicating password change success
    */
-  @Post("change-password")
+  @Put("change-password")
   @UseGuards(JwtAuthGuard)
   async change(@GetUser() user: AuthUser, @Body() data: ChangePasswordDto) {
     return this.authService.changePassword(
-      (user.id ?? user._id) as string,
+      user._id as string,
       data.currentPassword,
       data.newPassword,
     );
