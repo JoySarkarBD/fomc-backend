@@ -146,7 +146,8 @@ export class AuthService {
         newPassword,
       }),
     );
-    return buildResponse("Password reset successful", result);
+    if (!result) throw new UnauthorizedException("Invalid or expired OTP");
+    return buildResponse("Password reset successful", null);
   }
 
   /**
@@ -161,13 +162,13 @@ export class AuthService {
     currentPassword: string,
     newPassword: string,
   ) {
-    const result = await firstValueFrom(
+    await firstValueFrom(
       this.userClient.send(USER_COMMANDS.CHANGE_PASSWORD, {
         id,
         currentPassword,
         newPassword,
       }),
     );
-    return buildResponse("Password changed successfully", result);
+    return buildResponse("Password changed successfully", null);
   }
 }

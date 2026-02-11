@@ -60,7 +60,10 @@ export class UserService {
       const hashedPassword = await bcrypt.hash(data.password, 10);
       data.password = hashedPassword;
       const createdUser = new this.userModel(data);
-      return await createdUser.save();
+      const newUser = await createdUser.save();
+      const userObject = newUser.toObject();
+      delete userObject.password;
+      return userObject as User;
     } catch (error: any) {
       // MongoDB duplicate key error
       if (error?.code === 11000) {
