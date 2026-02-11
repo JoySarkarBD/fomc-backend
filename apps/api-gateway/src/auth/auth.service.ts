@@ -1,15 +1,17 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ClientProxy } from "@nestjs/microservices";
 import * as bcrypt from "bcrypt";
 import { firstValueFrom } from "rxjs";
 import { USER_COMMANDS } from "../user/constants/user.constants";
+import { MailService } from "../utils/mail.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(data: any) {
@@ -22,9 +24,10 @@ export class AuthService {
     const user = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.FIND_BY_EMAIL, email),
     );
-    if (!user) throw new NotFoundException("Invalid credentials");
+    if (!user) throw new UnauthorizedException("Invalid credentials");
     const match = await bcrypt.compare(password, user.password as string);
-    if (!match) throw new NotFoundException("Invalid credentials");
+
+    if (!match) throw new UnauthorizedException("Invalid credentials");
     // preserve id for token, then remove sensitive fields
     const id = user.id ?? user._id ?? null;
     delete user.password;
@@ -46,7 +49,17 @@ export class AuthService {
         token,
         expiry: expiry.toISOString(),
       }),
-    ).then((ok) => ({ ok, token }));
+    ).then((ok) => {
+      if (ok) {
+        const resetLink = `https://your-app.com/reset-password?token=${token}`;
+        this.mailService.sendMail({
+          to: email,
+          subject: "Reset Your Password",
+          html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
+        });
+      }
+      return { ok, token };
+    });
   }
 
   async resetPassword(token: string, newPassword: string) {
