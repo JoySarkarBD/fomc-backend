@@ -1,9 +1,9 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
-import { USER_COMMANDS } from './constants/user.constants';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserMessageDto } from './dto/update-user.dto';
-import { UserService } from './user.service';
+import { Controller } from "@nestjs/common";
+import { MessagePattern } from "@nestjs/microservices";
+import { USER_COMMANDS } from "./constants/user.constants";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserMessageDto } from "./dto/update-user.dto";
+import { UserService } from "./user.service";
 
 /**
  * UserController
@@ -83,5 +83,47 @@ export class UserController {
   @MessagePattern(USER_COMMANDS.DELETE_USER)
   deleteUser(id: string) {
     return this.userService.deleteUser(id);
+  }
+
+  /**
+   * Find user by email
+   * Message Pattern: { cmd: 'find_user_by_email' }
+   */
+  @MessagePattern({ cmd: "find_user_by_email" })
+  findByEmail(email: string) {
+    return this.userService.findByEmail(email);
+  }
+
+  /**
+   * Set a password reset token for a user
+   * Message Pattern: { cmd: 'set_reset_token' }
+   */
+  @MessagePattern({ cmd: "set_reset_token" })
+  setResetToken(payload: { email: string; token: string; expiry: string }) {
+    const { email, token, expiry } = payload;
+    return this.userService.setResetToken(email, token, new Date(expiry));
+  }
+
+  /**
+   * Reset password using token
+   * Message Pattern: { cmd: 'reset_password' }
+   */
+  @MessagePattern({ cmd: "reset_password" })
+  resetPassword(payload: { token: string; newPassword: string }) {
+    return this.userService.resetPassword(payload.token, payload.newPassword);
+  }
+
+  /**
+   * Change password given user id and current password
+   * Message Pattern: { cmd: 'change_password' }
+   */
+  @MessagePattern({ cmd: "change_password" })
+  changePassword(payload: {
+    id: string;
+    currentPassword: string;
+    newPassword: string;
+  }) {
+    const { id, currentPassword, newPassword } = payload;
+    return this.userService.changePassword(id, currentPassword, newPassword);
   }
 }

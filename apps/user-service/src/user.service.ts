@@ -2,13 +2,13 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './schemas/user.schema';
-
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import * as bcrypt from "bcrypt";
+import { Model } from "mongoose";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { User, UserDocument } from "./schemas/user.schema";
 /**
  * UserService
  *
@@ -44,7 +44,7 @@ export class UserService {
    */
   async getUser(id: string): Promise<User> {
     const user = await this.userModel.findById(id).exec();
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
     return user;
   }
 
@@ -57,15 +57,81 @@ export class UserService {
    */
   async createUser(data: CreateUserDto): Promise<User> {
     try {
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      data.password = hashedPassword;
       const createdUser = new this.userModel(data);
       return await createdUser.save();
     } catch (error: any) {
       // MongoDB duplicate key error
       if (error?.code === 11000) {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException("Email already exists");
       }
       throw error;
     }
+  }
+
+  /**
+   * Find user by email (includes password field)
+   */
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userModel
+      .findOne({ email })
+      .select("+password +resetToken +resetTokenExpiry")
+      .exec();
+  }
+
+  /**
+   * Set reset token and expiry for a user identified by email
+   */
+  async setResetToken(
+    email: string,
+    token: string,
+    expiry: Date,
+  ): Promise<boolean> {
+    const res = await this.userModel
+      .findOneAndUpdate(
+        { email },
+        { resetToken: token, resetTokenExpiry: expiry },
+        { new: true },
+      )
+      .exec();
+    return !!res;
+  }
+
+  /**
+   * Reset password using a valid token
+   */
+  async resetPassword(token: string, newPassword: string): Promise<boolean> {
+    const user = await this.userModel
+      .findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } })
+      .exec();
+    if (!user) return false;
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    user.resetToken = null as any;
+    user.resetTokenExpiry = null as any;
+    await user.save();
+    return true;
+  }
+
+  /**
+   * Change password given user id and current password
+   */
+  async changePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<boolean> {
+    const user = await this.userModel.findById(id).select("+password").exec();
+    if (!user) throw new NotFoundException("User not found");
+    const match = await bcrypt.compare(
+      currentPassword,
+      user.password as string,
+    );
+    if (!match) return false;
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    return true;
   }
 
   /**
@@ -81,7 +147,7 @@ export class UserService {
       .findByIdAndUpdate(id, data, { new: true, runValidators: true })
       .exec();
 
-    if (!updatedUser) throw new NotFoundException('User not found');
+    if (!updatedUser) throw new NotFoundException("User not found");
     return updatedUser;
   }
 
@@ -94,7 +160,7 @@ export class UserService {
    */
   async deleteUser(id: string): Promise<User> {
     const deletedUser = await this.userModel.findByIdAndDelete(id).exec();
-    if (!deletedUser) throw new NotFoundException('User not found');
+    if (!deletedUser) throw new NotFoundException("User not found");
     return deletedUser;
   }
 }

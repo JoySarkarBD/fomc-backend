@@ -62,6 +62,14 @@ export class User extends Document {
   @Prop({ required: true, select: false })
   password?: string;
 
+  /** Token for password reset flows */
+  @Prop({ type: String, default: null })
+  resetToken?: string | null;
+
+  /** Expiry date for the password reset token */
+  @Prop({ type: Date, default: null })
+  resetTokenExpiry?: Date | null;
+
   /** Role of the user in the organization */
   @Prop({ default: UserRole.EMPLOYEE, enum: UserRole })
   role: UserRole = UserRole.EMPLOYEE;

@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
 
 /**
  * AppModule
@@ -28,6 +29,7 @@ import { UserModule } from './user/user.module';
      * and communicates with the User microservice.
      */
     UserModule,
+    AuthModule,
   ],
 
   /**
