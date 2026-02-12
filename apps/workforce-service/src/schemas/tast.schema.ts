@@ -66,12 +66,7 @@ export class Task extends Document {
   assignTo!: mongo.ObjectId[];
 
   @Prop()
-  attachments?: [
-    {
-      links: string[];
-      ref: string[];
-    },
-  ];
+  attachments?: string[];
 }
 
 /**
