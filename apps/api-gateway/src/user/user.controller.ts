@@ -7,7 +7,6 @@ import {
   Post,
   UseGuards,
 } from "@nestjs/common";
-import { User } from "../../../user-service/src/schemas/user.schema";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import type { AuthUser } from "../common/interfaces/auth-user.interface";
@@ -26,22 +25,22 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async getUsers(): Promise<User[]> {
+  async getUsers() {
     return await this.userService.getUsers();
   }
 
   @Get(":id")
-  async getUser(@Param() params: UserParamDto): Promise<User> {
+  async getUser(@Param() params: UserParamDto) {
     return await this.userService.getUser(params.id);
   }
 
   @Post("")
-  async createUser(@Body() data: CreateUserDto): Promise<User> {
+  async createUser(@Body() data: CreateUserDto) {
     return await this.userService.createUser(data);
   }
 
   @Delete(":id")
-  async deleteUser(@Param() params: UserParamDto): Promise<User> {
+  async deleteUser(@Param() params: UserParamDto) {
     return await this.userService.deleteUser(params.id);
   }
 
@@ -52,7 +51,7 @@ export class UserController {
    */
   @Get("profile/me")
   @UseGuards(JwtAuthGuard)
-  async getProfile(@GetUser() user: AuthUser): Promise<User> {
+  async getProfile(@GetUser() user: AuthUser) {
     return await this.userService.getUser(user._id as string);
   }
 }
