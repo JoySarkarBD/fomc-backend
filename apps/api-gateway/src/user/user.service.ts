@@ -1,7 +1,6 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
-import { User } from "../../../user-service/src/schemas/user.schema";
 import { buildResponse } from "../common/response.util";
 import { USER_COMMANDS } from "./constants/user.constants";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -23,8 +22,11 @@ export class UserService {
    *
    * @returns Promise resolving to an array of users
    */
-  async getUsers(): Promise<User[]> {
-    return firstValueFrom(this.userClient.send(USER_COMMANDS.GET_USERS, {}));
+  async getUsers() {
+    const users = await firstValueFrom(
+      this.userClient.send(USER_COMMANDS.GET_USERS, {}),
+    );
+    return buildResponse("Users fetched successfully", users);
   }
 
   /**
@@ -48,10 +50,11 @@ export class UserService {
    * @param data - Data transfer object containing user creation fields
    * @returns Promise resolving to the created user object
    */
-  async createUser(data: CreateUserDto): Promise<User> {
-    return firstValueFrom(
+  async createUser(data: CreateUserDto) {
+    const user = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.CREATE_USER, data),
     );
+    return buildResponse("User created successfully", user);
   }
 
   /**
@@ -61,11 +64,11 @@ export class UserService {
    * @returns Promise resolving to the deleted user object
    * @throws NotFoundException if the user does not exist
    */
-  async deleteUser(id: string): Promise<User> {
+  async deleteUser(id: string) {
     const deletedUser = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.DELETE_USER, id),
     );
     if (!deletedUser) throw new NotFoundException("User not found");
-    return deletedUser;
+    return buildResponse("User deleted successfully", deletedUser);
   }
 }
