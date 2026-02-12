@@ -41,6 +41,10 @@ import { JwtStrategy } from "./jwt.strategy";
      */
     MailModule,
 
+    /**
+     * Redis Module responsible for providing Redis-related services and functionality, such as storing and managing authentication tokens in Redis.
+     * This module allows the AuthService to utilize Redis for caching and token management, enhancing the performance and scalability of authentication operations within the API Gateway.
+     */
     RedisModule,
 
     /**
