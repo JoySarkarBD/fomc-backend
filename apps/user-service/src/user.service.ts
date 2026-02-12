@@ -61,9 +61,11 @@ export class UserService {
       const existing = await this.userModel
         .findOne({ email: data.email })
         .exec();
+      // If a user with the provided email already exists, return an object indicating the email conflict instead of throwing an exception.
       if (existing) {
         return { emailExist: true, message: "Email already exists" };
       }
+      // Hash the user's password before saving it to the database to ensure security.
       const hashedPassword = await bcrypt.hash(data.password, 10);
       data.password = hashedPassword;
       const createdUser = new this.userModel(data);

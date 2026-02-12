@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import { buildResponse } from "../common/response.util";
@@ -54,6 +59,10 @@ export class UserService {
     const user = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.CREATE_USER, data),
     );
+    // If the email already exists, throw a ConflictException with the message from the User Service response
+    if (user?.emailExist) {
+      throw new ConflictException(user.message);
+    }
     return buildResponse("User created successfully", user);
   }
 
