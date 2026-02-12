@@ -27,6 +27,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
+    },
+    "workforce-service": {
+      "type": "application",
+      "root": "apps/workforce-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/workforce-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/workforce-service/tsconfig.app.json"
+      }
     }
   }
 }
