@@ -19,6 +19,16 @@ export enum LeaveType {
   UNPAID_LEAVE = "UNPAID_LEAVE",
 }
 
+/**
+ * Leave Schema
+ *
+ * Represents a leave request in the workforce management system.
+ * Includes details such as the user requesting leave, type of leave, start and end dates, and the reason for the leave.
+ *
+ * Options:
+ * - timestamps: automatically add `createdAt` and `updatedAt`
+ * - versionKey: disables `__v` field
+ */
 @Schema({ timestamps: true, versionKey: false })
 export class Leave extends Document {
   @Prop({ required: true })
