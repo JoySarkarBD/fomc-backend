@@ -13,54 +13,30 @@ import { UserParamDto } from "./dto/user-param.dto";
 import { UserService } from "./user.service";
 
 /**
- * UserController
- *
- * Handles all user-related API endpoints.
- * Supports CRUD operations for users.
+ * User Controller responsible for handling HTTP requests related to user operations in the API Gateway.
+ * Provides endpoints for creating, retrieving, updating, and deleting users.
+ * Utilizes the UserService to perform the necessary business logic for each user-related operation.
+ * Includes guards and validation to ensure that incoming requests contain valid data and that only authorized users can perform certain actions.
  */
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  /**
-   * Get all users.
-   *
-   * @returns Array of users
-   */
   @Get()
   async getUsers(): Promise<any> {
     return await this.userService.getUsers();
   }
 
-  /**
-   * Get a single user by ID.
-   *
-   * @param params - Object containing the user ID
-   * @returns User object
-   */
   @Get(":id")
   async getUser(@Param() params: UserParamDto): Promise<any> {
     return await this.userService.getUser(params.id);
   }
 
-  /**
-   * Create a new user.
-   *
-   * @param data - DTO containing user creation data
-   * @returns Created user object
-   */
   @Post("")
   async createUser(@Body() data: CreateUserDto): Promise<any> {
     return await this.userService.createUser(data);
   }
 
-  /**
-   * Update an existing user by ID.
-   *
-   * @param params - Object containing the user ID
-   * @param data - DTO containing updated user data
-   * @returns Updated user object
-   */
   @Put(":id")
   async updateUser(
     @Param() params: UserParamDto,
@@ -69,12 +45,6 @@ export class UserController {
     return await this.userService.updateUser(params.id, data);
   }
 
-  /**
-   * Delete a user by ID.
-   *
-   * @param params - Object containing the user ID
-   * @returns Deleted user object
-   */
   @Delete(":id")
   async deleteUser(@Param() params: UserParamDto): Promise<any> {
     return await this.userService.deleteUser(params.id);

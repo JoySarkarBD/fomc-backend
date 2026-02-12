@@ -2,18 +2,10 @@ import { Injectable, Logger } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
 
 /**
- * MailService
- *
- * Provides email sending functionality using Nodemailer.
- * Configured via environment variables.
- *
- * Environment Variables:
- * - MAIL_HOST: SMTP server host
- * - MAIL_PORT: SMTP server port
- * - MAIL_USER: SMTP authentication username
- * - MAIL_PASS: SMTP authentication password
- * - MAIL_FROM_NAME: Name for the "from" field in emails
- * - MAIL_FROM_EMAIL: Email for the "from" field
+ * Mail Service responsible for sending emails within the API Gateway.
+ * This service utilizes Nodemailer to send emails, such as OTPs for password resets and other authentication-related notifications.
+ * It provides a method `sendMail` that accepts email options and sends an email using the configured SMTP transporter.
+ * The service also includes error handling and logging to ensure that email sending operations are properly monitored and any issues are logged for troubleshooting.
  */
 @Injectable()
 export class MailService {
@@ -34,15 +26,10 @@ export class MailService {
   }
 
   /**
-   * Send an email.
-   *
-   * @param options - Mail options
-   * @param options.to - Recipient email address
-   * @param options.subject - Email subject
-   * @param options.html - HTML content of the email
-   * @param options.text - Optional plain text content
-   * @returns Promise resolving with Nodemailer sent info object
-   * @throws Throws an error if sending fails
+   * Sends an email using the configured transporter.
+   * @param options - An object containing the email options, including recipient, subject, HTML content, and optional text content.
+   * @returns A promise that resolves with the result of the email sending operation.
+   * @throws An error if the email sending operation fails, which is also logged for troubleshooting purposes.
    */
   async sendMail(options: {
     to: string;

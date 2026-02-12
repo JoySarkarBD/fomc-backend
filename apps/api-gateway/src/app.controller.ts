@@ -1,30 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get } from "@nestjs/common";
+import { AppService } from "./app.service";
 
 /**
- * AppController
- *
- * Root controller of the API Gateway.
- * Handles base route requests.
+ * AppController is the main controller for the API Gateway application.
+ * It defines the root endpoint and handles basic requests to the API Gateway.
+ * The controller uses the AppService to provide responses for incoming requests.
+ * Currently, it has a single endpoint that returns a status message, which can be used as a health check to verify that the API Gateway is running properly.
  */
 @Controller()
 export class AppController {
-  /**
-   * Creates an instance of AppController.
-   *
-   * @param {AppService} appService - Application-level service provider.
-   */
   constructor(private readonly appService: AppService) {}
 
   /**
-   * Root endpoint handler.
-   *
-   * Route: GET /
-   *
-   * Used as a basic health-check endpoint to verify
-   * that the API Gateway is running.
-   *
-   * @returns {string} Status message from AppService.
+   * Handles GET requests to the root endpoint ("/") and returns a simple status message indicating that the API Gateway is running.
+   * This endpoint can be used as a health check to verify that the API Gateway is operational and responding to requests.
+   * @returns A string message indicating that the API Gateway is running.
    */
   @Get()
   getHello(): string {
