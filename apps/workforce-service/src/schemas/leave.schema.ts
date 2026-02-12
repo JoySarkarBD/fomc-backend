@@ -1,6 +1,14 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, mongo } from "mongoose";
 
+/**
+ * Mongoose document type for Leave.
+ */
+export type LeaveDocument = Leave & Document;
+
+/**
+ * Enum for leave types within the workforce management system.
+ */
 export enum LeaveType {
   SICK_LEAVE = "SICK_LEAVE",
   CASUAL_LEAVE = "CASUAL_LEAVE",
@@ -10,11 +18,6 @@ export enum LeaveType {
   PATERNITY_LEAVE = "PATERNITY_LEAVE",
   UNPAID_LEAVE = "UNPAID_LEAVE",
 }
-
-/**
- * Mongoose document type for Leave.
- */
-export type LeaveDocument = Leave & Document;
 
 @Schema({ timestamps: true, versionKey: false })
 export class Leave extends Document {

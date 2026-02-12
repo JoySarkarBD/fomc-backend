@@ -6,6 +6,9 @@ import { Document, mongo } from "mongoose";
  */
 export type TaskDocument = Task & Document;
 
+/**
+ * Enum for task priorities within the workforce management system.
+ */
 export enum TaskPriority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
@@ -13,6 +16,9 @@ export enum TaskPriority {
   CRITICAL = "CRITICAL",
 }
 
+/**
+ * Enum for task statuses within the workforce management system.
+ */
 export enum TaskStatus {
   PENDING = "PENDING",
   WIP = "WORK_IN_PROGRESS",
