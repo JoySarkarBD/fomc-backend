@@ -7,7 +7,10 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { ClientProxy } from "@nestjs/microservices";
 import * as bcrypt from "bcrypt";
+import { randomUUID } from "crypto";
 import { firstValueFrom } from "rxjs";
+import { jwtConfig } from "../common/jwt.config";
+import { RedisService } from "../common/redis/redis.service";
 import { buildResponse } from "../common/response.util";
 import { USER_COMMANDS } from "../user/constants/user.constants";
 import { MailService } from "../utils/mail.service";
@@ -21,6 +24,7 @@ export class AuthService {
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly redisService: RedisService,
   ) {}
 
   /**
@@ -64,6 +68,32 @@ export class AuthService {
   private sanitizeUser(user: any) {
     const { password, otp, otpExpiry, ...safeUser } = user ?? {};
     return safeUser;
+  }
+
+  private getTokenTtlSeconds(token: string): number {
+    const decoded = this.jwtService.decode(token) as { exp?: number } | null;
+    if (decoded?.exp) {
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      return Math.max(decoded.exp - nowSeconds, 1);
+    }
+
+    const expiresIn = jwtConfig.signOptions?.expiresIn;
+    if (typeof expiresIn === "number" && Number.isFinite(expiresIn)) {
+      return Math.max(Math.floor(expiresIn), 1);
+    }
+
+    if (typeof expiresIn === "string") {
+      const match = /^\d+[smhd]$/.exec(expiresIn);
+      if (match) {
+        const value = Number(expiresIn.slice(0, -1));
+        const unit = expiresIn.slice(-1);
+        const multiplier =
+          unit === "s" ? 1 : unit === "m" ? 60 : unit === "h" ? 3600 : 86400;
+        return Math.max(value * multiplier, 1);
+      }
+    }
+
+    return 7 * 24 * 60 * 60;
   }
 
   /**
@@ -114,10 +144,14 @@ export class AuthService {
     const safeUser = this.sanitizeUser(user);
     const payload = { sub: id, email: safeUser.email, role: safeUser.role };
     const accessToken = this.jwtService.sign(payload);
+    const tokenId = randomUUID();
+    const ttlSeconds = this.getTokenTtlSeconds(accessToken);
+
+    await this.redisService.storeToken(tokenId, accessToken, ttlSeconds);
 
     // Return a success response with the generated JWT token and sanitized user details
     return buildResponse("Login successful", {
-      accessToken,
+      accessToken: tokenId,
       user: safeUser,
     });
   }

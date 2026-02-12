@@ -4,6 +4,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
 import { PassportModule } from "@nestjs/passport";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { jwtConfig } from "../common/jwt.config";
+import { RedisModule } from "../common/redis/redis.module";
 import { MailModule } from "../utils/mail.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
@@ -38,6 +39,8 @@ import { JwtStrategy } from "./jwt.strategy";
      * This module provides services for sending emails, which can be utilized by the AuthService to communicate with users during authentication processes, particularly for password reset workflows.
      */
     MailModule,
+
+    RedisModule,
 
     /**
      * Clients Module configured to register a microservice client for the User Service, enabling communication between the API Gateway and the User Service over TCP.
