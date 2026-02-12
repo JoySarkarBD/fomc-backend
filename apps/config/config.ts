@@ -7,6 +7,8 @@ interface Config {
   PORT: number;
   USER_SERVICE_HOST: string;
   USER_SERVICE_PORT: number;
+  WORKFORCE_SERVICE_HOST: string;
+  WORKFORCE_SERVICE_PORT: number;
 
   // The expiration time for JWT tokens, specified in seconds, which determines how long a generated JWT token will be valid before it expires and requires renewal.
   JWT_EXPIRES_IN: number;
@@ -43,6 +45,11 @@ const config: Config = {
   PORT: parseInt(process.env.PORT as string, 10),
   USER_SERVICE_HOST: process.env.USER_SERVICE_HOST as string,
   USER_SERVICE_PORT: parseInt(process.env.USER_SERVICE_PORT as string, 10),
+  WORKFORCE_SERVICE_HOST: process.env.WORKFORCE_SERVICE_HOST as string,
+  WORKFORCE_SERVICE_PORT: parseInt(
+    process.env.WORKFORCE_SERVICE_PORT as string,
+    10,
+  ),
 
   // The expiration time for JWT tokens, specified in seconds, which determines how long a generated JWT token will be valid before it expires and requires renewal. This setting is crucial for maintaining security while providing a reasonable duration for user sessions.
   JWT_EXPIRES_IN: parseInt(process.env.JWT_EXPIRES_IN as string, 10),
