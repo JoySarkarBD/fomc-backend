@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import config from "../../config/config";
 import { User, UserSchema } from "./schemas/user.schema";
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
@@ -19,9 +20,9 @@ import { UserService } from "./user.service";
      * This allows the User Service to interact with the MongoDB database for storing and retrieving user data, enabling persistence and data management for user-related operations.
      */
     MongooseModule.forRoot(
-      process.env.MONGO_URI ??
-        process.env.MONGODB_URI ??
-        "mongodb://127.0.0.1:27017/office-management",
+      config.MONGO_URI
+        ? config.MONGO_URI
+        : "mongodb://127.0.0.1:27017/office-management",
     ),
 
     /**

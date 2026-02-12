@@ -1,4 +1,5 @@
 import { JwtModuleOptions } from "@nestjs/jwt";
+import config from "../../../config/config";
 
 /**
  * JWT configuration for the API Gateway, defining the secret key and token expiration settings for JWT authentication.
@@ -8,8 +9,8 @@ import { JwtModuleOptions } from "@nestjs/jwt";
  * This configuration ensures that the application can securely handle JWT tokens, providing a robust authentication mechanism for users accessing protected routes and resources within the API Gateway.
  */
 export const jwtConfig: JwtModuleOptions = {
-  secret: process.env.JWT_SECRET || "your-default-jwt-secret",
+  secret: config.JWT_SECRET || "your-default-jwt-secret",
   signOptions: {
-    expiresIn: (process.env.JWT_EXPIRES_IN || 2592000) as any,
+    expiresIn: (config.JWT_EXPIRES_IN || 2592000) as any,
   },
 };

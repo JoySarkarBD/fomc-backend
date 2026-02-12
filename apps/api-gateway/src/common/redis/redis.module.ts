@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
-import { RedisService } from "./redis.service";
+import { RedisTokenService } from "./redis-token.service";
+import { RedisClientService } from "./redis.client";
 
 /**
  * Redis Module responsible for providing Redis-related services and functionality within the API Gateway.
@@ -12,11 +13,11 @@ import { RedisService } from "./redis.service";
   /**
    * Providers array includes the RedisService, which is responsible for managing Redis connections and operations. This service can be injected into other services or controllers that require Redis functionality, such as the JwtStrategy for token validation.
    */
-  providers: [RedisService],
+  providers: [RedisClientService, RedisTokenService],
 
   /**
    * Exports array makes the RedisService available for injection in other modules of the application. By exporting the RedisService, we can ensure that any module that imports the RedisModule can access and utilize the RedisService for its operations, facilitating a modular and reusable architecture.
    */
-  exports: [RedisService],
+  exports: [RedisClientService, RedisTokenService],
 })
 export class RedisModule {}

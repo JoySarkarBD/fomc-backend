@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
+import config from "../../../config/config";
 
 /**
  * Mail Service responsible for sending emails within the API Gateway.
@@ -15,12 +16,12 @@ export class MailService {
   constructor() {
     // Initialize Nodemailer transporter with SMTP configuration
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT) || 587,
+      host: config.MAIL_HOST,
+      port: Number(config.MAIL_PORT) || 587,
       secure: false, // true for port 465, false for other ports
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        user: config.MAIL_USER,
+        pass: config.MAIL_PASS,
       },
     });
   }
@@ -39,7 +40,7 @@ export class MailService {
   }) {
     try {
       const info = await this.transporter.sendMail({
-        from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_EMAIL}>`,
+        from: `"${config.MAIL_FROM_NAME}" <${config.MAIL_FROM_EMAIL}>`,
         ...options,
       });
 

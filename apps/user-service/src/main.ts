@@ -2,6 +2,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 import "dotenv/config";
+import config from "../../config/config";
 import { UserModule } from "./user.module";
 
 /**
@@ -18,8 +19,8 @@ async function bootstrap(): Promise<void> {
    * Resolve service host and port from environment variables.
    * Fallbacks are provided for local development.
    */
-  const host = process.env.USER_SERVICE_HOST ?? "127.0.0.1";
-  const port = Number(process.env.USER_SERVICE_PORT ?? 3001);
+  const host = config.USER_SERVICE_HOST ?? "127.0.0.1";
+  const port = Number(config.USER_SERVICE_PORT ?? 3001);
 
   /**
    * Create NestJS microservice instance.

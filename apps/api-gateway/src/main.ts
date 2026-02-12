@@ -1,6 +1,7 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import "dotenv/config";
+import config from "../../config/config";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./common/http-exception.filter";
 import { ResponseInterceptor } from "./common/response.interceptor";
@@ -42,7 +43,7 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // Determine the port to listen on, using the PORT environment variable if defined, or defaulting to 3000 if not. This allows for flexibility in different deployment environments where the port may need to be configured dynamically.
-  const port = Number(process.env.PORT ?? 3000);
+  const port = Number(config.PORT ?? 3000);
 
   // Start the HTTP server and listen on the defined port. Once the server is running, log a message to the console indicating that the API Gateway is operational and providing the URL where it can be accessed.
   await app.listen(port, () => {

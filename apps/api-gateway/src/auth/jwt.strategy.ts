@@ -6,7 +6,7 @@ import type { Request } from "express";
 import { Strategy } from "passport-custom";
 import { firstValueFrom } from "rxjs";
 import { jwtConfig } from "../common/jwt.config";
-import { RedisService } from "../common/redis/redis.service";
+import { RedisTokenService } from "../common/redis/redis-token.service";
 import { USER_COMMANDS } from "../user/constants/user.constants";
 
 /**
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(
     @Inject("USER_SERVICE") private userClient: ClientProxy,
     private readonly jwtService: JwtService,
-    private readonly redisService: RedisService,
+    private readonly redisTokenService: RedisTokenService,
   ) {
     super();
   }
@@ -46,7 +46,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     const tokenId = this.extractTokenId(request);
     if (!tokenId) return null;
 
-    const token = await this.redisService.getToken(tokenId);
+    const token = await this.redisTokenService.getToken(tokenId);
     if (!token) return null;
     let payload: any;
     try {

@@ -3,6 +3,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { PassportModule } from "@nestjs/passport";
 import { ThrottlerModule } from "@nestjs/throttler";
+import config from "../../../config/config";
 import { jwtConfig } from "../common/jwt.config";
 import { RedisModule } from "../common/redis/redis.module";
 import { MailModule } from "../utils/mail.module";
@@ -51,8 +52,8 @@ import { JwtStrategy } from "./jwt.strategy";
         name: "USER_SERVICE",
         transport: Transport.TCP,
         options: {
-          host: process.env.USER_SERVICE_HOST ?? "127.0.0.1",
-          port: Number(process.env.USER_SERVICE_PORT ?? 3001),
+          host: config.USER_SERVICE_HOST ?? "127.0.0.1",
+          port: Number(config.USER_SERVICE_PORT ?? 3001),
         },
       },
     ]),

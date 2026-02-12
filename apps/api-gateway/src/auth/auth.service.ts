@@ -9,7 +9,8 @@ import { ClientProxy } from "@nestjs/microservices";
 import * as bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { firstValueFrom } from "rxjs";
-import { RedisService } from "../common/redis/redis.service";
+import config from "../../../config/config";
+import { RedisTokenService } from "../common/redis/redis-token.service";
 import { buildResponse } from "../common/response.util";
 import { USER_COMMANDS } from "../user/constants/user.constants";
 import { MailService } from "../utils/mail.service";
@@ -23,7 +24,7 @@ export class AuthService {
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-    private readonly redisService: RedisService,
+    private readonly redisTokenService: RedisTokenService,
   ) {}
 
   /**
@@ -119,10 +120,10 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload);
     const tokenId = randomUUID();
 
-    await this.redisService.storeToken(
+    await this.redisTokenService.storeToken(
       tokenId,
       accessToken,
-      process.env.JWT_EXPIRES_IN ? Number(process.env.JWT_EXPIRES_IN) : 2592000,
+      config.JWT_EXPIRES_IN ? Number(config.JWT_EXPIRES_IN) : 2592000,
     );
 
     // Return a success response with the generated JWT token and sanitized user details
