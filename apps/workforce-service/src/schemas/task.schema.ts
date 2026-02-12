@@ -1,6 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, mongo } from "mongoose";
 
+/**
+ * Mongoose document type for Task.
+ */
+export type TaskDocument = Task & Document;
+
 export enum TaskPriority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
@@ -15,8 +20,6 @@ export enum TaskStatus {
   BLOCKED = "BLOCKED",
   DELIVERED = "DELIVERED",
 }
-
-export type TaskDocument = Task & Document;
 
 /**
  * Task Schema
