@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import { User } from "../../../user-service/src/schemas/user.schema";
+import { buildResponse } from "../common/response.util";
 import { USER_COMMANDS } from "./constants/user.constants";
 import { CreateUserDto } from "./dto/create-user.dto";
 
@@ -33,12 +34,12 @@ export class UserService {
    * @returns Promise resolving to the user object
    * @throws NotFoundException if the user does not exist
    */
-  async getUser(id: string): Promise<User> {
+  async getUser(id: string) {
     const user = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.GET_USER, id),
     );
     if (!user) throw new NotFoundException("User not found");
-    return user;
+    return buildResponse("User fetched successfully", user);
   }
 
   /**
