@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "dist/apps/api-gateway/main.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dist/apps/user-service/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "dist/apps/api-gateway/main.js"
+    },
+    {
+      "src": "/user-service/(.*)",
+      "dest": "dist/apps/user-service/main.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
