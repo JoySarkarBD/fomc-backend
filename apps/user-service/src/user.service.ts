@@ -6,9 +6,11 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { Model } from "mongoose";
+import config from "../../config/config";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User, UserDocument } from "./schemas/user.schema";
+
 /**
  * UserService
  *
@@ -145,7 +147,7 @@ export class UserService {
         success: false,
         message: "Current password is incorrect",
       };
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = await bcrypt.hash(newPassword, config.BCRYPT_SALT_ROUNDS);
     await user.save();
     return {
       success: true,

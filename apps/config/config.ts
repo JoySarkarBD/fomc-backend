@@ -12,6 +12,9 @@ interface Config {
   JWT_EXPIRES_IN: number;
   JWT_SECRET: string;
 
+  // The number of salt rounds to use for bcrypt hashing, which determines the computational cost of hashing passwords. A higher number of salt rounds increases security but also increases the time required to hash passwords, so it should be set to a value that balances security and performance.
+  BCRYPT_SALT_ROUNDS: number;
+
   // The time-to-live (TTL) for rate limiting, specified in seconds, which defines the duration for which a rate limit will be applied to a client after they exceed the allowed number of requests.
   RATE_LIMIT_TTL: number;
   RATE_LIMIT_LIMIT: number;
@@ -44,6 +47,9 @@ const config: Config = {
   // The expiration time for JWT tokens, specified in seconds, which determines how long a generated JWT token will be valid before it expires and requires renewal. This setting is crucial for maintaining security while providing a reasonable duration for user sessions.
   JWT_EXPIRES_IN: parseInt(process.env.JWT_EXPIRES_IN as string, 10),
   JWT_SECRET: process.env.JWT_SECRET as string,
+
+  // The number of salt rounds to use for bcrypt hashing, which determines the computational cost of hashing passwords. A higher number of salt rounds increases security but also increases the time required to hash passwords, so it should be set to a value that balances security and performance.
+  BCRYPT_SALT_ROUNDS: parseInt(process.env.BCRYPT_SALT_ROUNDS as string, 10),
 
   // The time-to-live (TTL) for rate limiting, specified in seconds, which defines the duration for which a rate limit will be applied to a client after they exceed the allowed number of requests. This helps to mitigate abuse and ensure fair usage of the API Gateway's resources.
   RATE_LIMIT_TTL: parseInt(process.env.RATE_LIMIT_TTL as string, 10),
