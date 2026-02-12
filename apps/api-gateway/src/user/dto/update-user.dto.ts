@@ -11,6 +11,13 @@ import {
   UserRole,
 } from "../../../../user-service/src/schemas/user.schema";
 
+/**
+ * Data Transfer Object for updating an existing user's information in the API Gateway.
+ * Contains fields for user information such as name, employee ID, phone number, email, secondary email, password, role, and department.
+ * All fields are optional to allow for partial updates, but each field has its own validation rules to ensure that any provided data meets the required format before processing the update request.
+ * The UpdateUserDto is used in the user service to handle update user requests and ensure that the provided data is valid before sending the update request to the User Service for processing.
+ * The validation rules defined in this DTO help maintain data integrity and ensure that only valid user information is accepted when updating existing users through the API Gateway.
+ */
 export class UpdateUserDto {
   @IsString({ message: "Name must be a string" })
   @IsOptional()

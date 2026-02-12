@@ -9,16 +9,12 @@ import { map } from "rxjs/operators";
 import { ServiceResponse } from "./response.interface";
 
 /**
- * ResponseInterceptor
- *
- * Intercepts all HTTP responses and wraps them into a consistent
- * structure defined by the ServiceResponse interface.
- *
- * Features:
- * - Adds metadata: method, endpoint, statusCode, timestamp
- * - Ensures every response has a `success` boolean
- * - Optionally passes through data under the `data` key
- * - Skips wrapping for the root API path (`/api` or `/api/`)
+ * ResponseInterceptor is a NestJS interceptor that transforms outgoing responses into a standardized ServiceResponse format.
+ * This interceptor intercepts the response from route handlers and maps it to a consistent structure that includes metadata such as success status, message, HTTP method, endpoint, status code, timestamp, and the actual data payload.
+ * The interceptor checks if the response is already in the ServiceResponse format and returns it as-is if so. Otherwise, it constructs a new ServiceResponse object based on the original response data and the HTTP status code.
+ * This interceptor can be applied globally or to specific controllers/routes to ensure that all responses from the API Gateway adhere to a consistent format, improving the client experience and making it easier to handle responses on the frontend.
+ * The intercept method uses the RxJS map operator to transform the response data before it is sent back to the client, allowing for flexible response formatting and ensuring that all necessary metadata is included in the response payload.
+ * By using this interceptor, developers can ensure that all responses from the API Gateway are structured in a predictable way, making it easier for clients to consume and handle responses effectively while also providing useful information about the request and response context.
  */
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
@@ -52,6 +48,7 @@ export class ResponseInterceptor implements NestInterceptor {
           return data;
         }
 
+        // Determine the appropriate status code for the response
         const statusCode =
           typeof data?.statusCode === "number"
             ? data.statusCode
@@ -59,6 +56,8 @@ export class ResponseInterceptor implements NestInterceptor {
         if (httpRes?.statusCode !== statusCode) {
           httpRes?.status(statusCode);
         }
+
+        // Check if the original data is already an envelope with message and data properties
         const isEnvelope =
           data &&
           typeof data === "object" &&

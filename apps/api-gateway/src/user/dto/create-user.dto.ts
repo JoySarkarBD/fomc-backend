@@ -11,6 +11,13 @@ import {
   UserRole,
 } from "../../../../user-service/src/schemas/user.schema";
 
+/**
+ * Data Transfer Object for creating a new user in the API Gateway.
+ * Contains fields for user information such as name, employee ID, phone number, email, secondary email, password, role, and department.
+ * Validates that the name, phone number, email, and password fields are required and meet specific validation criteria, while employee ID, secondary email, role, and department are optional fields with their own validation rules.
+ * The CreateUserDto is used in the user service to handle create user requests and ensure that the provided data meets the required format before processing the request to create a new user in the system.
+ * The validation rules defined in this DTO help maintain data integrity and ensure that only valid user information is accepted when creating new users through the API Gateway.
+ */
 export class CreateUserDto {
   @IsString({ message: "Name must be a string" })
   @IsNotEmpty({ message: "Name is required" })

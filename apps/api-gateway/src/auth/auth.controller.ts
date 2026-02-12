@@ -12,25 +12,20 @@ import { RegisterDto } from "./dto/register.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 
 /**
- * AuthController
- *
- * Handles authentication-related routes:
- * - User registration
- * - User login
- * - Forgot password / reset password
- * - Change password
- *
- * Includes rate-limiting on sensitive endpoints and JWT guard for protected routes.
+ * Authentication Controller responsible for handling authentication-related HTTP requests.
+ * Provides endpoints for user registration, login, password reset, and password change.
+ * Utilizes the AuthService to perform the necessary business logic for each authentication operation.
+ * Includes guards and throttling to enhance security, particularly for password reset requests.
  */
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   /**
-   * Register a new user.
-   *
-   * @param {RegisterDto} data - User registration data
-   * @returns {Promise<any>} Service response with newly created user
+   * Endpoint for user registration.
+   * Accepts a RegisterDto containing the user's name, email, phone number, and password.
+   * Validates the input data and creates a new user account using the AuthService.
+   * Returns the result of the registration process, which may include user details or a success message.
    */
   @Post("register")
   async register(@Body() data: RegisterDto) {
@@ -38,10 +33,10 @@ export class AuthController {
   }
 
   /**
-   * Authenticate a user and return a JWT token.
-   *
-   * @param {LoginDto} data - User login credentials
-   * @returns {Promise<any>} Service response containing access token and user data
+   * Endpoint for user login.
+   * Accepts a LoginDto containing the user's email and password.
+   * Validates the input data and attempts to authenticate the user using the AuthService.
+   * Returns a JWT token or an error message based on the authentication result.
    */
   @Post("login")
   async login(@Body() data: LoginDto) {
@@ -49,12 +44,11 @@ export class AuthController {
   }
 
   /**
-   * Request a password reset OTP.
-   *
-   * Rate-limited to prevent abuse.
-   *
-   * @param {ForgotPasswordDto} data - Contains the user's email
-   * @returns {Promise<any>} Service response indicating OTP sent status
+   * Endpoint for initiating the password reset process.
+   * Accepts a ForgotPasswordDto containing the user's email address.
+   * Validates the input data and triggers the password reset process using the AuthService, which may involve sending an OTP to the user's email.
+   * Utilizes throttling to prevent abuse of the password reset functionality, limiting the number of requests that can be made within a certain time frame.
+   * Returns a success message or an error message based on the result of the password reset initiation.
    */
   @Post("forgot-password")
   @UseGuards(ThrottlerGuard)
@@ -64,10 +58,10 @@ export class AuthController {
   }
 
   /**
-   * Reset the user's password using OTP.
-   *
-   * @param {ResetPasswordDto} data - Contains OTP and new password
-   * @returns {Promise<any>} Service response indicating password reset success
+   * Endpoint for resetting the user's password.
+   * Accepts a ResetPasswordDto containing the OTP and the new password.
+   * Validates the input data and attempts to reset the user's password using the AuthService, which verifies the OTP and updates the password if valid.
+   * Returns a success message or an error message based on the result of the password reset operation.
    */
   @Post("reset-password")
   async reset(@Body() data: ResetPasswordDto) {
@@ -75,13 +69,11 @@ export class AuthController {
   }
 
   /**
-   * Change the password of a logged-in user.
-   *
-   * Protected route, requires JWT authentication.
-   *
-   * @param {AuthUser} user - Authenticated user object (injected by GetUser decorator)
-   * @param {ChangePasswordDto} data - Contains current and new password
-   * @returns {Promise<any>} Service response indicating password change success
+   * Endpoint for changing the user's password.
+   * Protected by the JwtAuthGuard to ensure that only authenticated users can access this endpoint.
+   * Accepts a ChangePasswordDto containing the current password and the new password.
+   * Validates the input data and attempts to change the user's password using the AuthService, which verifies the current password and updates it if valid.
+   * Returns a success message or an error message based on the result of the password change operation.
    */
   @Put("change-password")
   @UseGuards(JwtAuthGuard)

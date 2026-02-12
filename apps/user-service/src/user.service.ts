@@ -53,10 +53,18 @@ export class UserService {
    *
    * @param {CreateUserDto} data - DTO containing user creation data.
    * @throws {ConflictException} If email already exists (duplicate key error).
-   * @returns {Promise<User>} Newly created user document.
+   * @returns {Promise<User|{emailExist: boolean, message: string}>} Newly created user document or conflict message.
    */
-  async createUser(data: CreateUserDto): Promise<User> {
+  async createUser(
+    data: CreateUserDto,
+  ): Promise<User | { emailExist: boolean; message: string }> {
     try {
+      const existing = await this.userModel
+        .findOne({ email: data.email })
+        .exec();
+      if (existing) {
+        return { emailExist: true, message: "Email already exists" };
+      }
       const hashedPassword = await bcrypt.hash(data.password, 10);
       data.password = hashedPassword;
       const createdUser = new this.userModel(data);
@@ -67,7 +75,7 @@ export class UserService {
     } catch (error: any) {
       // MongoDB duplicate key error
       if (error?.code === 11000) {
-        throw new ConflictException("Email already exists");
+        return { emailExist: true, message: "Email already exists" };
       }
       throw error;
     }

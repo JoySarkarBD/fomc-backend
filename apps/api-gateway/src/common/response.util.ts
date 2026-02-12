@@ -18,9 +18,6 @@ export type ResponseEnvelope<T> = {
  * @param message - Human-readable message describing the response
  * @param data - Actual data payload to return
  * @returns A response object conforming to ResponseEnvelope<T>
- *
- * @example
- * const response = buildResponse("User created successfully", user);
  */
 export const buildResponse = <T>(
   message: string,

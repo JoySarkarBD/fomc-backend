@@ -11,51 +11,37 @@ import { PASSWORD_THROTTLER } from "./constants/auth-throttle.constants";
 import { JwtStrategy } from "./jwt.strategy";
 
 /**
- * AuthModule
- *
- * Handles authentication-related functionality including:
- * - JWT-based authentication
- * - User login and registration
- * - Password reset and change
- * - OTP-based password recovery with rate limiting
- *
- * Integrates with the User microservice for user management
- * and MailModule for sending emails (e.g., OTPs).
+ * Authentication Module responsible for managing authentication-related functionality within the API Gateway.
+ * This module imports necessary dependencies such as JWT handling, microservices communication, and throttling.
+ * It provides the AuthController to handle authentication-related HTTP requests and the AuthService to perform the business logic for authentication operations.
+ * The module also exports relevant services and modules for use in other parts of the application.
  */
 @Module({
-  /**
-   * Imported modules
-   */
   imports: [
     /**
-     * JwtModule
-     * - Configured with custom JWT options from jwtConfig
+     * JWT Module configured with the application's JWT settings, enabling JWT-based authentication and token management.
+     * This allows the application to generate and validate JWT tokens for user authentication and authorization.
      */
     JwtModule.register(jwtConfig),
-
-    /**
-     * PassportModule
-     * - Provides JWT strategy for authentication
-     */
     PassportModule.register({ defaultStrategy: "jwt" }),
 
     /**
-     * ThrottlerModule
-     * - Provides rate limiting for sensitive endpoints (forgot password, etc.)
+     * Throttler Module configured with a custom throttler for password-related operations, providing rate limiting to enhance security and prevent abuse of authentication endpoints, particularly those related to password resets.
+     * This helps to mitigate brute-force attacks and ensures that users cannot make excessive requests to sensitive endpoints.
      */
     ThrottlerModule.forRoot({
       throttlers: [PASSWORD_THROTTLER],
     }),
 
     /**
-     * MailModule
-     * - Handles sending emails (OTP, notifications)
+     * Mail Module responsible for handling email-related functionality, such as sending OTPs for password resets and other authentication-related notifications.
+     * This module provides services for sending emails, which can be utilized by the AuthService to communicate with users during authentication processes, particularly for password reset workflows.
      */
     MailModule,
 
     /**
-     * ClientsModule
-     * - Connects to the User microservice over TCP transport
+     * Clients Module configured to register a microservice client for the User Service, enabling communication between the API Gateway and the User Service over TCP.
+     * This allows the AuthService to interact with the User Service for operations such as user registration, authentication, and password management, facilitating a microservices architecture where different services can communicate seamlessly.
      */
     ClientsModule.register([
       {
@@ -70,21 +56,21 @@ import { JwtStrategy } from "./jwt.strategy";
   ],
 
   /**
-   * Controllers
-   * - AuthController handles API routes for authentication
+   * Controllers responsible for handling incoming HTTP requests related to authentication, such as user registration, login, password reset, and password change.
+   * The AuthController defines the endpoints and request handling logic for these operations, utilizing the AuthService to perform the necessary business logic.
    */
   controllers: [AuthController],
 
   /**
-   * Providers
-   * - AuthService contains the business logic
-   * - JwtStrategy validates JWT tokens
+   * Providers responsible for implementing the business logic for authentication operations, such as user registration, login, password reset, and password change.
+   * The AuthService contains methods that perform these operations, interacting with the User Service and other dependencies as needed.
+   * The JwtStrategy is also provided to handle JWT validation and authentication logic for protected routes.
    */
   providers: [AuthService, JwtStrategy],
 
   /**
-   * Exports
-   * - JwtModule, PassportModule, MailModule can be used in other modules
+   * Exports the JwtModule, PassportModule, and MailModule to make their services available for use in other modules of the application.
+   * This allows other parts of the application to utilize JWT handling, authentication strategies, and email functionality provided by these modules, facilitating a modular and reusable architecture.
    */
   exports: [JwtModule, PassportModule, MailModule],
 })
