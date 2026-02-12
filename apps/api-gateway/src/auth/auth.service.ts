@@ -14,6 +14,7 @@ import { RedisTokenService } from "../common/redis/redis-token.service";
 import { buildResponse } from "../common/response.util";
 import { USER_COMMANDS } from "../user/constants/user.constants";
 import { MailService } from "../utils/mail.service";
+import { RegisterDto } from "./dto/register.dto";
 
 @Injectable()
 export class AuthService {
@@ -76,7 +77,7 @@ export class AuthService {
    * @param data - The registration data containing name, email, phone number, and password
    * @returns A response indicating successful registration or an error message if the email already exists
    */
-  async register(data: any) {
+  async register(data: RegisterDto) {
     // Send registration data to User Service and handle response
     const user = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.CREATE_USER, data),
