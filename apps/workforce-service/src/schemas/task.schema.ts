@@ -64,9 +64,6 @@ export class Task extends Document {
   // For now it will be a string but in future it will be a reference to the user collection
   @Prop()
   assignTo!: mongo.ObjectId[];
-
-  @Prop()
-  attachments?: string[];
 }
 
 /**

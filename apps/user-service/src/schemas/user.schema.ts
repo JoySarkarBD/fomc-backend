@@ -38,43 +38,43 @@ export enum Department {
  */
 @Schema({ timestamps: true, versionKey: false })
 export class User extends Document {
-  /** Full name of the user */
+  // Full name of the user
   @Prop({ required: true })
   name!: string;
 
-  /** Optional employee identifier */
+  // Optional employee identifier
   @Prop({ default: null })
   employeeId?: string;
 
-  /** Primary phone number (required) */
+  // Primary phone number (required)
   @Prop({ required: true })
   phoneNumber?: string;
 
-  /** Unique email address (required) */
+  // Unique email address (required)
   @Prop({ required: true, unique: true })
   email!: string;
 
-  /** Optional secondary email */
+  // Optional secondary email
   @Prop({ default: null })
   secondaryEmail?: string;
 
-  /** User password (required, excluded from queries by default) */
+  // User password (required, excluded from queries by default)
   @Prop({ required: true, select: false })
   password?: string;
 
-  /** OTP for password reset flows */
+  // OTP for password reset flows
   @Prop({ type: String, default: null, maxlength: 6, minlength: 6 })
   otp?: string | null;
 
-  /** Expiry date for the OTP */
+  // Expiry date for the OTP
   @Prop({ type: Date, default: null })
   otpExpiry?: Date | null;
 
-  /** Role of the user in the organization */
+  // Role of the user in the organization
   @Prop({ default: UserRole.EMPLOYEE, enum: UserRole })
   role: UserRole = UserRole.EMPLOYEE;
 
-  /** Department of the user (optional) */
+  // Department of the user (optional)
   @Prop({ default: null, enum: Department })
   department?: Department;
 }

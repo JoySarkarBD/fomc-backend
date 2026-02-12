@@ -31,21 +31,27 @@ export type AttendanceDocument = Attendance & Document;
  */
 @Schema({ timestamps: true, versionKey: false })
 export class Attendance extends Document {
+  // Reference to the user associated with this attendance record
   @Prop({ required: true })
   user!: mongo.ObjectId;
 
-  @Prop({ required: true })
-  checkInTime!: Date;
+  // Check-in time for the attendance record
+  @Prop()
+  checkInTime?: Date;
 
+  // Check-out time for the attendance record (optional)
   @Prop()
   checkOutTime?: Date;
 
+  // Date of the attendance record
   @Prop({ required: true })
   date!: Date;
 
+  // Type of attendance (e.g., present, late, absent)
   @Prop({ required: true, enum: AttendanceInType })
   inType!: AttendanceInType;
 
+  // Type of shift (e.g., morning, evening, night)
   @Prop({ required: true, enum: ShiftType })
   shiftType!: ShiftType;
 }
