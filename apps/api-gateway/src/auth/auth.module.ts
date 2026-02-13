@@ -5,12 +5,12 @@ import { PassportModule } from "@nestjs/passport";
 import config from "../../../config/config";
 import { jwtConfig } from "../common/jwt.config";
 import { RedisModule } from "../common/redis/redis.module";
+import { ForgotThrottleGuard } from "../common/throttles/forgot-throttle.guard";
+import { ResetThrottleGuard } from "../common/throttles/reset-throttle.guard";
 import { MailModule } from "../utils/mail.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./jwt.strategy";
-import { ForgotThrottleGuard } from "./throttles/forgot-throttle.guard";
-import { ResetThrottleGuard } from "./throttles/reset-throttle.guard";
 
 /**
  * Authentication Module responsible for managing authentication-related functionality within the API Gateway.

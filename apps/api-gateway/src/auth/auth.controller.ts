@@ -12,14 +12,14 @@ import type { Request } from "express";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import type { AuthUser } from "../common/interfaces/auth-user.interface";
+import { ForgotThrottleGuard } from "../common/throttles/forgot-throttle.guard";
+import { ResetThrottleGuard } from "../common/throttles/reset-throttle.guard";
 import { AuthService } from "./auth.service";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
-import { ForgotThrottleGuard } from "./throttles/forgot-throttle.guard";
-import { ResetThrottleGuard } from "./throttles/reset-throttle.guard";
 
 /**
  * Authentication Controller responsible for handling authentication-related HTTP requests.
