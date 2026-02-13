@@ -72,7 +72,7 @@ export class AuthController {
    * Validates the input data and attempts to reset the user's password using the AuthService, which verifies the OTP and updates the password if valid.
    * Returns a success message or an error message based on the result of the password reset operation.
    */
-  @Post("reset-password")
+  @Put("reset-password")
   async reset(@Body() data: ResetPasswordDto) {
     return this.authService.resetPassword(data.otp, data.newPassword);
   }
