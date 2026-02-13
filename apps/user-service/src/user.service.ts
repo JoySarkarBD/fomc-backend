@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -11,7 +13,7 @@ import config from "../../config/config";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserSearchQueryDto } from "./dto/user-query.dto";
-import { User, UserDocument } from "./schemas/user.schema";
+import { User, UserDocument, UserRole } from "./schemas/user.schema";
 
 /**
  * UserService
@@ -33,16 +35,45 @@ export class UserService {
   /**
    * Retrieve all users from the database.
    *
+   * @param {UserRole} myRole - Role of the requesting user to apply role-based access control.
    * @param {UserSearchQueryDto} query - Optional search query parameters for filtering users.
    * @returns {Promise<{users: User[]; total: number; totalPages: number}>} Array of user documents with pagination info.
    */
   async getUsers(
+    myRole: UserRole,
     query: UserSearchQueryDto,
   ): Promise<{ users: User[]; total: number; totalPages: number }> {
     const { pageNo, pageSize, searchKey, department, role } = query;
 
     // Build a dynamic filter object based on the presence of search key, department, and role in the query parameters. This allows for flexible querying of users based on different criteria.
     const filter: any = {};
+
+    // Role-based access control
+    switch (myRole) {
+      case UserRole.DIRECTOR:
+        // Director can see everyone
+        break;
+      case UserRole.HR:
+        // HR can see all employees and team leads
+        filter.role = {
+          $in: [
+            UserRole.EMPLOYEE,
+            UserRole.TEAM_LEADER,
+            UserRole.PROJECT_MANAGER,
+          ],
+        };
+        break;
+      case UserRole.PROJECT_MANAGER:
+      case UserRole.TEAM_LEADER:
+        // Managers/Leads can see only their department/team members
+        if (department) {
+          filter.department = department;
+        }
+        filter.role = { $in: [UserRole.EMPLOYEE, UserRole.TEAM_LEADER] };
+        break;
+      default:
+        throw new HttpException("Invalid role", HttpStatus.FORBIDDEN);
+    }
 
     // If a search key is provided, add a case-insensitive regex filter on both the name and email fields to allow searching for users by either their name or email.
     if (searchKey) {
@@ -52,15 +83,10 @@ export class UserService {
       ];
     }
 
-    // If a department filter is provided, add it to the filter object to allow filtering users by their department.
-    if (department) {
+    // Apply department and role filters from query if provided (Director can use these)
+    if (department && myRole === UserRole.DIRECTOR)
       filter.department = department;
-    }
-
-    // If a role filter is provided, add it to the filter object to allow filtering users by their role.
-    if (role) {
-      filter.role = role;
-    }
+    if (role && myRole === UserRole.DIRECTOR) filter.role = role;
 
     // Execute the query to find users based on the constructed filter, applying pagination using skip and limit. Simultaneously, count the total number of documents that match the filter to provide pagination metadata. Finally, return the users along with total count and total pages calculated from the total count and page size.
     const [users, total] = await Promise.all([
@@ -82,13 +108,46 @@ export class UserService {
   /**
    * Retrieve a single user by ID.
    *
+   * @param {UserRole} myRole - Role of the requesting user to apply role-based access control.
    * @param {MongoIdDto["id"]} id - Unique identifier of the user.
    * @throws {NotFoundException} If the user does not exist.
    * @returns {Promise<User>} The found user document.
    */
-  async getUser(id: MongoIdDto["id"]): Promise<User | null> {
+  async getUser(myRole: UserRole, id: MongoIdDto["id"]): Promise<User | null> {
     const user = await this.userModel.findById(id).exec();
-    return user;
+
+    if (!user) throw new NotFoundException("User not found");
+
+    // Role-based access control
+    switch (myRole) {
+      case UserRole.DIRECTOR:
+        return user;
+      case UserRole.HR:
+        if (
+          [
+            UserRole.EMPLOYEE,
+            UserRole.TEAM_LEADER,
+            UserRole.PROJECT_MANAGER,
+          ].includes(user.role)
+        ) {
+          return user;
+        }
+        break;
+      case UserRole.PROJECT_MANAGER:
+      case UserRole.TEAM_LEADER:
+        if (
+          user.department === user.department &&
+          [UserRole.EMPLOYEE, UserRole.TEAM_LEADER].includes(user.role)
+        ) {
+          return user;
+        }
+        break;
+      case UserRole.EMPLOYEE:
+        if (user._id.equals(id)) return user;
+        break;
+    }
+
+    throw new HttpException("Access denied", HttpStatus.FORBIDDEN);
   }
 
   /**

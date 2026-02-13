@@ -8,9 +8,9 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { UserRole } from "apps/user-service/src/schemas/user.schema";
 import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
 import { UserSearchQueryDto } from "../../../user-service/src/dto/user-query.dto";
+import { UserRole } from "../../../user-service/src/schemas/user.schema";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { MongoIdDto } from "../common/dto/mongo-id.dto";
@@ -45,15 +45,18 @@ export class UserController {
     UserRole.TEAM_LEADER,
   )
   @Get()
-  async getUsers(@Query() query: UserSearchQueryDto) {
-    return await this.userService.getUsers(query);
+  async getUsers(
+    @GetUser() user: AuthUser,
+    @Query() query: UserSearchQueryDto,
+  ) {
+    return await this.userService.getUsers(user.role as UserRole, query);
   }
 
   /**
    * Get a single user by their unique identifier (ID).
    *
    * @guards RolesGuard - Ensures that only users with specific roles (Director, HR, Project Manager, Team Leader) can access this endpoint.
-   * @param params - An object containing the user ID as a parameter.
+   * @param {MongoIdDto} params - Object containing the user ID.
    * @returns The user details corresponding to the provided ID.
    */
   @UseGuards(RolesGuard)
@@ -64,8 +67,8 @@ export class UserController {
     UserRole.TEAM_LEADER,
   )
   @Get(":id")
-  async getUser(@Param() params: MongoIdDto) {
-    return await this.userService.getUser(params.id);
+  async getUser(@GetUser() user: AuthUser, @Param() params: MongoIdDto) {
+    return await this.userService.getUser(user.role as UserRole, params.id);
   }
 
   /**
@@ -83,7 +86,7 @@ export class UserController {
    * Delete a user by their unique identifier (ID).
    *
    * @guards RolesGuard - Ensures that only users with the HR role can access this endpoint.
-   * @param params - An object containing the user ID as a parameter.
+   * @param {MongoIdDto} params - Object containing the user ID.
    * @returns A success message or the details of the deleted user.
    */
   @UseGuards(RolesGuard)
@@ -100,6 +103,9 @@ export class UserController {
    */
   @Get("profile/me")
   async getProfile(@GetUser() user: AuthUser) {
-    return await this.userService.getUser(user._id as string);
+    return await this.userService.getUser(
+      user.role as UserRole,
+      user._id as MongoIdDto["id"],
+    );
   }
 }

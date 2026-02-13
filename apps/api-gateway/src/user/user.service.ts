@@ -9,6 +9,8 @@ import { firstValueFrom } from "rxjs";
 import { USER_COMMANDS } from "../../../user-service/src/constants/user.constants";
 import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
 import { UserSearchQueryDto } from "../../../user-service/src/dto/user-query.dto";
+import { UserRole } from "../../../user-service/src/schemas/user.schema";
+import { MongoIdDto } from "../common/dto/mongo-id.dto";
 import { buildResponse } from "../common/response.util";
 
 /**
@@ -28,9 +30,9 @@ export class UserService {
    *
    * @returns Promise resolving to an array of users
    */
-  async getUsers(query: UserSearchQueryDto) {
+  async getUsers(myRole: UserRole, query: UserSearchQueryDto) {
     const { users, total, totalPages } = await firstValueFrom(
-      this.userClient.send(USER_COMMANDS.GET_USERS, query),
+      this.userClient.send(USER_COMMANDS.GET_USERS, { ...query, myRole }),
     );
     return buildResponse("Users fetched successfully", {
       users,
@@ -42,13 +44,13 @@ export class UserService {
   /**
    * Fetch a single user by ID.
    *
-   * @param id - User ID
+   * @param {MongoIdDto} params - Object containing the user ID.
    * @returns Promise resolving to the user object
    * @throws NotFoundException if the user does not exist
    */
-  async getUser(id: string) {
+  async getUser(myRole: UserRole, id: MongoIdDto["id"]) {
     const user = await firstValueFrom(
-      this.userClient.send(USER_COMMANDS.GET_USER, id),
+      this.userClient.send(USER_COMMANDS.GET_USER, { id, myRole }),
     );
     if (!user) throw new NotFoundException("User not found");
     return buildResponse("User fetched successfully", user);
@@ -74,11 +76,11 @@ export class UserService {
   /**
    * Delete a user by ID.
    *
-   * @param id - User ID
+   * @param {MongoIdDto} params - Object containing the user ID.
    * @returns Promise resolving to the deleted user object
    * @throws NotFoundException if the user does not exist
    */
-  async deleteUser(id: string) {
+  async deleteUser(id: MongoIdDto["id"]) {
     const deletedUser = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.DELETE_USER, id),
     );
