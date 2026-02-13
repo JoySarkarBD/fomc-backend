@@ -1,8 +1,10 @@
 import { Controller } from "@nestjs/common";
 import { MessagePattern } from "@nestjs/microservices";
+import { MongoIdDto } from "../../api-gateway/src/common/dto/mongo-id.dto";
 import { USER_COMMANDS } from "./constants/user.constants";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserMessageDto } from "./dto/update-user.dto";
+import { UserSearchQueryDto } from "./dto/user-query.dto";
 import { UserService } from "./user.service";
 
 /**
@@ -25,11 +27,12 @@ export class UserController {
    *
    * Message Pattern: { cmd: USER_COMMANDS.GET_USERS }
    *
+   * @param {UserSearchQueryDto} query - Query parameters for filtering and pagination.
    * @returns {Promise<any>} List of users.
    */
   @MessagePattern(USER_COMMANDS.GET_USERS)
-  getUsers() {
-    return this.userService.getUsers();
+  getUsers(query: UserSearchQueryDto) {
+    return this.userService.getUsers(query);
   }
 
   /**
@@ -37,11 +40,11 @@ export class UserController {
    *
    * Message Pattern: { cmd: USER_COMMANDS.GET_USER }
    *
-   * @param {string} id - Unique identifier of the user.
+   * @param {MongoIdDto} params - Object containing the user ID.
    * @returns {Promise<any>} User details.
    */
   @MessagePattern(USER_COMMANDS.GET_USER)
-  getUser(id: string) {
+  getUser(id: MongoIdDto["id"]) {
     return this.userService.getUser(id);
   }
 
@@ -77,11 +80,11 @@ export class UserController {
    *
    * Message Pattern: { cmd: USER_COMMANDS.DELETE_USER }
    *
-   * @param {string} id - Unique identifier of the user.
+   * @param {MongoIdDto} params - Object containing the user ID to be deleted.
    * @returns {Promise<any>} Deletion result.
    */
   @MessagePattern(USER_COMMANDS.DELETE_USER)
-  deleteUser(id: string) {
+  deleteUser(id: MongoIdDto["id"]) {
     return this.userService.deleteUser(id);
   }
 
@@ -119,7 +122,7 @@ export class UserController {
    */
   @MessagePattern(USER_COMMANDS.CHANGE_PASSWORD)
   changePassword(payload: {
-    id: string;
+    id: MongoIdDto["id"];
     currentPassword: string;
     newPassword: string;
   }) {

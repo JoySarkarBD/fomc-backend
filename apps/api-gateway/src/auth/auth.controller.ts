@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import type { Request } from "express";
+import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import type { AuthUser } from "../common/interfaces/auth-user.interface";
@@ -18,7 +19,6 @@ import { AuthService } from "./auth.service";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { LoginDto } from "./dto/login.dto";
-import { RegisterDto } from "./dto/register.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 
 /**
@@ -38,7 +38,7 @@ export class AuthController {
    * Returns the result of the registration process, which may include user details or a success message.
    */
   @Post("register")
-  async register(@Body() data: RegisterDto) {
+  async register(@Body() data: CreateUserDto) {
     return this.authService.register(data);
   }
 

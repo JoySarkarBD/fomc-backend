@@ -7,8 +7,9 @@ import {
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import { USER_COMMANDS } from "../../../user-service/src/constants/user.constants";
+import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
+import { UserSearchQueryDto } from "../../../user-service/src/dto/user-query.dto";
 import { buildResponse } from "../common/response.util";
-import { CreateUserDto } from "./dto/create-user.dto";
 
 /**
  * UserService
@@ -27,11 +28,15 @@ export class UserService {
    *
    * @returns Promise resolving to an array of users
    */
-  async getUsers() {
-    const users = await firstValueFrom(
-      this.userClient.send(USER_COMMANDS.GET_USERS, {}),
+  async getUsers(query: UserSearchQueryDto) {
+    const { users, total, totalPages } = await firstValueFrom(
+      this.userClient.send(USER_COMMANDS.GET_USERS, query),
     );
-    return buildResponse("Users fetched successfully", users);
+    return buildResponse("Users fetched successfully", {
+      users,
+      total,
+      totalPages,
+    });
   }
 
   /**

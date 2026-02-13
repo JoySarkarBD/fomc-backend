@@ -5,13 +5,18 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
+import { UserRole } from "apps/user-service/src/schemas/user.schema";
+import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
+import { UserSearchQueryDto } from "../../../user-service/src/dto/user-query.dto";
 import { GetUser } from "../common/decorators/get-user.decorator";
+import { Roles } from "../common/decorators/roles.decorator";
+import { MongoIdDto } from "../common/dto/mongo-id.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
 import type { AuthUser } from "../common/interfaces/auth-user.interface";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UserParamDto } from "./dto/user-param.dto";
 import { UserService } from "./user.service";
 
 /**
@@ -20,27 +25,71 @@ import { UserService } from "./user.service";
  * Utilizes the UserService to perform the necessary business logic for each user-related operation.
  * Includes guards and validation to ensure that incoming requests contain valid data and that only authorized users can perform certain actions.
  */
+@UseGuards(JwtAuthGuard)
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  /**
+   * Get a list of users based on query parameters for filtering and pagination.
+   *
+   * @guards RolesGuard - Ensures that only users with specific roles (Director, HR, Project Manager, Team Leader) can access this endpoint.
+   * @param query - Query parameters for filtering and pagination of users.
+   * @returns A list of users matching the query criteria.
+   */
+  @UseGuards(RolesGuard)
+  @Roles(
+    UserRole.DIRECTOR,
+    UserRole.HR,
+    UserRole.PROJECT_MANAGER,
+    UserRole.TEAM_LEADER,
+  )
   @Get()
-  async getUsers() {
-    return await this.userService.getUsers();
+  async getUsers(@Query() query: UserSearchQueryDto) {
+    return await this.userService.getUsers(query);
   }
 
+  /**
+   * Get a single user by their unique identifier (ID).
+   *
+   * @guards RolesGuard - Ensures that only users with specific roles (Director, HR, Project Manager, Team Leader) can access this endpoint.
+   * @param params - An object containing the user ID as a parameter.
+   * @returns The user details corresponding to the provided ID.
+   */
+  @UseGuards(RolesGuard)
+  @Roles(
+    UserRole.DIRECTOR,
+    UserRole.HR,
+    UserRole.PROJECT_MANAGER,
+    UserRole.TEAM_LEADER,
+  )
   @Get(":id")
-  async getUser(@Param() params: UserParamDto) {
+  async getUser(@Param() params: MongoIdDto) {
     return await this.userService.getUser(params.id);
   }
 
+  /**
+   * Create a new user with the provided data.
+   *
+   * @param data - An object containing the necessary information to create a new user (e.g., name, email, password).
+   * @returns The details of the newly created user.
+   */
   @Post("")
   async createUser(@Body() data: CreateUserDto) {
     return await this.userService.createUser(data);
   }
 
+  /**
+   * Delete a user by their unique identifier (ID).
+   *
+   * @guards RolesGuard - Ensures that only users with the HR role can access this endpoint.
+   * @param params - An object containing the user ID as a parameter.
+   * @returns A success message or the details of the deleted user.
+   */
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.HR)
   @Delete(":id")
-  async deleteUser(@Param() params: UserParamDto) {
+  async deleteUser(@Param() params: MongoIdDto) {
     return await this.userService.deleteUser(params.id);
   }
 
@@ -50,7 +99,6 @@ export class UserController {
    * @returns The profile information of the authenticated user.
    */
   @Get("profile/me")
-  @UseGuards(JwtAuthGuard)
   async getProfile(@GetUser() user: AuthUser) {
     return await this.userService.getUser(user._id as string);
   }

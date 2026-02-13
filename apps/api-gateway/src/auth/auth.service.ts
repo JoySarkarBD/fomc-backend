@@ -11,10 +11,10 @@ import { randomUUID } from "crypto";
 import { firstValueFrom } from "rxjs";
 import config from "../../../config/config";
 import { USER_COMMANDS } from "../../../user-service/src/constants/user.constants";
+import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
 import { RedisTokenService } from "../common/redis/redis-services/auth/redis-token.service";
 import { buildResponse } from "../common/response.util";
 import { MailService } from "../utils/mail.service";
-import { RegisterDto } from "./dto/register.dto";
 
 @Injectable()
 export class AuthService {
@@ -77,7 +77,7 @@ export class AuthService {
    * @param data - The registration data containing name, email, phone number, and password
    * @returns A response indicating successful registration or an error message if the email already exists
    */
-  async register(data: RegisterDto) {
+  async register(data: CreateUserDto) {
     // Send registration data to User Service and handle response
     const user = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.CREATE_USER, data),
@@ -124,7 +124,7 @@ export class AuthService {
     await this.redisTokenService.storeToken(
       tokenId,
       accessToken,
-      config.JWT_EXPIRES_IN ? Number(config.JWT_EXPIRES_IN) : 2592000,
+      config.JWT_EXPIRES_IN ? Number(config.JWT_EXPIRES_IN) : 2592000, // Default to 30 days if not set
     );
 
     // Return a success response with the generated JWT token and sanitized user details
