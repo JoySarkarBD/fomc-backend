@@ -42,7 +42,6 @@ export class UserController {
     UserRole.HR,
     UserRole.PROJECT_MANAGER,
     UserRole.TEAM_LEADER,
-    UserRole.EMPLOYEE,
   )
   @Get()
   async getUsers(
@@ -70,7 +69,6 @@ export class UserController {
     UserRole.HR,
     UserRole.PROJECT_MANAGER,
     UserRole.TEAM_LEADER,
-    UserRole.EMPLOYEE,
   )
   @Get(":id")
   async getUser(@GetUser() user: AuthUser, @Param() params: MongoIdDto) {
