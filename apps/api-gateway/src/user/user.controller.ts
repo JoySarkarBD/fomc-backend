@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
@@ -102,12 +101,12 @@ export class UserController {
    * @param {MongoIdDto} params - Object containing the user ID.
    * @returns A success message or the details of the deleted user.
    */
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.HR)
-  @Delete(":id")
-  async deleteUser(@Param() params: MongoIdDto) {
-    return await this.userService.deleteUser(params.id);
-  }
+  // @UseGuards(RolesGuard)
+  // @Roles(UserRole.HR)
+  // @Delete(":id")
+  // async deleteUser(@Param() params: MongoIdDto) {
+  //   return await this.userService.deleteUser(params.id);
+  // }
 
   /**
    * Endpoint for retrieving the profile of the currently authenticated user.
