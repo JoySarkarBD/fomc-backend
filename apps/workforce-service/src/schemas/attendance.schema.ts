@@ -22,9 +22,14 @@ export enum AttendanceInType {
 /**
  * Enum for shift types within the workforce management system.
  */
-export enum ShiftType {
+export enum ShiftTypeForSales {
   MORNING = "MORNING",
   EVENING = "EVENING",
+  NIGHT = "NIGHT",
+}
+
+export enum ShiftTypeForOperations {
+  DAY = "DAY",
   NIGHT = "NIGHT",
 }
 
@@ -61,8 +66,22 @@ export class Attendance extends Document {
   inType!: AttendanceInType;
 
   // Type of shift (e.g., morning, evening, night)
-  @Prop({ required: true, enum: ShiftType })
-  shiftType!: ShiftType;
+  @Prop({
+    required: true,
+    enum: [
+      ...Object.values(ShiftTypeForSales),
+      ...Object.values(ShiftTypeForOperations),
+    ],
+  })
+  shiftType!: string;
+
+  // Weekend exchange can be done by only PROJECT_MANAGER
+  @Prop()
+  weekendExchange?: boolean;
+
+  // Optional field to track if the attendance record has been marked as late
+  @Prop({ default: false })
+  isLate?: boolean;
 }
 
 /**

@@ -1,31 +1,25 @@
 import { Injectable } from "@nestjs/common";
-import { CreateAttendanceDto } from "./dto/create-attendance.dto";
-import { UpdateAttendanceDto } from "./dto/update-attendance.dto";
+import { PresentAttendanceDto } from "./dto/create-attendance.dto";
 
 /* 
   attendance logic:-
-  for the 
+  for the operation department er jonno ekta shifting
+
+  sales e shift 3 times; morning, evening, night
+
+
+
+  shift-timing er sathe 15 min er modhye attendance mark korte hobe, otherwise late mark hobe
+  
+  shift timing -
+  
 */
 
 @Injectable()
 export class AttendanceService {
-  create(createAttendanceDto: CreateAttendanceDto) {
+  presentAttendance(presentAttendanceDto: PresentAttendanceDto) {
+    const { checkInTime } = presentAttendanceDto;
+    console.log("Check-in time:", checkInTime);
     return "This action adds a new attendance";
-  }
-
-  findAll() {
-    return `This action returns all attendances`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} attendance`;
-  }
-
-  update(id: string, updateAttendanceDto: UpdateAttendanceDto) {
-    return `This action updates a #${id} attendance`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} attendance`;
   }
 }
