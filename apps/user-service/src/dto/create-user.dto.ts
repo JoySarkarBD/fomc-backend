@@ -1,12 +1,11 @@
 import {
   IsEmail,
-  IsEnum,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
   MinLength,
 } from "class-validator";
-import { Department, UserRole } from "../schemas/user.schema";
 
 /**
  * Data Transfer Object for creating a new user in the API Gateway.
@@ -38,11 +37,14 @@ export class CreateUserDto {
   @MinLength(6, { message: "Password must be at least 6 characters long" })
   password!: string;
 
-  @IsEnum(UserRole, { message: "Role must be a valid UserRole" })
-  @IsOptional()
-  role?: UserRole;
+  @IsMongoId({ message: "Role must be a valid MongoDB ObjectId" })
+  role!: string;
 
-  @IsEnum(Department, { message: "Department must be a valid Department" })
+  @IsMongoId({ message: "Department must be a valid MongoDB ObjectId" })
   @IsOptional()
-  department?: Department;
+  department?: string;
+
+  @IsMongoId({ message: "Designation must be a valid MongoDB ObjectId" })
+  @IsOptional()
+  designation?: string;
 }
