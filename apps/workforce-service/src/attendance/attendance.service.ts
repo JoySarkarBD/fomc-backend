@@ -5,7 +5,6 @@ import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import type { AuthUser } from "../../../api-gateway/src/common/interfaces/auth-user.interface";
 import { USER_COMMANDS } from "../../../user-service/src/constants/user.constants";
-import { Department } from "../../../user-service/src/schemas/user.schema";
 import {
   Attendance,
   AttendanceDocument,
