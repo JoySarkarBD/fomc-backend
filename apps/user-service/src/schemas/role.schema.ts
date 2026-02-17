@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, mongo, Types } from "mongoose";
+import { Document, mongo } from "mongoose";
 
 /**
  * Mongoose document type for Role.
@@ -28,12 +28,6 @@ export class Role extends Document {
   // System roles cannot be modified or deleted through the application
   @Prop({ default: false })
   isSystem!: boolean;
-
-  @Prop({
-    type: [{ type: Types.ObjectId, ref: "Permission" }],
-    default: [],
-  })
-  permissions!: Types.ObjectId[];
 
   @Prop({ default: null })
   createdBy?: mongo.ObjectId; // Reference to the user who created the role

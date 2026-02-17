@@ -67,6 +67,10 @@ export class User extends Document {
   @Prop({ required: true, ref: "Designation" })
   designation?: mongo.ObjectId; // Reference to the Designation document
 
+  // Blocked status of the user (active/inactive)
+  @Prop({ type: Boolean, default: false })
+  isBlocked!: boolean;
+
   // Employment status (active/inactive)
   @Prop({ type: Boolean, default: true })
   employmentStatus!: boolean;
