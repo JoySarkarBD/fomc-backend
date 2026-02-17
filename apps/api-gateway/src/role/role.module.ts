@@ -32,7 +32,6 @@ import { RoleService } from "./role.service";
    * Controllers responsible for handling incoming HTTP requests related to role operations, such as retrieving role information, updating role data, and other role-related functionalities.
    * The RoleController defines the endpoints and request handling logic for these operations, utilizing the RoleService to perform the necessary business logic.
    */
-
   controllers: [RoleController],
 
   /**
