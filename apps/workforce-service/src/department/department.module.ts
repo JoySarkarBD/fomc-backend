@@ -1,11 +1,14 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import {
+  User,
+  UserSchema,
+} from "../../../user-service/src/schemas/user.schema";
 import { Department, DepartmentSchema } from "../schemas/department.schema";
 import { Designation, DesignationSchema } from "../schemas/designation.schema";
 import { MongooseConnectionsModule } from "./../../../common/src/mongoose/mongoose-connections.module";
 import { DepartmentController } from "./department.controller";
 import { DepartmentService } from "./department.service";
-import { User, UserSchema, } from "../../../user-service/src/schemas/user.schema";
 
 /**
  * Department Module is responsible for managing department-related functionality within the Workforce Service. It provides the necessary services and controllers to handle department-related operations such as creating, retrieving, updating, and deleting departments. The module is designed to be a self-contained unit that encapsulates all department-related functionality, allowing for modularity and separation of concerns within the microservices architecture. By defining the DepartmentModule, we can easily manage departments and their associated data, ensuring that the Workforce Service can effectively handle department-related operations.
@@ -24,7 +27,8 @@ import { User, UserSchema, } from "../../../user-service/src/schemas/user.schema
      */
     MongooseModule.forFeature([
       {
-        name: User.name, schema: UserSchema,
+        name: User.name,
+        schema: UserSchema,
       },
       { name: Department.name, schema: DepartmentSchema },
       { name: Designation.name, schema: DesignationSchema },
@@ -40,8 +44,9 @@ import { User, UserSchema, } from "../../../user-service/src/schemas/user.schema
     MongooseModule.forFeature(
       [
         {
-          name: User.name, schema: UserSchema,
-        }
+          name: User.name,
+          schema: UserSchema,
+        },
         { name: Department.name, schema: DepartmentSchema },
         { name: Designation.name, schema: DesignationSchema },
       ],
