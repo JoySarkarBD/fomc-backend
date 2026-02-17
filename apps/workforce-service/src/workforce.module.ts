@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { MongooseConnectionsModule } from "../../common/mongoose-connections.module";
+import { MongooseConnectionsModule } from "../../database/mongoose-connections.module";
 import { AttendanceModule } from "./attendance/attendance.module";
 import { DepartmentModule } from "./department/department.module";
 import { Attendance, AttendanceSchema } from "./schemas/attendance.schema";
