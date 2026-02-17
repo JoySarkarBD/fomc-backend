@@ -8,7 +8,7 @@ import {
 } from "class-validator";
 
 /**
- * Data Transfer Object for creating a new user in the API Gateway.
+ * Data Transfer Object for creating a new user in the user service.
  * Contains fields for user information such as name, employee ID, phone number, email, secondary email, password, role, and department.
  * Validates that the name, phone number, email, and password fields are required and meet specific validation criteria, while employee ID, secondary email, role, and department are optional fields with their own validation rules.
  * The CreateUserDto is used in the user service to handle create user requests and ensure that the provided data meets the required format before processing the request to create a new user in the system.

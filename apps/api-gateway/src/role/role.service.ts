@@ -91,6 +91,8 @@ export class RoleService {
     switch (result?.exception) {
       case "NotFoundException":
         throw new NotFoundException(result.message);
+      case "Forbidden":
+        throw new ForbiddenException(result.message);
       case "Conflict":
         throw new ConflictException(result.message);
     }
@@ -114,6 +116,8 @@ export class RoleService {
         throw new ForbiddenException(result.message);
       case "NotFoundException":
         throw new NotFoundException(result.message);
+      case "Conflict":
+        throw new ConflictException(result.message);
     }
 
     return buildResponse("Role deleted successfully", result);

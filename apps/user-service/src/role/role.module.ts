@@ -8,7 +8,7 @@ import { RoleController } from "./role.controller";
 import { RoleService } from "./role.service";
 
 /**
- * RoleModule is responsible for managing user roles within the application. It provides the necessary services and controllers to handle role-related operations such as creating, retrieving, updating, and deleting roles. The module is designed to be a self-contained unit that encapsulates all role-related functionality, allowing for modularity and separation of concerns within the microservices architecture. By defining the RoleModule, we can easily manage user roles and their associated permissions, ensuring that users have the appropriate access levels within the application.
+ * Role Module is responsible for managing user roles within the application. It provides the necessary services and controllers to handle role-related operations such as creating, retrieving, updating, and deleting roles. The module is designed to be a self-contained unit that encapsulates all role-related functionality, allowing for modularity and separation of concerns within the microservices architecture. By defining the RoleModule, we can easily manage user roles and their associated permissions, ensuring that users have the appropriate access levels within the application.
  */
 @Module({
   imports: [

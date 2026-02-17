@@ -77,7 +77,6 @@ export class RoleService {
     const { pageNo, pageSize, searchKey } = query;
 
     // Roles with associate user count and permission count
-
     const [roles, total] = await Promise.all([
       this.roleModel.aggregate([
         {
@@ -127,9 +126,12 @@ export class RoleService {
         { $skip: (pageNo - 1) * pageSize },
         { $limit: pageSize },
       ]),
-      this.roleModel.countDocuments(
-        searchKey ? { name: { $regex: searchKey, $options: "i" } } : {},
-      ),
+      this.roleModel.countDocuments({
+        $or: [
+          { name: { $regex: searchKey, $options: "i" } },
+          { description: { $regex: searchKey, $options: "i" } },
+        ],
+      }),
     ]);
 
     return {
@@ -237,6 +239,13 @@ export class RoleService {
       };
     }
 
+    if (existingRole.isSystem) {
+      return {
+        message: "System roles cannot be updated",
+        exception: "Forbidden",
+      };
+    }
+
     // If the role is already exist with the same name, we should not allow update
     if (updateRoleDto.name) {
       const duplicateRole = await this.roleModel.findOne({
@@ -281,7 +290,7 @@ export class RoleService {
       };
     }
 
-    if (existingRole && existingRole.isSystem) {
+    if (existingRole.isSystem) {
       return {
         message: "System roles cannot be deleted",
         exception: "Forbidden",
