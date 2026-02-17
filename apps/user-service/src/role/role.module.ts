@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { MongooseConnectionsModule } from "../../../common/mongoose-connections.module";
 import { Permission, PermissionSchema } from "../schemas/permission.schema";
 import { Role, RoleSchema } from "../schemas/role.schema";
 import { User, UserSchema } from "../schemas/user.schema";
-import { MongooseConnectionsModule } from "./../../../common/src/mongoose/mongoose-connections.module";
 import { RoleController } from "./role.controller";
 import { RoleService } from "./role.service";
 

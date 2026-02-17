@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { MongooseConnectionsModule } from "../../common/src/mongoose/mongoose-connections.module";
+import { MongooseConnectionsModule } from "../../common/mongoose-connections.module";
 import { AttendanceModule } from "./attendance/attendance.module";
+import { DepartmentModule } from "./department/department.module";
 import { Attendance, AttendanceSchema } from "./schemas/attendance.schema";
 import { Department, DepartmentSchema } from "./schemas/department.schema";
 import { Leave, LeaveSchema } from "./schemas/leave.schema";
 import { SeedDepartmentAndDesignationModule } from "./seed/seed-department-and-designation.module";
 import { TaskModule } from "./task/task.module";
-import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [

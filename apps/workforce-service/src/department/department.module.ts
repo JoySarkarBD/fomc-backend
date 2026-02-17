@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { MongooseConnectionsModule } from "../../../common/mongoose-connections.module";
 import {
   User,
   UserSchema,
 } from "../../../user-service/src/schemas/user.schema";
 import { Department, DepartmentSchema } from "../schemas/department.schema";
 import { Designation, DesignationSchema } from "../schemas/designation.schema";
-import { MongooseConnectionsModule } from "./../../../common/src/mongoose/mongoose-connections.module";
 import { DepartmentController } from "./department.controller";
 import { DepartmentService } from "./department.service";
 
