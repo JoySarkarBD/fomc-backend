@@ -14,14 +14,6 @@ import { TaskService } from "./task.service";
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Task.name, schema: TaskSchema }]),
-    MongooseModule.forFeature(
-      [{ name: Task.name, schema: TaskSchema }],
-      "PRIMARY_DB",
-    ),
-    MongooseModule.forFeature(
-      [{ name: Task.name, schema: TaskSchema }],
-      "SECONDARY_DB",
-    ),
   ],
   controllers: [TaskController],
   providers: [TaskService],

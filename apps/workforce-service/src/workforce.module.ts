@@ -38,40 +38,6 @@ import { TaskModule } from "./task/task.module";
         schema: LeaveSchema,
       },
     ]),
-    MongooseModule.forFeature(
-      [
-        {
-          name: Attendance.name,
-          schema: AttendanceSchema,
-        },
-        {
-          name: Department.name,
-          schema: DepartmentSchema,
-        },
-        {
-          name: Leave.name,
-          schema: LeaveSchema,
-        },
-      ],
-      "PRIMARY_DB",
-    ),
-    MongooseModule.forFeature(
-      [
-        {
-          name: Attendance.name,
-          schema: AttendanceSchema,
-        },
-        {
-          name: Department.name,
-          schema: DepartmentSchema,
-        },
-        {
-          name: Leave.name,
-          schema: LeaveSchema,
-        },
-      ],
-      "SECONDARY_DB",
-    ),
     AttendanceModule,
     TaskModule,
     SeedDepartmentAndDesignationModule,

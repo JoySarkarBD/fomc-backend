@@ -40,25 +40,6 @@ import { DepartmentService } from "./department.service";
       { name: Department.name, schema: DepartmentSchema },
       { name: Designation.name, schema: DesignationSchema },
     ]),
-    MongooseModule.forFeature(
-      [
-        { name: User.name, schema: UserSchema },
-        { name: Department.name, schema: DepartmentSchema },
-        { name: Designation.name, schema: DesignationSchema },
-      ],
-      "PRIMARY_DB",
-    ),
-    MongooseModule.forFeature(
-      [
-        {
-          name: User.name,
-          schema: UserSchema,
-        },
-        { name: Department.name, schema: DepartmentSchema },
-        { name: Designation.name, schema: DesignationSchema },
-      ],
-      "SECONDARY_DB",
-    ),
   ],
 
   /**

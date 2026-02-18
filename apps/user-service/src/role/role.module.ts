@@ -28,34 +28,6 @@ import { RoleService } from "./role.service";
       { name: Permission.name, schema: PermissionSchema },
       { name: User.name, schema: UserSchema },
     ]),
-    MongooseModule.forFeature(
-      [
-        { name: Role.name, schema: RoleSchema },
-        {
-          name: User.name,
-          schema: UserSchema,
-        },
-        {
-          name: Permission.name,
-          schema: PermissionSchema,
-        },
-      ],
-      "PRIMARY_DB",
-    ),
-    MongooseModule.forFeature(
-      [
-        { name: Role.name, schema: RoleSchema },
-        {
-          name: User.name,
-          schema: UserSchema,
-        },
-        {
-          name: Permission.name,
-          schema: PermissionSchema,
-        },
-      ],
-      "SECONDARY_DB",
-    ),
   ],
 
   /**

@@ -33,14 +33,6 @@ import { AttendanceService } from "./attendance.service";
     MongooseModule.forFeature([
       { name: Attendance.name, schema: AttendanceSchema },
     ]),
-    MongooseModule.forFeature(
-      [{ name: Attendance.name, schema: AttendanceSchema }],
-      "PRIMARY_DB",
-    ),
-    MongooseModule.forFeature(
-      [{ name: Attendance.name, schema: AttendanceSchema }],
-      "SECONDARY_DB",
-    ),
   ],
   controllers: [AttendanceController],
   providers: [AttendanceService],

@@ -41,34 +41,6 @@ import { UserService } from "./user.service";
         schema: PermissionSchema,
       },
     ]),
-    MongooseModule.forFeature(
-      [
-        { name: User.name, schema: UserSchema },
-        {
-          name: Role.name,
-          schema: RoleSchema,
-        },
-        {
-          name: Permission.name,
-          schema: PermissionSchema,
-        },
-      ],
-      "PRIMARY_DB",
-    ),
-    MongooseModule.forFeature(
-      [
-        { name: User.name, schema: UserSchema },
-        {
-          name: Role.name,
-          schema: RoleSchema,
-        },
-        {
-          name: Permission.name,
-          schema: PermissionSchema,
-        },
-      ],
-      "SECONDARY_DB",
-    ),
     RoleModule,
     SeedRoleAndPermissionModule,
   ],
