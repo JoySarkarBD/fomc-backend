@@ -1,120 +1,156 @@
-# SUPER ADMIN AND HR CAN ANYTHING
+# 🏢 Office Management System (OMS)
 
-# PROJECT MANAGER
+## 🔐 Role & Permission Structure
 
-### TASK MANAGEMENT
+---
 
-    - FULL CRUD ON THE TASK
-    - Manage will create task and assign those tasks to his team members, and team members should have to be in the same department.
-    - Can update the task status of his assigned task for any team member.
+## 👑 SUPER ADMIN & HR
 
-### DCR MANAGEMENT
+> Super Admin and HR have full system access.
 
-    - Can view all the dcr of his own departments team member.
-    - Can give feedback for each and every dcr.
+- Full access to all modules
+- Full CRUD (Create, Read, Update, Delete) on all resources
+- Can manage all departments, teams, users, projects, tasks, attendance, leave, shift, DCR, learning resources, etc.
 
-### PROJECT MANAGEMENT
+---
 
-    - Can view all the projects which are under his department.
+# 🗂️ PROJECT MANAGER
 
-### USER MANAGEMENT
+## 📌 Task Management
 
-    - Can view all users of his department.
-    - Can view user specific projects.
+- Full CRUD on tasks
+- Can create and assign tasks to team members within the same department
+- Can update task status of any assigned team member
 
-### PERFORMANCE MANAGEMENT
+## 📝 DCR Management
 
-    - Can view overall performance of this department.
-    - Can view each team member performance.
+- Can view all DCRs of department team members
+- Can provide feedback on each DCR
 
-### ATTENDANCE MANAGEMENT
+## 📁 Project Management
 
-    - Can submit his own attendance.
-    - Can update the attendance status of his department team member.
-    - Can manage weekend exchange of his department team member.
+- Can view all projects under their department
 
-### LEAVE MANAGEMENT
+## 👥 User Management
 
-    - Can submit a leave request for his own.
-    - Can accept or reject his department team member leave request, but his leave request will be manage by the SUPER ADMIN or DIRECTOR.
+- Can view all users in their department
+- Can view user-specific projects
 
-### SHIFT MANAGEMENT
+## 📊 Performance Management
 
-    - Can submit a shift change for his own.
-    - Can accept or reject his department team member shift change request, but his shift change request will be manage by the SUPER ADMIN or DIRECTOR.
-    - Can assign his department team member duty shifting.
+- Can view overall department performance
+- Can view individual team member performance
 
-### LEARNING MANAGEMENT
+## 🕒 Attendance Management
 
-    - Can crud overall his department learning resource.
+- Can submit own attendance
+- Can update attendance status of department team members
+- Can manage weekend exchange requests of department team members
 
-# TEAM LEADER
+## 🌴 Leave Management
 
-### TASK MANAGEMENT
+- Can submit own leave request
+- Can approve/reject department team members' leave requests
+- Own leave requests are managed by Super Admin or Director
 
-    - FULL CRUD ON THE TASK
-    - Manage will create task and assign those tasks for his own and to his team members, and team members should have to be in the same department.
-    - Can update the task status of his assigned task for any team member.
+## 🔄 Shift Management
 
-### DCR MANAGEMENT
+- Can submit own shift change request
+- Can approve/reject department team members' shift change requests
+- Own shift change requests are managed by Super Admin or Director
+- Can assign duty shifts to department team members
 
-    - Can submit his own dcr.(but this dcr status can be updated by only the project manager)
-    - Can view all the dcr of his own team member.
-    - Can give feedback for each and every dcr.
+## 📚 Learning Management
 
-### PROJECT MANAGEMENT
+- Full CRUD on department learning resources
 
-    - Can view all the projects which are under his team.
+---
 
-### USER MANAGEMENT
+# 👨‍💼 TEAM LEADER
 
-    - Can view all users of his team.
-    - Can view user specific projects.
+## 📌 Task Management
 
-### ATTENDANCE MANAGEMENT
+- Full CRUD on tasks
+- Can create and assign tasks to self and team members within the same department
+- Can update task status of assigned team members
 
-    - Can submit his own attendance.
-    - Can update the attendance status of his team member.
-    - Can manage weekend exchange of his team member.
+## 📝 DCR Management
 
-### LEAVE MANAGEMENT
+- Can submit own DCR (status update only by Project Manager)
+- Can view all DCRs of own team members
+- Can provide feedback on each DCR
 
-    - Can submit a leave request for his own.
+## 📁 Project Management
 
-### SHIFT MANAGEMENT
+- Can view all projects under their team
 
-    - Can submit a shift change for his own.
+## 👥 User Management
 
-### LEARNING MANAGEMENT
+- Can view all users in their team
+- Can view user-specific projects
 
-    - Can view all the learning resources of his team.
+## 🕒 Attendance Management
 
-# EMPLOYEE
+- Can submit own attendance
+- Can update attendance status of team members
+- Can manage weekend exchange requests of team members
 
-### TASK MANAGEMENT
+## 🌴 Leave Management
 
-    - FULL CRUD ON THE TASK(ONLY HIS).
-    - Can't update the task after the completed.
+- Can submit own leave request
 
-### DCR MANAGEMENT
+## 🔄 Shift Management
 
-    - Can submit his own dcr.(but this dcr status can be updated by only the project manager or team leader)
-    - Can't update the task after the completed.
-    - Can give feedback of his own dcr.
+- Can submit own shift change request
 
-### ATTENDANCE MANAGEMENT
+## 📚 Learning Management
 
-    - Can submit his own attendance.
-    - Can request for the weekend exchange for his own.
+- Can view all learning resources of their team
 
-### LEAVE MANAGEMENT
+---
 
-    - Can submit a leave request for his own.
+# 👨‍💻 EMPLOYEE
 
-### SHIFT MANAGEMENT
+## 📌 Task Management
 
-    - Can submit a shift change for his own.
+- Full CRUD on own tasks only
+- Cannot update a task after it is marked as completed
 
-### LEARNING MANAGEMENT
+## 📝 DCR Management
 
-    - Can view all the learning resources of his team.
+- Can submit own DCR (status update only by Project Manager or Team Leader)
+- Cannot update DCR after completion
+- Can provide feedback on own DCR
+
+## 🕒 Attendance Management
+
+- Can submit own attendance
+- Can request weekend exchange for own schedule
+
+## 🌴 Leave Management
+
+- Can submit own leave request
+
+## 🔄 Shift Management
+
+- Can submit own shift change request
+
+## 📚 Learning Management
+
+- Can view all learning resources of their team
+
+---
+
+# 📌 Permission Hierarchy Overview
+
+```
+SUPER ADMIN / HR
+        ↓
+PROJECT MANAGER
+        ↓
+TEAM LEADER
+        ↓
+EMPLOYEE
+```
+
+Higher roles inherit and extend lower-level permissions within their scope.
