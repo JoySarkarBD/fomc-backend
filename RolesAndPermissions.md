@@ -1,8 +1,4 @@
-# Office Management System (OMS)
-
-## Role & Permission Structure
-
----
+# Role & Permission Structure
 
 ## SUPER ADMIN & DIRECTOR
 
