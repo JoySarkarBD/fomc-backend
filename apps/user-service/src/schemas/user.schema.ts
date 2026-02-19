@@ -62,10 +62,10 @@ export class User extends Document {
   role!: mongo.ObjectId; // Reference to the Role document
 
   // Department of the user in the organization
-  @Prop({ ref: "Department" })
+  @Prop()
   department?: mongo.ObjectId; // Reference to the Department document
 
-  @Prop({ required: true, ref: "Designation" })
+  @Prop()
   designation?: mongo.ObjectId; // Reference to the Designation document
 
   // Blocked status of the user (active/inactive)
