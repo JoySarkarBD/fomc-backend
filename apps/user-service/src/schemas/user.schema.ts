@@ -65,6 +65,7 @@ export class User extends Document {
   @Prop()
   department?: mongo.ObjectId; // Reference to the Department document
 
+  // Designation of the user in the organization
   @Prop()
   designation?: mongo.ObjectId; // Reference to the Designation document
 
