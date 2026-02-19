@@ -45,6 +45,9 @@ export class Permission extends Document {
   description?: string;
 
   @Prop({ default: false })
+  isSystem!: boolean; // System permissions cannot be modified or deleted through the application
+
+  @Prop({ default: false })
   canCreate!: boolean;
 
   @Prop({ default: false })
