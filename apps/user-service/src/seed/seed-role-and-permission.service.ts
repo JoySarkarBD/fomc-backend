@@ -190,15 +190,6 @@ export class SeedRoleAndPermissionService {
         canUpdate: true,
         canDelete: true,
       },
-      {
-        role: getRoleId("DIRECTOR"),
-        name: PermissionName.PERFORMANCE,
-        description: "Manage performance reviews",
-        canCreate: true,
-        canRead: true,
-        canUpdate: true,
-        canDelete: true,
-      },
 
       // SUPER ADMIN - ALL PERMISSIONS (same as director but with an additional system role flag)
       {
@@ -309,15 +300,6 @@ export class SeedRoleAndPermissionService {
         canUpdate: true,
         canDelete: true,
       },
-      {
-        role: getRoleId("SUPER ADMIN"),
-        name: PermissionName.PERFORMANCE,
-        description: "Manage performance reviews",
-        canCreate: true,
-        canRead: true,
-        canUpdate: true,
-        canDelete: true,
-      },
 
       // PROJECT MANAGER
       {
@@ -351,15 +333,6 @@ export class SeedRoleAndPermissionService {
         role: getRoleId("PROJECT MANAGER"),
         name: PermissionName.USER,
         description: "View team members",
-        canCreate: false,
-        canRead: true,
-        canUpdate: false,
-        canDelete: false,
-      },
-      {
-        role: getRoleId("PROJECT MANAGER"),
-        name: PermissionName.PERFORMANCE,
-        description: "Approve team performance reviews",
         canCreate: false,
         canRead: true,
         canUpdate: false,
