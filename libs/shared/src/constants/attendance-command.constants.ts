@@ -16,4 +16,6 @@ export const ATTENDANCE_COMMANDS = {
 
   /** Swap a weekend day with a working day. */
   WEEKEND_EXCHANGE: { cmd: "weekend_exchange" },
+
+  GET_MY_ATTENDANCE: { cmd: "get_my_attendance" },
 } as const;

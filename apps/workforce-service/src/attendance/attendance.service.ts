@@ -13,7 +13,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
 import { USER_COMMANDS } from "@shared/constants/user-command.constants";
 import { AuthUser } from "@shared/interfaces/auth-user.interface";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import {
   Attendance,
@@ -22,6 +22,7 @@ import {
   ShiftTypeForOperations,
   ShiftTypeForSales,
 } from "../schemas/attendance.schema";
+import { GetAttendanceDto } from "./dto/get-attendance.dto";
 
 /* 
   attendance logic:-
@@ -48,7 +49,7 @@ export class AttendanceService {
    */
   async presentAttendance(
     user: AuthUser,
-  ) /* : Promise<Attendance | { message: string; exception: string }> */ {
+  ): Promise<Attendance | { message: string; exception: string }> {
     const userId = (user.id ?? user._id) as string;
 
     // Check user existence from user-service
@@ -74,16 +75,14 @@ export class AttendanceService {
       nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
     );
 
-    // Today start and end
-    const todayStart = new Date(bdNow);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date(bdNow);
-    todayEnd.setHours(23, 59, 59, 999);
+    // Today's date (without time)
+    const todayDate = new Date(bdNow);
+    todayDate.setHours(0, 0, 0, 0);
 
     // Prevent duplicate attendance
     const existingAttendance = await this.attendanceModel.findOne({
-      user: userId,
-      date: { $gte: todayStart, $lte: todayEnd },
+      user: new Types.ObjectId(userId),
+      date: todayDate,
     });
 
     if (existingAttendance) {
@@ -149,14 +148,90 @@ export class AttendanceService {
 
     // Save Attendance
     const attendance = await this.attendanceModel.create({
-      user: userId,
+      user: new Types.ObjectId(userId),
       checkInTime: bdNow,
-      date: todayStart,
+      date: todayDate,
       inType: attendanceType,
       shiftType,
       isLate,
     });
 
     return attendance;
+  }
+
+  async outAttendance(user: AuthUser) {
+    // Current BD Time
+    const nowUTC = new Date();
+    const bdNow = new Date(
+      nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
+    );
+
+    // Today's date (without time)
+    const todayDate = new Date(bdNow);
+    todayDate.setHours(0, 0, 0, 0);
+
+    const attendance = await this.attendanceModel.findOne({
+      user: new Types.ObjectId(user.id ?? user._id),
+      date: todayDate,
+    });
+
+    if (!attendance) {
+      return {
+        message: "No attendance record found for today",
+        exception: "NotFoundException",
+      };
+    }
+
+    if (attendance.checkOutTime) {
+      return {
+        message: "Attendance already marked as out for today",
+        exception: "HttpException",
+      };
+    }
+
+    attendance.checkOutTime = bdNow;
+    await attendance.save();
+  }
+
+  /**
+   * Retrieves the attendance records for the authenticated user based on optional month and year filters.
+   *
+   * @param user - The authenticated user whose attendance records are being retrieved.
+   * @param query - Optional query parameters for filtering attendance records by month and year.
+   * @return A promise that resolves to an array of attendance records matching the specified criteria, or an object containing a message and exception if there was an error during retrieval.
+   */
+  async getMyAttendance(
+    user: AuthUser,
+    query: GetAttendanceDto,
+  ): Promise<Attendance[]> {
+    const userId = (user.id ?? user._id) as string;
+
+    const { month /* 1-12 */, year /* 1900999*/ } = query;
+
+    const filter: any = {
+      user: new Types.ObjectId(userId),
+    };
+
+    // Filter by month and year if provided
+    if (month && year) {
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+      filter.date = { $gte: startDate, $lte: endDate };
+    }
+    // Filter by month only
+    else if (month) {
+      const currentYear = new Date().getFullYear();
+      const startDate = new Date(currentYear, month - 1, 1);
+      const endDate = new Date(currentYear, month, 0, 23, 59, 59, 999);
+      filter.date = { $gte: startDate, $lte: endDate };
+    }
+    // Filter by year only
+    else if (year) {
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
+      filter.date = { $gte: startDate, $lte: endDate };
+    }
+
+    return await this.attendanceModel.find(filter).sort({ date: -1 });
   }
 }
