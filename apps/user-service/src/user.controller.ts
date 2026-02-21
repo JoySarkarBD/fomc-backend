@@ -33,7 +33,7 @@ export class UserController {
   //  * @returns {Promise<any>} List of users.
   //  */
   // @MessagePattern(USER_COMMANDS.GET_USERS)
-  // getUsers(
+  // async getUsers(
   //   payload: UserSearchQueryDto & {
   //     myRole: UserRole;
   //     myId?: string;
@@ -41,7 +41,7 @@ export class UserController {
   //   },
   // ) {
   //   const { myRole, myId, myDepartment, ...query } = payload ?? {};
-  //   return this.userService.getUsers(
+  //   return await this.userService.getUsers(
   //     myRole,
   //     query as UserSearchQueryDto,
   //     myId,
@@ -49,24 +49,17 @@ export class UserController {
   //   );
   // }
 
-  // /**
-  //  * Retrieve a single user by ID.
-  //  *
-  //  * Message Pattern: { cmd: USER_COMMANDS.GET_USER }
-  //  *
-  //  * @param {MongoIdDto} params - Object containing the user ID.
-  //  * @returns {Promise<any>} User details.
-  //  */
-  // @MessagePattern(USER_COMMANDS.GET_USER)
+  /**
+   * Retrieve a single user by ID.
+   *
+   * Message Pattern: { cmd: USER_COMMANDS.GET_USER }
+   *
+   * @param {MongoIdDto} params - Object containing the user ID.
+   * @returns {Promise<any>} User details.
+   */
   @MessagePattern(USER_COMMANDS.GET_USER)
-  getUser(payload: {
-    id: MongoIdDto["id"];
-    myRole?: string;
-    myId?: MongoIdDto["id"];
-    myDepartment?: string;
-  }) {
-    const { id, myRole, myId, myDepartment } = payload ?? {};
-    return this.userService.getUser(myRole as string, id, myId, myDepartment);
+  async getUser(payload: { id: MongoIdDto["id"] }) {
+    return await this.userService.getUser(payload.id);
   }
 
   /**
@@ -91,9 +84,9 @@ export class UserController {
   //  * @returns {Promise<any>} Updated user data.
   //  */
   // @MessagePattern(USER_COMMANDS.UPDATE_USER)
-  // updateUser(data: UpdateUserMessageDto) {
+  // async updateUser(data: UpdateUserMessageDto) {
   //   const { id, ...payload } = data;
-  //   return this.userService.updateUser(id, payload);
+  //   return await this.userService.updateUser(id, payload);
   // }
 
   // /**
@@ -105,8 +98,8 @@ export class UserController {
   //  * @returns {Promise<any>} Deletion result.
   //  */
   // @MessagePattern(USER_COMMANDS.DELETE_USER)
-  // deleteUser(id: MongoIdDto["id"]) {
-  //   return this.userService.deleteUser(id);
+  // async deleteUser(id: MongoIdDto["id"]) {
+  //   return await this.userService.deleteUser(id);
   // }
 
   /**
@@ -114,8 +107,8 @@ export class UserController {
    * Message Pattern: { cmd: USER_COMMANDS.FIND_BY_EMAIL }
    */
   @MessagePattern(USER_COMMANDS.FIND_BY_EMAIL)
-  findByEmail(email: string) {
-    return this.userService.findByEmail(email);
+  async findByEmail(email: string) {
+    return await this.userService.findByEmail(email);
   }
 
   /**
@@ -123,9 +116,17 @@ export class UserController {
    * Message Pattern: { cmd: USER_COMMANDS.SET_RESET_PASSWORD_OTP }
    */
   @MessagePattern(USER_COMMANDS.SET_RESET_PASSWORD_OTP)
-  setResetPasswordOtp(payload: { email: string; otp: string; expiry: string }) {
+  async setResetPasswordOtp(payload: {
+    email: string;
+    otp: string;
+    expiry: string;
+  }) {
     const { email, otp, expiry } = payload;
-    return this.userService.setResetPasswordOtp(email, otp, new Date(expiry));
+    return await this.userService.setResetPasswordOtp(
+      email,
+      otp,
+      new Date(expiry),
+    );
   }
 
   /**
@@ -133,8 +134,11 @@ export class UserController {
    * Message Pattern: { cmd: USER_COMMANDS.RESET_PASSWORD }
    */
   @MessagePattern(USER_COMMANDS.RESET_PASSWORD)
-  resetPassword(payload: { otp: string; newPassword: string }) {
-    return this.userService.resetPassword(payload.otp, payload.newPassword);
+  async resetPassword(payload: { otp: string; newPassword: string }) {
+    return await this.userService.resetPassword(
+      payload.otp,
+      payload.newPassword,
+    );
   }
 
   /**
@@ -142,13 +146,17 @@ export class UserController {
    * Message Pattern: { cmd: USER_COMMANDS.CHANGE_PASSWORD }
    */
   @MessagePattern(USER_COMMANDS.CHANGE_PASSWORD)
-  changePassword(payload: {
+  async changePassword(payload: {
     id: MongoIdDto["id"];
     currentPassword: string;
     newPassword: string;
   }) {
     const { id, currentPassword, newPassword } = payload;
-    return this.userService.changePassword(id, currentPassword, newPassword);
+    return await this.userService.changePassword(
+      id,
+      currentPassword,
+      newPassword,
+    );
   }
   /**
    * Get users count by designation ID.
@@ -158,7 +166,7 @@ export class UserController {
    * @returns {Promise<number>} Count of users with the specified designation.
    */
   @MessagePattern(USER_COMMANDS.GET_USERS_COUNT_BY_DESIGNATION)
-  getUsersCountByDesignation(designationId: MongoIdDto["id"]) {
-    return this.userService.getUsersCountByDesignation(designationId);
+  async getUsersCountByDesignation(designationId: MongoIdDto["id"]) {
+    return await this.userService.getUsersCountByDesignation(designationId);
   }
 }

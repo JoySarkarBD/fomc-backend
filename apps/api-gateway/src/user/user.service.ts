@@ -7,8 +7,12 @@
  * @module api-gateway/user
  */
 
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
+import { USER_COMMANDS } from "@shared/constants";
+import { MongoIdDto } from "@shared/dto";
+import { firstValueFrom } from "rxjs";
+import { buildResponse } from "../common/response.util";
 
 @Injectable()
 export class UserService {
@@ -44,67 +48,24 @@ export class UserService {
   //   return buildResponse("Users fetched successfully", result);
   // }
 
-  // /**
-  //  * Fetch a single user by ID.
-  //  *
-  //  * @param {MongoIdDto} params - Object containing the user ID.
-  //  * @returns Promise resolving to the user object
-  //  * @throws NotFoundException if the user does not exist
-  //  */
-  // async getUser(
-  //   myRole: UserRole,
-  //   id: MongoIdDto["id"],
-  //   myId?: MongoIdDto["id"],
-  //   myDepartment?: Department,
-  // ) {
-  //   const user = await firstValueFrom(
-  //     this.userClient.send(USER_COMMANDS.GET_USER, {
-  //       id,
-  //       myRole,
-  //       myId,
-  //       myDepartment,
-  //     }),
-  //   );
+  /**
+   * Fetch a single user by ID.
+   *
+   * @param {MongoIdDto} params - Object containing the user ID.
+   * @returns Promise resolving to the user object
+   * @throws NotFoundException if the user does not exist
+   */
+  async getUser(id: MongoIdDto["id"]) {
+    const user = await firstValueFrom(
+      this.userClient.send(USER_COMMANDS.GET_USER, {
+        id,
+      }),
+    );
 
-  //   switch (user?.exception) {
-  //     case "NotFoundException":
-  //       throw new NotFoundException(user.message);
-  //     case "HttpException":
-  //       throw new HttpException(user.message, HttpStatus.FORBIDDEN);
-  //   }
+    if (user.exception === "NotFoundException") {
+      throw new NotFoundException("User not found");
+    }
 
-  //   return buildResponse("User fetched successfully", user);
-  // }
-
-  // /**
-  //  * Create a new user.
-  //  *
-  //  * @param data - Data transfer object containing user creation fields
-  //  * @returns Promise resolving to the created user object
-  //  */
-  // async createUser(data: CreateUserDto) {
-  //   const user = await firstValueFrom(
-  //     this.userClient.send(USER_COMMANDS.CREATE_USER, data),
-  //   );
-  //   // If the email already exists, throw a ConflictException with the message from the User Service response
-  //   if (user?.emailExist) {
-  //     throw new ConflictException(user.message);
-  //   }
-  //   return buildResponse("User created successfully", user);
-  // }
-
-  // /**
-  //  * Delete a user by ID.
-  //  *
-  //  * @param {MongoIdDto} params - Object containing the user ID.
-  //  * @returns Promise resolving to the deleted user object
-  //  * @throws NotFoundException if the user does not exist
-  //  */
-  // async deleteUser(id: MongoIdDto["id"]) {
-  //   const deletedUser = await firstValueFrom(
-  //     this.userClient.send(USER_COMMANDS.DELETE_USER, id),
-  //   );
-  //   if (!deletedUser) throw new NotFoundException("User not found");
-  //   return buildResponse("User deleted successfully", deletedUser);
-  // }
+    return buildResponse("User fetched successfully", user);
+  }
 }

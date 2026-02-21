@@ -87,8 +87,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       const user = await firstValueFrom(
         this.userClient.send(USER_COMMANDS.GET_USER, {
           id,
-          myRole: payload?.role,
-          myId: id,
         }),
       );
 

@@ -174,104 +174,6 @@ export class UserService {
   //   };
   // }
 
-  // /**
-  //  * Retrieve a single user by ID.
-  //  *
-  //  * @param {UserRole} myRole - Role of the requesting user to apply role-based access control.
-  //  * @param {MongoIdDto["id"]} id - Unique identifier of the user.
-  //  * @param {MongoIdDto["id"]} myId - ID of the requesting user.
-  //  * @param {Department} myDepartment - Department of the requesting user.
-  //  * @throws {NotFoundException} If the user does not exist.
-  //  * @throws {HttpException} If access is denied (403 Forbidden).
-  //  * @returns {Promise<User>} The found user document.
-  //  */
-  // async getUser(
-  //   myRole: UserRole,
-  //   id: MongoIdDto["id"],
-  //   myId?: MongoIdDto["id"],
-  //   myDepartment?: Department,
-  // ): Promise<User | { message: string; exception: string }> {
-  //   const user = await this.userModel.findById(id).exec();
-  //   // if (!user) throw new NotFoundException("User not found");
-  //   if (!user) {
-  //     return {
-  //       message: "User not found",
-  //       exception: "NotFoundException",
-  //     };
-  //   }
-
-  //   // EMPLOYEE: Can only access their own profile
-  //   if (myRole === UserRole.EMPLOYEE) {
-  //     if (myId && user._id.equals(myId)) {
-  //       return user;
-  //     }
-  //     return {
-  //       message: "Access denied",
-  //       exception: "HttpException",
-  //     };
-  //     // throw new HttpException("Access denied", HttpStatus.FORBIDDEN);
-  //   }
-
-  //   // Allow any authenticated user to fetch their own profile
-  //   if (myId && user._id.equals(myId)) return user;
-
-  //   // Role-based access control
-  //   switch (myRole) {
-  //     case UserRole.DIRECTOR:
-  //       // Director can access any user
-  //       return user;
-
-  //     case UserRole.HR:
-  //       // HR can access all users except DIRECTOR
-  //       if (user.role === UserRole.DIRECTOR) {
-  //         return {
-  //           message: "Access denied",
-  //           exception: "HttpException",
-  //         };
-  //         // throw new HttpException("Access denied", HttpStatus.FORBIDDEN);
-  //       }
-  //       return user;
-
-  //     case UserRole.PROJECT_MANAGER:
-  //     case UserRole.TEAM_LEADER:
-  //       // Can only fetch users from the same department
-  //       // Cannot access HR or DIRECTOR profiles
-  //       if (!myDepartment) {
-  //         return {
-  //           message: "Department required for this role",
-  //           exception: "HttpException",
-  //         };
-  //         // throw new HttpException(
-  //         //   "Department required for this role",
-  //         //   HttpStatus.FORBIDDEN,
-  //         // );
-  //       }
-  //       if (user.role === UserRole.HR || user.role === UserRole.DIRECTOR) {
-  //         return {
-  //           message: "Access denied",
-  //           exception: "HttpException",
-  //         };
-
-  //         // throw new HttpException("Access denied", HttpStatus.FORBIDDEN);
-  //       }
-  //       if (user.department !== myDepartment) {
-  //         return {
-  //           message: "Access denied",
-  //           exception: "HttpException",
-  //         };
-  //         // throw new HttpException("Access denied", HttpStatus.FORBIDDEN);
-  //       }
-  //       return user;
-
-  //     default:
-  //       return {
-  //         message: "Invalid role",
-  //         exception: "HttpException",
-  //       };
-  //     // throw new HttpException("Invalid role", HttpStatus.FORBIDDEN);
-  //   }
-  // }
-
   /**
    * Create a new user.
    *
@@ -372,10 +274,7 @@ export class UserService {
    * Returns a sanitized user object or an object indicating not found.
    */
   async getUser(
-    myRole: string,
     id: MongoIdDto["id"],
-    myId?: MongoIdDto["id"],
-    myDepartment?: string,
   ): Promise<User | { message: string; exception: string }> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
@@ -384,7 +283,6 @@ export class UserService {
         exception: "NotFoundException",
       };
     }
-
     const userObj: any = user.toObject();
     delete userObj.password;
     delete userObj.otp;

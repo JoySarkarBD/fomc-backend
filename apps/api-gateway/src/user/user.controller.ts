@@ -7,7 +7,10 @@
  * @module api-gateway/user
  */
 
-import { Controller, UseGuards } from "@nestjs/common";
+import { Controller, Get, UseGuards } from "@nestjs/common";
+import { MongoIdDto } from "@shared/dto";
+import type { AuthUser } from "@shared/interfaces";
+import { GetUser } from "../common/decorators/get-user.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { UserService } from "./user.service";
 
@@ -93,18 +96,15 @@ export class UserController {
   // //   return await this.userService.deleteUser(params.id);
   // // }
 
-  // /**
-  //  * Endpoint for retrieving the profile of the currently authenticated user.
-  //  * Utilizes the UserService to fetch the profile information based on the authenticated user's context.
-  //  * @returns The profile information of the authenticated user.
-  //  */
-  // @Get("profile/me")
-  // async getProfile(@GetUser() user: AuthUser) {
-  //   return await this.userService.getUser(
-  //     user.role as UserRole,
-  //     (user._id ?? user.id) as MongoIdDto["id"],
-  //     (user._id ?? user.id) as MongoIdDto["id"],
-  //     user.department,
-  //   );
-  // }
+  /**
+   * Endpoint for retrieving the profile of the currently authenticated user.
+   * Utilizes the UserService to fetch the profile information based on the authenticated user's context.
+   * @returns The profile information of the authenticated user.
+   */
+  @Get("profile/me")
+  async getProfile(@GetUser() user: AuthUser) {
+    return await this.userService.getUser(
+      (user._id ?? user.id) as MongoIdDto["id"],
+    );
+  }
 }
