@@ -30,14 +30,7 @@ export class UserController {
    * @returns A list of users matching the query criteria.
    */
   @UseGuards(RolesGuard)
-  @Roles(
-    "SUPER ADMIN",
-    "DIRECTOR",
-    "HR",
-    "PROJECT MANAGER",
-    "TEAM LEADER",
-    "EMPLOYEE",
-  )
+  @Roles("SUPER ADMIN", "DIRECTOR", "HR", "PROJECT MANAGER", "TEAM LEADER")
   @Get()
   async getUsers(
     @GetUser() user: AuthUser,
@@ -62,17 +55,6 @@ export class UserController {
     );
     return result;
   }
-
-  // /**
-  //  * Create a new user with the provided data.
-  //  *
-  //  * @param data - An object containing the necessary information to create a new user (e.g., name, email, password).
-  //  * @returns The details of the newly created user.
-  //  */
-  // @Post("")
-  // async createUser(@Body() data: CreateUserDto) {
-  //   return await this.userService.createUser(data);
-  // }
 
   // /**
   //  * Delete a user by their unique identifier (ID).
