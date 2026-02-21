@@ -30,8 +30,10 @@ export class DesignationController {
    * @returns {Promise<any>} Newly created designation.
    */
   @MessagePattern(DESIGNATION_COMMANDS.CREATE_DESIGNATION)
-  create(@Payload() createDesignationDto: CreateDesignationDto) {
-    return this.designationService.createDesignation(createDesignationDto);
+  async create(@Payload() createDesignationDto: CreateDesignationDto) {
+    return await this.designationService.createDesignation(
+      createDesignationDto,
+    );
   }
 
   /**
@@ -42,8 +44,8 @@ export class DesignationController {
    * @returns {Promise<any>} List of designations matching the search criteria.
    */
   @MessagePattern(DESIGNATION_COMMANDS.GET_DESIGNATIONS)
-  findAll(@Payload() query: SearchQueryDto): Promise<any> {
-    return this.designationService.findDesignations(query);
+  async findAll(@Payload() query: SearchQueryDto): Promise<any> {
+    return await this.designationService.findDesignations(query);
   }
 
   /**
@@ -54,8 +56,8 @@ export class DesignationController {
    * @returns {Promise<any>} Designation details.
    */
   @MessagePattern(DESIGNATION_COMMANDS.GET_DESIGNATION)
-  findOne(@Payload() id: MongoIdDto["id"]): Promise<any> {
-    return this.designationService.findDesignationById(id);
+  async findOne(@Payload() id: MongoIdDto["id"]): Promise<any> {
+    return await this.designationService.findDesignationById(id);
   }
 
   /**
@@ -67,10 +69,10 @@ export class DesignationController {
    * @param {UpdateDesignationDto} payload.data - The data transfer object containing the updated designation information.
    */
   @MessagePattern(DESIGNATION_COMMANDS.UPDATE_DESIGNATION)
-  update(
+  async update(
     @Payload() payload: { id: MongoIdDto["id"]; data: UpdateDesignationDto },
   ): Promise<any> {
-    return this.designationService.updateDesignationById(
+    return await this.designationService.updateDesignationById(
       payload.id,
       payload.data,
     );
@@ -84,7 +86,7 @@ export class DesignationController {
    * @returns {Promise<any>} Result of the delete operation.
    */
   @MessagePattern(DESIGNATION_COMMANDS.DELETE_DESIGNATION)
-  remove(@Payload() id: MongoIdDto["id"]): Promise<any> {
-    return this.designationService.deleteDesignationById(id);
+  async remove(@Payload() id: MongoIdDto["id"]): Promise<any> {
+    return await this.designationService.deleteDesignationById(id);
   }
 }

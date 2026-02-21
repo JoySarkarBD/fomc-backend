@@ -273,21 +273,40 @@ export class UserService {
    * Retrieve a single user by ID (minimal implementation used by JwtStrategy).
    * Returns a sanitized user object or an object indicating not found.
    */
-  async getUser(
-    id: MongoIdDto["id"],
-  ): Promise<User | { message: string; exception: string }> {
-    const user = await this.userModel.findById(id).exec();
+  async getUser(id: MongoIdDto["id"]): Promise<any> {
+    const user = await this.userModel
+      .findById(id)
+      .populate({
+        path: "role",
+        select: "name",
+      })
+      .exec();
+
     if (!user) {
       return {
         message: "User not found",
         exception: "NotFoundException",
       };
     }
+
+    // Fetch designation details if designation reference exists, to include the designation name in the returned user object for easier access in authorization checks.
+    const designation = await firstValueFrom(
+      this.workForceClient.send(DESIGNATION_COMMANDS.GET_DESIGNATION, {
+        id: user.designation,
+      }),
+    );
+
     const userObj: any = user.toObject();
     delete userObj.password;
     delete userObj.otp;
     delete userObj.otpExpiry;
-    return userObj as User;
+
+    // Replace the role field with the role name for easier access in the JwtStrategy, since we only need the role name for authorization checks and not the entire role document.
+    userObj.role = userObj.role?.name;
+    userObj.designation = designation?.name || null;
+    userObj.department = designation?.departmentName || null;
+
+    return userObj;
   }
 
   /**
