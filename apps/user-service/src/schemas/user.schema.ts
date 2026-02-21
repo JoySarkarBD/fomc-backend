@@ -19,6 +19,10 @@ export type UserDocument = User & Document;
  */
 @Schema({ timestamps: true, versionKey: false })
 export class User extends Document {
+  // Avatar URL for the user profile picture
+  @Prop({ type: String, default: null })
+  avatar?: string | null;
+
   // Full name of the user
   @Prop({ required: true })
   name!: string;

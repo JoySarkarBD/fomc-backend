@@ -7,10 +7,26 @@
  * @module api-gateway/user
  */
 
-import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { MongoIdDto } from "@shared/dto";
 import type { AuthUser } from "@shared/interfaces";
+import { UpdateUserProfileDto } from "apps/user-service/src/dto/update-user-profile.dto";
 import { UserSearchQueryDto } from "apps/user-service/src/dto/user-search-query.dto";
+import * as fs from "fs";
+import type { File } from "multer";
+import { diskStorage } from "multer";
+import * as path from "path";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
@@ -80,5 +96,80 @@ export class UserController {
     return await this.userService.getUser(
       (user._id ?? user.id) as MongoIdDto["id"],
     );
+  }
+
+  /**
+   * Endpoint for updating the profile of the currently authenticated user, allowing updates to the user's name and avatar.
+   *
+   * This endpoint accepts multipart/form-data for avatar uploads and uses the FileInterceptor to handle file storage. The uploaded avatar is saved to the "uploads/avatars" directory, and the file path is stored in the user's profile. The endpoint validates that at least one profile field (name or avatar) is provided for update and returns an appropriate response based on the update operation's success or failure.
+   * @param {AuthUser} user - The currently authenticated user, injected via the GetUser decorator.
+   * @param {UpdateUserProfileDto} data - Data transfer object containing the fields to be updated in the user's profile (name and/or avatar).
+   * @param {File} avatarFile - The uploaded avatar file, handled by the FileInterceptor.
+   * @returns The updated profile information of the authenticated user after the update operation is performed.
+   * @throws BadRequestException if neither name nor avatar is provided for update.
+   */
+  @Patch("profile/me")
+  /**
+   * Update the authenticated user's profile, allowing changes to their name and avatar.
+   *
+   * This endpoint accepts multipart/form-data for avatar uploads and uses the FileInterceptor to handle file storage. The uploaded avatar is saved to the "uploads/avatars" directory, and the file path is stored in the user's profile. The endpoint validates that at least one profile field (name or avatar) is provided for update and returns an appropriate response based on the update operation's success or failure.
+   * @param {AuthUser} user - The currently authenticated user, injected via the GetUser decorator.
+   */
+  @UseInterceptors(
+    FileInterceptor("avatar", {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadDir = path.join(process.cwd(), "uploads", "avatars");
+          if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (req, file, cb) => {
+          const ext = path.extname(file.originalname);
+          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+          cb(null, `${unique}${ext}`);
+        },
+      }),
+    }),
+  )
+  async updateProfile(
+    @GetUser() user: AuthUser,
+    @Body() data: UpdateUserProfileDto,
+    @UploadedFile() avatarFile?: File,
+  ) {
+    const existingProfile = avatarFile
+      ? await this.userService.getUser(
+          (user._id ?? user.id) as MongoIdDto["id"],
+        )
+      : null;
+    const existingAvatarPath = existingProfile?.data?.avatar as
+      | string
+      | null
+      | undefined;
+
+    const avatarPath = avatarFile
+      ? path.join("uploads", "avatars", avatarFile.filename).replace(/\\/g, "/")
+      : undefined;
+
+    const updated = await this.userService.updateUserProfile(
+      (user._id ?? user.id) as MongoIdDto["id"],
+      {
+        ...data,
+        avatar: avatarPath,
+      },
+    );
+
+    if (avatarFile && existingAvatarPath && existingAvatarPath !== avatarPath) {
+      const normalized = existingAvatarPath.replace(/^\/+/, "");
+      if (normalized.startsWith("uploads/avatars/")) {
+        const absolutePath = path.join(process.cwd(), normalized);
+        if (fs.existsSync(absolutePath)) {
+          fs.unlinkSync(absolutePath);
+        }
+      }
+    }
+
+    return updated;
   }
 }

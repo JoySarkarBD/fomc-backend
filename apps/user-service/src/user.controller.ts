@@ -7,6 +7,7 @@ import { MessagePattern } from "@nestjs/microservices";
 import { USER_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserProfileDto } from "./dto/update-user-profile.dto";
 import { UserSearchQueryDto } from "./dto/user-search-query.dto";
 import { UserService } from "./user.service";
 
@@ -157,5 +158,17 @@ export class UserController {
   @MessagePattern(USER_COMMANDS.GET_USERS_COUNT_BY_DESIGNATION)
   async getUsersCountByDesignation(designationId: MongoIdDto["id"]) {
     return await this.userService.getUsersCountByDesignation(designationId);
+  }
+
+  /**
+   * Update the authenticated user's profile.
+   * Message Pattern: { cmd: USER_COMMANDS.UPDATE_USER_PROFILE }
+   */
+  @MessagePattern(USER_COMMANDS.UPDATE_USER_PROFILE)
+  async updateUserProfile(payload: {
+    id: MongoIdDto["id"];
+    data: UpdateUserProfileDto;
+  }) {
+    return await this.userService.updateUserProfile(payload.id, payload.data);
   }
 }

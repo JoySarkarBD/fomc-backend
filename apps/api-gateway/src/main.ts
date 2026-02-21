@@ -13,8 +13,10 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import config from "@shared/config/app.config";
 import "dotenv/config";
+import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import * as path from "path";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./common/http-exception.filter";
 import { ResponseInterceptor } from "./common/response.interceptor";
@@ -35,6 +37,9 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix("api");
   app.use(helmet());
   app.use(morgan("dev"));
+  const uploadsRoot = path.join(process.cwd(), "uploads");
+  app.use("/uploads", express.static(uploadsRoot));
+  app.use("/api/uploads", express.static(uploadsRoot));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

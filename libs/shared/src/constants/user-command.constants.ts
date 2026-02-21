@@ -40,4 +40,6 @@ export const USER_COMMANDS = {
 
   /* Get users count by designation */
   GET_USERS_COUNT_BY_DESIGNATION: { cmd: "get_users_count_by_designation" },
+
+  UPDATE_USER_PROFILE: { cmd: "update_user_profile" },
 } as const;

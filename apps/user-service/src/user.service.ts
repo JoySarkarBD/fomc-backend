@@ -1,5 +1,4 @@
 /** @fileoverview User service stub. Business logic methods are currently commented out. @module user-service/user.service */
-
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
@@ -11,6 +10,7 @@ import * as bcrypt from "bcrypt";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserProfileDto } from "./dto/update-user-profile.dto";
 import { UserSearchQueryDto } from "./dto/user-search-query.dto";
 import { RoleService } from "./role/role.service";
 import { User, UserDocument } from "./schemas/user.schema";
@@ -427,7 +427,10 @@ export class UserService {
   // }
 
   /**
+   * Get the count of users associated with a specific designation.
    *
+   * @param {MongoIdDto} params - Object containing the designation ID.
+   * @returns {Promise<number>} The count of users that have the specified designation ID in their user document's designation field, which is used to determine how many users are assigned to that particular designation in the system.
    */
   async getUsersCountByDesignation(
     designationId: MongoIdDto["id"],
@@ -435,5 +438,33 @@ export class UserService {
     return await this.userModel
       .countDocuments({ designationId: new Types.ObjectId(designationId) })
       .exec();
+  }
+
+  /**
+   * Update the authenticated user's profile (name and avatar only).
+   */
+  async updateUserProfile(
+    id: MongoIdDto["id"],
+    data: UpdateUserProfileDto,
+  ): Promise<any> {
+    const update: Partial<Pick<User, "name" | "avatar">> = {};
+
+    if (data.name !== undefined) update.name = data.name;
+    if (data.avatar !== undefined) update.avatar = data.avatar;
+
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(id, update, { new: true, runValidators: true })
+      .exec();
+
+    if (!updatedUser) {
+      return {
+        message: "User not found",
+        exception: "NotFoundException",
+      };
+    }
+
+    const userObj = (await this.getUser(updatedUser._id.toString())) as any;
+
+    return userObj;
   }
 }
