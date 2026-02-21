@@ -26,6 +26,12 @@ export class AttendanceService {
     @Inject("WORKFORCE_SERVICE") private readonly workforceClient: ClientProxy,
   ) {}
 
+  /**
+   * Marks the attendance of a user as present or late based on their check-in time and shift timings.
+   *
+   * @param user - The authenticated user for whom the attendance is being marked.
+   * @return A promise that resolves to the attendance record if successfully marked, or an object containing a message and exception if there was an error (e.g., user not found, attendance already marked, no shift matched).
+   */
   async presentAttendance(user: AuthUser) {
     const result = await firstValueFrom(
       this.workforceClient.send(ATTENDANCE_COMMANDS.PRESENT_ATTENDANCE, user),

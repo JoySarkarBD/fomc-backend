@@ -11,8 +11,17 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
+import { USER_COMMANDS } from "@shared/constants/user-command.constants";
+import { AuthUser } from "@shared/interfaces/auth-user.interface";
 import { Model } from "mongoose";
-import { Attendance, AttendanceDocument } from "../schemas/attendance.schema";
+import { firstValueFrom } from "rxjs";
+import {
+  Attendance,
+  AttendanceDocument,
+  AttendanceInType,
+  ShiftTypeForOperations,
+  ShiftTypeForSales,
+} from "../schemas/attendance.schema";
 
 /* 
   attendance logic:-
@@ -37,9 +46,9 @@ export class AttendanceService {
    * @param user - The authenticated user for whom the attendance is being marked.
    * @return A promise that resolves to the attendance record if successfully marked, or an object containing a message and exception if there was an error (e.g., user not found, attendance already marked, no shift matched).
    */
-  /* async presentAttendance(
+  async presentAttendance(
     user: AuthUser,
-  ): Promise<Attendance | { message: string; exception: string }> {
+  ) /* : Promise<Attendance | { message: string; exception: string }> */ {
     const userId = (user.id ?? user._id) as string;
 
     // Check user existence from user-service
@@ -73,7 +82,7 @@ export class AttendanceService {
 
     // Prevent duplicate attendance
     const existingAttendance = await this.attendanceModel.findOne({
-      user: new Types.ObjectId(userId),
+      user: userId,
       date: { $gte: todayStart, $lte: todayEnd },
     });
 
@@ -89,6 +98,8 @@ export class AttendanceService {
     let shiftType: string;
     let shiftStartMinutes = 0;
 
+    console.log(user);
+
     // Fixed shift for HR
     if (user.role === "HR") {
       shiftType = ShiftTypeForOperations.DAY; // 09:00 → 18:00
@@ -96,12 +107,11 @@ export class AttendanceService {
     } else {
       // SWITCH BASED ON DEPARTMENT
       switch (user.department) {
-        case Department.OPERATIONS:
+        case "OPERATIONS":
           shiftType = ShiftTypeForOperations.DAY;
           shiftStartMinutes = 9 * 60;
           break;
-
-        case Department.SALES: {
+        case "SALES": {
           const morningStart = 7 * 60;
           const morningEnd = 15 * 60;
           const eveningStart = 15 * 60;
@@ -124,7 +134,6 @@ export class AttendanceService {
           }
           break;
         }
-
         default:
           return {
             message: "Department not found",
@@ -142,7 +151,7 @@ export class AttendanceService {
 
     // Save Attendance
     const attendance = await this.attendanceModel.create({
-      user: new Types.ObjectId(userId),
+      user: userId,
       checkInTime: bdNow,
       date: todayStart,
       inType: attendanceType,
@@ -150,6 +159,6 @@ export class AttendanceService {
       isLate,
     });
 
-    return attendance as Attendance;
-  } */
+    return attendance;
+  }
 }
