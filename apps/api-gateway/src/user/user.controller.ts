@@ -51,7 +51,7 @@ export class UserController {
   /**
    * Get a single user by their unique identifier (ID).
    *
-   * @guards RolesGuard - Ensures that only users with specific roles (Director, HR, Project Manager, Team Leader) can access this endpoint.
+   * @guards RolesGuard - Ensures that only users with specific roles can access this endpoint.
    * @param {MongoIdDto} params - Object containing the user ID.
    * @returns The user details corresponding to the provided ID.
    */
