@@ -7,11 +7,21 @@
  * @module @shared/dto/mongo-id
  */
 
-import { IsMongoId, IsNotEmpty } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsMongoId, IsNotEmpty } from "class-validator";
 
 export class MongoIdDto {
   /** A valid 24-character MongoDB ObjectId. */
   @IsMongoId({ message: "ID must be a valid MongoDB ObjectId" })
   @IsNotEmpty({ message: "ID is required" })
   id!: string;
+}
+
+export class MongoIdsDto {
+  @IsArray({ message: "ids must be an array" })
+  @ArrayNotEmpty({ message: "IDs array cannot be empty" })
+  @IsMongoId({
+    each: true,
+    message: "Each ID must be a valid MongoDB ObjectId",
+  })
+  ids!: string[];
 }

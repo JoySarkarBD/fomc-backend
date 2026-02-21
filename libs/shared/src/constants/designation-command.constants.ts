@@ -14,6 +14,9 @@ export const DESIGNATION_COMMANDS = {
   /** Retrieve a single designDesignation by ID (with permission & user counts). */
   GET_DESIGNATION: { cmd: "get_designDesignation" },
 
+  /** Retrieve multiple designDesignations by their IDs. */
+  GET_DESIGNATIONS_BY_IDS: { cmd: "get_designDesignations_by_ids" },
+
   /** Create a new designDesignation. */
   CREATE_DESIGNATION: { cmd: "create_designDesignation" },
 

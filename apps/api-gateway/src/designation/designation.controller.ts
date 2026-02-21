@@ -81,6 +81,18 @@ export class DesignationController {
   }
 
   /**
+   * Retrieve multiple designations by their IDs.
+   *
+   * @param {string[]} ids - An array of designation IDs to be retrieved.
+   * @return Promise resolving to a list of designations matching the provided IDs.
+   */
+  @Get("batch")
+  async findDesignationsByIds(@Query("ids") ids: string | string[]) {
+    const idsArray = Array.isArray(ids) ? ids : [ids];
+    return await this.designationService.findDesignationsByIds(idsArray);
+  }
+
+  /**
    * Delete a designation by ID.
    *
    * @param {string} id - The ID of the designation to be deleted.

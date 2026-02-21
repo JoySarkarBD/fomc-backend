@@ -30,7 +30,7 @@ export class Designation extends Document {
   @Prop({ default: null })
   description?: string;
 
-  @Prop()
+  @Prop({ ref: "Department", required: true })
   departmentId!: mongo.ObjectId; // Reference to the associated department
 
   @Prop({ default: null })

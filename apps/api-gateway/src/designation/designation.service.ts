@@ -101,6 +101,21 @@ export class DesignationService {
   }
 
   /**
+   * Find multiple designations by their IDs.
+   *
+   * @param {string[]} ids - An array of designation IDs to be retrieved.
+   * @return Promise resolving to a list of designations matching the provided IDs.
+   */
+  async findDesignationsByIds(ids: MongoIdDto["id"][]) {
+    const result = await firstValueFrom(
+      this.workforceClient.send(DESIGNATION_COMMANDS.GET_DESIGNATIONS_BY_IDS, {
+        ids,
+      }),
+    );
+    return buildResponse("Designations retrieved successfully", result);
+  }
+
+  /**
    * Delete a designation by ID.
    *
    * @param {string} id - The ID of the designation to be deleted.

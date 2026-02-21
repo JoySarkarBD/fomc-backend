@@ -85,6 +85,20 @@ export class DesignationController {
    * @param {MongoIdDto} payload - Object containing the designation ID to be deleted.
    * @returns {Promise<any>} Result of the delete operation.
    */
+  @MessagePattern(DESIGNATION_COMMANDS.GET_DESIGNATIONS_BY_IDS)
+  async findByIds(
+    @Payload() payload: { ids: MongoIdDto["id"][] },
+  ): Promise<any> {
+    return await this.designationService.findDesignationsByIds(payload.ids);
+  }
+
+  /**
+   * Delete a designation by ID.
+   *
+   * Message Pattern: { cmd: DESIGNATION_COMMANDS.DELETE_DESIGNATION }
+   * @param {MongoIdDto} payload - Object containing the designation ID to be deleted.
+   * @returns {Promise<any>} Result of the delete operation.
+   */
   @MessagePattern(DESIGNATION_COMMANDS.DELETE_DESIGNATION)
   async remove(@Payload() id: MongoIdDto["id"]): Promise<any> {
     return await this.designationService.deleteDesignationById(id);

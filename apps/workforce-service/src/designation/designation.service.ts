@@ -237,6 +237,22 @@ export class DesignationService {
   }
 
   /**
+   * Retrieve multiple designations by their unique identifiers.
+   *
+   * @param {MongoIdDto["id"][]} ids - An array of unique identifiers of the designations to be retrieved.
+   * @returns {Promise<{ _id: string; name: string; description: string; departmentId: string; departmentName: string; createdBy: string; createdAt: Date; updatedAt: Date }[]>} An array of objects containing the details of the designations along with their associated department names.
+   * @remarks This method performs an aggregation query to fetch multiple designations based on the provided array of IDs. It also joins the department collection to include the department name in the result. The method returns an array of designations with their details and associated department names.
+   */
+  async findDesignationsByIds(ids: MongoIdDto["id"][]) {
+    const result = await this.designationModel
+      .find({ _id: { $in: ids.map((id) => new Types.ObjectId(id)) } })
+      .populate("departmentId", "name")
+      .lean();
+
+    return result;
+  }
+
+  /**
    * Delete a designation by its unique identifier after checking for its existence and ensuring that no users are associated with it.
    *
    * @param {MongoIdDto["id"]} id - The unique identifier of the designation to be deleted.

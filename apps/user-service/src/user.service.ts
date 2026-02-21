@@ -1,25 +1,14 @@
 /** @fileoverview User service stub. Business logic methods are currently commented out. @module user-service/user.service */
-// TODO: Uncomment and implement user service methods once DTOs and schema references are finalised.
-import {
-  Inject,
-  // ConflictException,
-  // HttpException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import * as bcrypt from "bcrypt";
-import { Model, Types } from "mongoose";
-// import { MongoIdDto } from "../../api-gateway/src/common/dto/mongo-id.dto";
-// import config from "../../config/config";
-// import { CreateUserDto } from "./dto/create-user.dto";
-// import { UpdateUserDto } from "./dto/update-user.dto";
-// import { UserSearchQueryDto } from "./dto/user-query.dto";
+
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
+import { InjectModel } from "@nestjs/mongoose";
 import config from "@shared/config/app.config";
 import { DEPARTMENT_COMMANDS } from "@shared/constants";
 import { DESIGNATION_COMMANDS } from "@shared/constants/designation-command.constants";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
+import * as bcrypt from "bcrypt";
+import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UserSearchQueryDto } from "./dto/user-search-query.dto";
@@ -65,9 +54,23 @@ export class UserService {
 
     const filter: any = {};
 
-    if (role) filter.role = new Types.ObjectId(role);
-    if (department) filter.department = new Types.ObjectId(department);
-    if (designation) filter.designation = new Types.ObjectId(designation);
+    if (role?.length) {
+      filter.role = {
+        $in: role.map((id) => new Types.ObjectId(id)),
+      };
+    }
+
+    if (department?.length) {
+      filter.department = {
+        $in: department.map((id) => new Types.ObjectId(id)),
+      };
+    }
+
+    if (designation?.length) {
+      filter.designation = {
+        $in: designation.map((id) => new Types.ObjectId(id)),
+      };
+    }
 
     if (searchKey) {
       filter.$or = [
@@ -98,42 +101,58 @@ export class UserService {
       };
     }
 
-    // Fetch all designations in parallel
-    const formattedUsers = await Promise.all(
-      users.map(async (user: any) => {
-        let designationData: any = null;
-
-        if (user.designation) {
-          designationData = await firstValueFrom(
-            this.workForceClient.send(DESIGNATION_COMMANDS.GET_DESIGNATION, {
-              id: user.designation,
-            }),
-          );
-        }
-
-        delete user.password;
-        delete user.otp;
-        delete user.otpExpiry;
-
-        return {
-          _id: user._id,
-          name: user.name,
-          employeeId: user.employeeId,
-          phoneNumber: user.phoneNumber,
-          email: user.email,
-          secondaryEmail: user.secondaryEmail ?? null,
-          role: user.role?.name || null,
-          department: designationData?.departmentName || null,
-          designation: designationData?.name || null,
-          isBlocked: user.isBlocked,
-          employmentStatus: user.employmentStatus,
-          resignedDates: user.resignedDates || [],
-          reJoiningDates: user.reJoiningDates || [],
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        };
-      }),
+    const designationIds = Array.from(
+      new Set(
+        users
+          .map((user: any) => user.designation?.toString())
+          .filter((id): id is string => Boolean(id)),
+      ),
     );
+
+    const designationMap = new Map<string, any>();
+
+    if (designationIds.length) {
+      const designations = await firstValueFrom(
+        this.workForceClient.send(
+          DESIGNATION_COMMANDS.GET_DESIGNATIONS_BY_IDS,
+          { ids: designationIds },
+        ),
+      );
+
+      if (Array.isArray(designations)) {
+        designations.forEach((item: any) => {
+          designationMap.set(item?._id?.toString(), item);
+        });
+      }
+    }
+
+    const formattedUsers = users.map((user: any) => {
+      const designationData = user.designation
+        ? designationMap.get(user.designation.toString())
+        : null;
+
+      delete user.password;
+      delete user.otp;
+      delete user.otpExpiry;
+
+      return {
+        _id: user._id,
+        name: user.name,
+        employeeId: user.employeeId,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        secondaryEmail: user.secondaryEmail ?? null,
+        role: user.role?.name || null,
+        department: designationData?.departmentId?.name || null,
+        designation: designationData?.name || null,
+        isBlocked: user.isBlocked,
+        employmentStatus: user.employmentStatus,
+        resignedDates: user.resignedDates || [],
+        reJoiningDates: user.reJoiningDates || [],
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
+    });
 
     return {
       users: formattedUsers,
