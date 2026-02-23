@@ -15,3 +15,31 @@ export class RoleNotFoundDto extends CustomNotFoundDto {
   @ApiProperty({ example: "Role not found" })
   declare error: string;
 }
+
+export class RoleUpdateByIdNotFoundDto extends CustomNotFoundDto {
+  @ApiProperty({ example: "api/role/:id" })
+  declare endpoint: string;
+
+  @ApiProperty({ example: Methods.PATCH })
+  declare method: Methods.PATCH;
+
+  @ApiProperty({ example: "Role with the specified ID was not found." })
+  declare message: string;
+
+  @ApiProperty({ example: "Role not found" })
+  declare error: string;
+}
+
+export class RoleDeleteByIdNotFoundDto extends CustomNotFoundDto {
+  @ApiProperty({ example: "api/role/:id" })
+  declare endpoint: string;
+
+  @ApiProperty({ example: Methods.DELETE })
+  declare method: Methods.DELETE;
+
+  @ApiProperty({ example: "Role with the specified ID was not found." })
+  declare message: string;
+
+  @ApiProperty({ example: "Role not found" })
+  declare error: string;
+}
