@@ -10,7 +10,7 @@ export class RegistrationSuccessDto extends SuccessResponseDto<any> {
   declare message: string;
 
   @ApiProperty({ example: Methods.POST })
-  declare method: Methods;
+  declare method: Methods.POST;
 
   @ApiProperty({ example: "api/auth/register" })
   declare endpoint: string;

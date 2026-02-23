@@ -10,7 +10,7 @@ export class ChangePasswordSuccessDto extends SuccessResponseDto<null> {
   declare message: string;
 
   @ApiProperty({ example: Methods.PATCH })
-  declare method: Methods;
+  declare method: Methods.PATCH;
 
   @ApiProperty({ example: "api/auth/change-password" })
   declare endpoint: string;

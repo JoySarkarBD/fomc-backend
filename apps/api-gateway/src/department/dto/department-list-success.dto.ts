@@ -10,7 +10,7 @@ export class DepartmentListSuccessDto extends SuccessResponseDto<any[]> {
   declare message: string;
 
   @ApiProperty({ example: Methods.GET })
-  declare method: Methods;
+  declare method: Methods.GET;
 
   @ApiProperty({ example: "api/department" })
   declare endpoint: string;

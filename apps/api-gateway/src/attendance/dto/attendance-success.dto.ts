@@ -10,7 +10,7 @@ export class AttendanceSuccessDto extends SuccessResponseDto<any> {
   declare message: string;
 
   @ApiProperty({ example: Methods.POST })
-  declare method: Methods;
+  declare method: Methods.POST;
 
   @ApiProperty({ example: "api/attendance/present" })
   declare endpoint: string;

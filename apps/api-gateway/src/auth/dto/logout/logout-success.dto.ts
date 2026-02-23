@@ -10,7 +10,7 @@ export class LogoutSuccessDto extends SuccessResponseDto<null> {
   declare message: string;
 
   @ApiProperty({ example: Methods.POST })
-  declare method: Methods;
+  declare method: Methods.POST;
 
   @ApiProperty({ example: "api/auth/logout" })
   declare endpoint: string;

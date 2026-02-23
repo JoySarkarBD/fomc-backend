@@ -1,12 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { SuccessResponseDto } from "apps/api-gateway/src/common/dto/success-response.dto";
+import { CustomTooManyRequestsDto } from "apps/api-gateway/src/common/dto/custom-throttler.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
 
-export class ForgotPasswordSuccessDto extends SuccessResponseDto<null> {
-  @ApiProperty({ example: true })
+export class ForgotPasswordThrottlerDto extends CustomTooManyRequestsDto {
+  @ApiProperty({ example: false })
   declare success: boolean;
 
-  @ApiProperty({ example: "OTP sent successfully" })
+  @ApiProperty({
+    example: "Too many forgot password requests. Please try again later.",
+  })
   declare message: string;
 
   @ApiProperty({ example: Methods.POST })
@@ -15,12 +17,12 @@ export class ForgotPasswordSuccessDto extends SuccessResponseDto<null> {
   @ApiProperty({ example: "api/auth/forgot-password" })
   declare endpoint: string;
 
-  @ApiProperty({ example: 200 })
+  @ApiProperty({ example: 429 })
   declare statusCode: number;
 
   @ApiProperty({ example: "2026-02-23T12:00:00.000Z" })
   declare timestamp: string;
 
-  @ApiProperty({ example: null, nullable: true })
-  declare data: null;
+  @ApiProperty({ example: "Throttler error details" })
+  declare error: string;
 }
