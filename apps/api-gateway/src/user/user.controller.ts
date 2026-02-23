@@ -33,8 +33,26 @@ import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
-import { UserListSuccessDto } from "./dto/user-list-success.dto";
-import { UserSuccessDto } from "./dto/user-success.dto";
+import { UserForbiddenDto, UsersForbiddenDto } from "./dto/user-forbidden.dto";
+import {
+  UpdateUserProfileInternalErrorDto,
+  UserInternalErrorDto,
+  UserProfileInternalErrorDto,
+  UsersInternalErrorDto,
+} from "./dto/user-internal-error.dto";
+import { UserNotFoundDto } from "./dto/user-not-found.dto";
+import { UsersListSuccessDto, UserSuccessDto } from "./dto/user-success.dto";
+import {
+  UpdateUserProfileUnauthorizedDto,
+  UserProfileUnauthorizedDto,
+  UsersUnauthorizedDto,
+  UserUnauthorizedDto,
+} from "./dto/user-unauthorized.dto";
+import {
+  UserProfileUpdateValidationDto,
+  UsersValidationDto,
+  UserValidationDto,
+} from "./dto/user-validation.dto";
 import { UserService } from "./user.service";
 
 @ApiTags("User")
@@ -54,9 +72,14 @@ export class UserController {
     summary: "List users",
     description: "Retrieves a list of users with optional filtering.",
   })
-  @ApiStandardResponse(UserListSuccessDto, {
+  @ApiStandardResponse(UsersListSuccessDto, {
     status: 200,
-    successDto: UserListSuccessDto,
+    successDto: UsersListSuccessDto,
+    unauthorizedDto: UsersUnauthorizedDto,
+    forbiddenDto: UsersForbiddenDto,
+    internalServerErrorDto: UsersInternalErrorDto,
+    validationDto: UsersValidationDto,
+    validation: true,
     isArray: true,
     unauthorized: true,
     forbidden: true,
@@ -65,10 +88,7 @@ export class UserController {
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "DIRECTOR", "HR", "PROJECT MANAGER", "TEAM LEADER")
   @Get()
-  async getUsers(
-    @GetUser() user: AuthUser,
-    @Query() query: UserSearchQueryDto,
-  ) {
+  async getUsers(@Query() query: UserSearchQueryDto) {
     return await this.userService.getUsers(query);
   }
 
@@ -86,6 +106,12 @@ export class UserController {
   @ApiStandardResponse(UserSuccessDto, {
     status: 200,
     successDto: UserSuccessDto,
+    unauthorizedDto: UserUnauthorizedDto,
+    forbiddenDto: UserForbiddenDto,
+    internalServerErrorDto: UserInternalErrorDto,
+    validationDto: UserValidationDto,
+    notFoundDto: UserNotFoundDto,
+    validation: true,
     notFound: true,
     unauthorized: true,
     forbidden: true,
@@ -113,6 +139,8 @@ export class UserController {
   @ApiStandardResponse(UserSuccessDto, {
     status: 200,
     successDto: UserSuccessDto,
+    unauthorizedDto: UserProfileUnauthorizedDto,
+    internalServerErrorDto: UserProfileInternalErrorDto,
     unauthorized: true,
     internalServerError: true,
   })
@@ -140,6 +168,10 @@ export class UserController {
   @ApiStandardResponse(UserSuccessDto, {
     status: 200,
     successDto: UserSuccessDto,
+    validationDto: UserProfileUpdateValidationDto,
+    unauthorizedDto: UpdateUserProfileUnauthorizedDto,
+    internalServerErrorDto: UpdateUserProfileInternalErrorDto,
+    validation: true,
     unauthorized: true,
     internalServerError: true,
   })

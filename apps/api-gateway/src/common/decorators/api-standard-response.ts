@@ -37,6 +37,7 @@ interface ApiStandardOptions {
 
   // Flags to enable specific responses
   unauthorized?: boolean;
+  validation?: boolean;
   forbidden?: boolean;
   notFound?: boolean;
   conflict?: boolean;
@@ -105,21 +106,31 @@ export function ApiStandardResponse<TModel extends Type<any>>(
     }),
   );
 
-  // ✅ Validation 400 + X-Device-ID missing combined
-  if (options?.xDeviceId && XDeviceIdDto) {
+  // ✅ Validation 400 (optional)
+  if (options?.validation) {
+    if (options?.xDeviceId && XDeviceIdDto) {
+      decorators.push(
+        ApiBadRequestResponse({
+          schema: {
+            oneOf: [
+              { $ref: getSchemaPath(ValidationDto) },
+              { $ref: getSchemaPath(XDeviceIdDto) },
+            ],
+          },
+          description: "Validation error or missing x-device-id header",
+        }),
+      );
+    } else {
+      decorators.push(ApiBadRequestResponse({ type: ValidationDto }));
+    }
+  } else if (options?.xDeviceId && XDeviceIdDto) {
+    // Only x-device-id missing
     decorators.push(
       ApiBadRequestResponse({
-        schema: {
-          oneOf: [
-            { $ref: getSchemaPath(ValidationDto) },
-            { $ref: getSchemaPath(XDeviceIdDto) },
-          ],
-        },
-        description: "Validation error or missing x-device-id header",
+        type: XDeviceIdDto,
+        description: "Device identifier missing (x-device-id header)",
       }),
     );
-  } else {
-    decorators.push(ApiBadRequestResponse({ type: ValidationDto }));
   }
 
   // ✅ Unauthorized 401
