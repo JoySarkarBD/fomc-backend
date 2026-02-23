@@ -25,7 +25,7 @@ import { CreateRoleDto } from "apps/user-service/src/role/dto/create-role.dto";
 import { UpdateRoleDto } from "apps/user-service/src/role/dto/update-role.dto";
 import { ApiStandardResponse } from "../common/decorators/api-standard-response";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
-import { RoleListSuccessDto } from "./dto/role-list-success.dto";
+// import { RoleListSuccessDto } from "./dto/role-list-success.dto";
 import { RoleSuccessDto } from "./dto/role-success.dto";
 import { RoleService } from "./role.service";
 
@@ -67,13 +67,13 @@ export class RoleController {
     summary: "List roles",
     description: "Retrieves a list of user roles with optional filtering.",
   })
-  @ApiStandardResponse(RoleListSuccessDto, {
-    status: 200,
-    successDto: RoleListSuccessDto,
-    isArray: true,
-    unauthorized: true,
-    internalServerError: true,
-  })
+  // @ApiStandardResponse(RoleListSuccessDto, {
+  //   status: 200,
+  //   successDto: RoleListSuccessDto,
+  //   isArray: true,
+  //   unauthorized: true,
+  //   internalServerError: true,
+  // })
   @Get()
   async findRoles(@Query() query: SearchQueryDto) {
     return await this.roleService.findRoles(query);

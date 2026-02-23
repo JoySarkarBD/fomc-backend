@@ -41,7 +41,12 @@ import {
   UsersInternalErrorDto,
 } from "./dto/user-internal-error.dto";
 import { UserNotFoundDto } from "./dto/user-not-found.dto";
-import { UsersListSuccessDto, UserSuccessDto } from "./dto/user-success.dto";
+import {
+  UserProfileSuccessDto,
+  UserProfileUpdateSuccessDto,
+  UsersListSuccessDto,
+  UserSuccessDto,
+} from "./dto/user-success.dto";
 import {
   UpdateUserProfileUnauthorizedDto,
   UserProfileUnauthorizedDto,
@@ -136,9 +141,9 @@ export class UserController {
     summary: "Get my profile",
     description: "Retrieves the profile of the authenticated user.",
   })
-  @ApiStandardResponse(UserSuccessDto, {
+  @ApiStandardResponse(UserProfileSuccessDto, {
     status: 200,
-    successDto: UserSuccessDto,
+    successDto: UserProfileSuccessDto,
     unauthorizedDto: UserProfileUnauthorizedDto,
     internalServerErrorDto: UserProfileInternalErrorDto,
     unauthorized: true,
@@ -165,9 +170,9 @@ export class UserController {
     summary: "Update my profile",
     description: "Updates the authenticated user's name and/or avatar.",
   })
-  @ApiStandardResponse(UserSuccessDto, {
+  @ApiStandardResponse(UserProfileUpdateSuccessDto, {
     status: 200,
-    successDto: UserSuccessDto,
+    successDto: UserProfileUpdateSuccessDto,
     validationDto: UserProfileUpdateValidationDto,
     unauthorizedDto: UpdateUserProfileUnauthorizedDto,
     internalServerErrorDto: UpdateUserProfileInternalErrorDto,

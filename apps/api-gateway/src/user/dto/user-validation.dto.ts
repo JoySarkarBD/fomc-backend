@@ -96,8 +96,8 @@ export class UserProfileUpdateValidationDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: "Validation failed" })
   declare message: string;
 
-  @ApiProperty({ example: Methods.PUT })
-  declare method: Methods.PUT;
+  @ApiProperty({ example: Methods.PATCH })
+  declare method: Methods.PATCH;
 
   @ApiProperty({ example: "api/user/profile/me" })
   declare endpoint: string;
