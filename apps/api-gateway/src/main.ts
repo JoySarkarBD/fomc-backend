@@ -96,8 +96,7 @@ async function bootstrap(): Promise<void> {
 
   // ✅ Optional: serve raw JSON at /api-json
   app.getHttpAdapter().get("/api-json", (req, res) => {
-    res.setHeader("Content-Type", "application/json"); // ✅ important res.send(document);
-    res.send(document); // use send, not json (sometimes works better for $ref parser)
+    res.json(document); // use send, not json (sometimes works better for $ref parser)
   });
 
   const port = Number(config.PORT ?? 3000);

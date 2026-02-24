@@ -18,7 +18,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
 import { CreateDesignationDto } from "apps/workforce-service/src/designation/dto/create-designation.dto";
@@ -89,6 +89,12 @@ export class DesignationController {
     summary: "Get designation by ID",
     description: "Retrieves details of a specific job designation.",
   })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
+  })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
     // notFound: CustomNotFoundDto,
@@ -96,7 +102,7 @@ export class DesignationController {
     // internal: CustomInternalServerErrorDto,
   })
   @Get(":id")
-  async findDepartmentById(@Param() params: MongoIdDto) {
+  async findDesignationById(@Param() params: MongoIdDto) {
     return await this.designationService.findDesignationById(params.id);
   }
 
@@ -110,6 +116,12 @@ export class DesignationController {
   @ApiOperation({
     summary: "Update designation",
     description: "Updates an existing job designation's details.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
@@ -159,6 +171,12 @@ export class DesignationController {
   @ApiOperation({
     summary: "Delete designation",
     description: "Deletes a job designation by its ID.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({

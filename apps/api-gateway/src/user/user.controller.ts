@@ -19,7 +19,12 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto";
 import type { AuthUser } from "@shared/interfaces";
 import { UpdateUserProfileDto } from "apps/user-service/src/dto/update-user-profile.dto";
@@ -106,6 +111,12 @@ export class UserController {
   @ApiOperation({
     summary: "Get user by ID",
     description: "Retrieves details of a specific user.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiBearerAuth("authorization")
   @ApiSuccessResponse(UserSuccessDto, 200)

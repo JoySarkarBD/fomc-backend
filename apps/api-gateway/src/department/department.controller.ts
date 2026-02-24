@@ -18,7 +18,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
 import { CreateDepartmentDto } from "../../../workforce-service/src/department/dto/create-department.dto";
@@ -130,6 +130,12 @@ export class DepartmentController {
     summary: "Get department by ID",
     description: "Retrieves details of a specific department.",
   })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
+  })
   @ApiSuccessResponse(DepartmentByIdSuccessDto, 200)
   @ApiErrorResponses({
     validation: DepartmentGetByIdValidationDto,
@@ -153,6 +159,12 @@ export class DepartmentController {
   @ApiOperation({
     summary: "Update department",
     description: "Updates an existing department's details.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiSuccessResponse(DepartmentPatchSuccessDto, 200)
   @ApiErrorResponses({
@@ -183,6 +195,12 @@ export class DepartmentController {
   @ApiOperation({
     summary: "Delete department",
     description: "Deletes a department by its ID.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiSuccessResponse(DepartmentDeleteSuccessDto, 200)
   @ApiErrorResponses({

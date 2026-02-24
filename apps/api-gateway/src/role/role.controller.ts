@@ -18,7 +18,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { MongoIdDto, SearchQueryDto } from "@shared/dto";
 import { CreateRoleDto } from "apps/user-service/src/role/dto/create-role.dto";
 import { UpdateRoleDto } from "apps/user-service/src/role/dto/update-role.dto";
@@ -132,6 +132,12 @@ export class RoleController {
     summary: "Get role by ID",
     description: "Retrieves details of a specific user role.",
   })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
+  })
   @ApiSuccessResponse(RoleByIdSuccessDto, 200)
   @ApiErrorResponses({
     validation: RoleGetByIdValidationDto,
@@ -154,6 +160,12 @@ export class RoleController {
   @ApiOperation({
     summary: "Update role",
     description: "Updates an existing user role's details.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiSuccessResponse(RolePatchSuccessDto, 200)
   @ApiErrorResponses({
@@ -181,6 +193,12 @@ export class RoleController {
   @ApiOperation({
     summary: "Delete role",
     description: "Deletes a user role by its ID.",
+  })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "65f1b2c3d4e5f67890123456",
   })
   @ApiSuccessResponse(RoleDeleteSuccessDto, 200)
   @ApiErrorResponses({
