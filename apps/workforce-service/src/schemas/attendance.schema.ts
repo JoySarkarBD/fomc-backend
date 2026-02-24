@@ -53,11 +53,11 @@ export class Attendance extends Document {
   user!: mongo.ObjectId;
 
   // Check-in time for the attendance record
-  @Prop()
+  @Prop({ default: null })
   checkInTime?: Date;
 
   // Check-out time for the attendance record (optional)
-  @Prop()
+  @Prop({ default: null })
   checkOutTime?: Date;
 
   // Date of the attendance record
@@ -79,7 +79,7 @@ export class Attendance extends Document {
   shiftType!: string;
 
   // Weekend exchange can be done by only PROJECT_MANAGER
-  @Prop()
+  @Prop({ default: false })
   weekendExchange?: boolean;
 
   // Optional field to track if the attendance record has been marked as late
