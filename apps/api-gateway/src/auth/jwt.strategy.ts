@@ -34,6 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 
   private extractTokenId(request: Request): string | null {
     const header = request.headers.authorization;
+
     const headerValue = Array.isArray(header) ? header[0] : header;
     if (!headerValue) return null;
 

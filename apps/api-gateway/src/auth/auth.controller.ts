@@ -17,7 +17,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
-import { ApiHeader, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import type { AuthUser } from "@shared/interfaces/auth-user.interface";
 import type { Request } from "express";
 import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
@@ -102,12 +102,7 @@ export class AuthController {
     summary: "Forgot password",
     description: "Sends a password reset OTP to the user's email.",
   })
-  @ApiHeader({
-    name: "x-device-id",
-    description: "Unique identifier for the client's device (for throttling).",
-    required: true,
-    example: "123e4567-e89b-12d3-a456-426614174000",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(ForgotPasswordSuccessDto, 200)
   @ApiErrorResponses({
     validation: ForgotPasswordValidationDto,
@@ -125,12 +120,7 @@ export class AuthController {
     summary: "Reset password",
     description: "Resets the user's password using a valid OTP.",
   })
-  @ApiHeader({
-    name: "x-device-id",
-    description: "Unique identifier for the client's device (for throttling).",
-    required: true,
-    example: "123e4567-e89b-12d3-a456-426614174000",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(ResetPasswordSuccessDto, 200)
   @ApiErrorResponses({
     validation: ResetPasswordValidationDto,
@@ -148,12 +138,7 @@ export class AuthController {
     summary: "Change password",
     description: "Changes the authenticated user's password.",
   })
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token for authentication",
-    required: true,
-    example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(ChangePasswordSuccessDto, 200)
   @ApiErrorResponses({
     validation: ChangePasswordValidationDto,
@@ -176,12 +161,7 @@ export class AuthController {
     summary: "User logout",
     description: "Invalidates the current authentication token.",
   })
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token for authentication",
-    required: true,
-    example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(LogoutSuccessDto, 200)
   @ApiErrorResponses({
     unauthorized: LogoutUnauthorizedDto,

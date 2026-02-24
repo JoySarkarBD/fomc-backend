@@ -19,7 +19,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiHeader, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto";
 import type { AuthUser } from "@shared/interfaces";
 import { UpdateUserProfileDto } from "apps/user-service/src/dto/update-user-profile.dto";
@@ -81,12 +81,7 @@ export class UserController {
     summary: "List users",
     description: "Retrieves a list of users with optional filtering.",
   })
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token for authentication",
-    required: true,
-    example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(UsersListSuccessDto, 200)
   @ApiErrorResponses({
     validation: UsersValidationDto,
@@ -112,12 +107,7 @@ export class UserController {
     summary: "Get user by ID",
     description: "Retrieves details of a specific user.",
   })
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token for authentication",
-    required: true,
-    example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(UserSuccessDto, 200)
   @ApiErrorResponses({
     validation: UserValidationDto,
@@ -145,12 +135,7 @@ export class UserController {
     summary: "Get my profile",
     description: "Retrieves the profile of the authenticated user.",
   })
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token for authentication",
-    required: true,
-    example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(UserProfileSuccessDto, 200)
   @ApiErrorResponses({
     unauthorized: UserProfileUnauthorizedDto,
@@ -177,12 +162,7 @@ export class UserController {
     summary: "Update my profile",
     description: "Updates the authenticated user's name and/or avatar.",
   })
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token for authentication",
-    required: true,
-    example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
+  @ApiBearerAuth("authorization")
   @ApiSuccessResponse(UserProfileUpdateSuccessDto, 200)
   @ApiErrorResponses({
     validation: UserProfileUpdateValidationDto,

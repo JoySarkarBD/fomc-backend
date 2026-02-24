@@ -41,9 +41,17 @@ export class AttendanceController {
     return this.attendanceService.presentAttendance(payload);
   }
 
+  /**
+   * Marks out attendance for a user.
+   *
+   * Message Pattern: { cmd: ATTENDANCE_COMMANDS.OUT_ATTENDANCE }
+   *
+   * @param {AuthUser} payload - The authenticated user for whom out attendance is being marked.
+   * @returns {Promise<any>} Result of the out attendance marking process.
+   */
   @MessagePattern(ATTENDANCE_COMMANDS.OUT_ATTENDANCE)
   async outAttendance(payload: AuthUser) {
-    // return await this.attendanceService.outAttendance(outAttendanceDto);
+    return await this.attendanceService.outAttendance(payload);
   }
 
   /**

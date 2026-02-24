@@ -64,4 +64,25 @@ export class AttendanceService {
 
     return buildResponse("Attendance retrieved", result);
   }
+
+  /**
+   * Marks out attendance for a user.
+   *
+   * @param user - The authenticated user for whom out attendance is being marked.
+   * @return A promise that resolves to a success message if the out attendance was marked successfully, or an object containing a message and exception if there was an error (e.g., attendance record not found, invalid operation).
+   */
+  async outAttendance(user: AuthUser) {
+    const result = await firstValueFrom(
+      this.workforceClient.send(ATTENDANCE_COMMANDS.OUT_ATTENDANCE, user),
+    );
+
+    switch (result?.exception) {
+      case "NotFoundException":
+        throw new NotFoundException(result.message);
+      case "HttpException":
+        throw new HttpException(result.message, HttpStatus.FORBIDDEN);
+    }
+
+    return buildResponse("Attendance marked as out", result);
+  }
 }

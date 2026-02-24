@@ -159,7 +159,16 @@ export class AttendanceService {
     return attendance;
   }
 
+  /**
+   * Marks the attendance of a user as out by setting the check-out time for today's attendance record.
+   * Checks if an attendance record exists for today and if the check-out time has already been set to prevent duplicate out markings.
+   *
+   * @param user - The authenticated user for whom the attendance is being marked as out.
+   * @return A promise that resolves to the updated attendance record if successfully marked as out, or an object containing a message and exception if there was an error (e.g., no attendance record found for today, attendance already marked as out).
+   */
   async outAttendance(user: AuthUser) {
+    const userId = (user.id ?? user._id) as string;
+
     // Current BD Time
     const nowUTC = new Date();
     const bdNow = new Date(
@@ -171,14 +180,14 @@ export class AttendanceService {
     todayDate.setHours(0, 0, 0, 0);
 
     const attendance = await this.attendanceModel.findOne({
-      user: new Types.ObjectId(user.id ?? user._id),
+      user: new Types.ObjectId(userId),
       date: todayDate,
     });
 
     if (!attendance) {
       return {
         message: "No attendance record found for today",
-        exception: "NotFoundException",
+        exception: "HttpException",
       };
     }
 
@@ -190,7 +199,7 @@ export class AttendanceService {
     }
 
     attendance.checkOutTime = bdNow;
-    await attendance.save();
+    return await attendance.save();
   }
 
   /**
@@ -232,6 +241,6 @@ export class AttendanceService {
       filter.date = { $gte: startDate, $lte: endDate };
     }
 
-    return await this.attendanceModel.find(filter).sort({ date: -1 });
+    return await this.attendanceModel.find(filter).sort({ date: 1 });
   }
 }

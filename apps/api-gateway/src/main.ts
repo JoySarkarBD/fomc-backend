@@ -76,6 +76,15 @@ async function bootstrap(): Promise<void> {
     .setDescription(
       "API documentation for the Order Management System (OMS) - FB International BD",
     )
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        in: "header",
+      },
+      "authorization", // <- name important
+    )
     .setVersion("1.0")
     .build();
 
