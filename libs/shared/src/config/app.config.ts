@@ -28,6 +28,11 @@ interface AppConfig {
   /** TCP port of the Workforce microservice. */
   WORKFORCE_SERVICE_PORT: number;
 
+  /** Hostname of the Notification microservice. */
+  NOTIFICATION_SERVICE_HOST: string;
+  /** TCP port of the Notification microservice. */
+  NOTIFICATION_SERVICE_PORT: number;
+
   /** JWT token lifetime in seconds (default: 30 days). */
   JWT_EXPIRES_IN: number;
   /** Secret key used to sign JWT tokens. */
@@ -96,6 +101,9 @@ const config: AppConfig = {
 
   WORKFORCE_SERVICE_HOST: str("WORKFORCE_SERVICE_HOST"),
   WORKFORCE_SERVICE_PORT: int("WORKFORCE_SERVICE_PORT"),
+
+  NOTIFICATION_SERVICE_HOST: str("NOTIFICATION_SERVICE_HOST"),
+  NOTIFICATION_SERVICE_PORT: int("NOTIFICATION_SERVICE_PORT"),
 
   JWT_EXPIRES_IN: int("JWT_EXPIRES_IN"),
   JWT_SECRET: str("JWT_SECRET"),

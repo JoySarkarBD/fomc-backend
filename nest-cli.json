@@ -19,6 +19,24 @@
         "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
       }
     },
+    "notification-service": {
+      "type": "application",
+      "root": "apps/notification-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification-service/tsconfig.app.json"
+      }
+    },
+    "shared": {
+      "type": "library",
+      "root": "libs/shared",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared/tsconfig.lib.json"
+      }
+    },
     "user-service": {
       "type": "application",
       "root": "apps/user-service",
@@ -35,15 +53,6 @@
       "sourceRoot": "apps/workforce-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/workforce-service/tsconfig.app.json"
-      }
-    },
-    "shared": {
-      "type": "library",
-      "root": "libs/shared",
-      "entryFile": "index",
-      "sourceRoot": "libs/shared/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/shared/tsconfig.lib.json"
       }
     }
   }
