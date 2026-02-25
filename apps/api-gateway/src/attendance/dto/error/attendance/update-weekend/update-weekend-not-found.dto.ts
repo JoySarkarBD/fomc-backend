@@ -2,14 +2,14 @@ import { ApiProperty } from "@nestjs/swagger";
 import { CustomNotFoundDto } from "apps/api-gateway/src/common/dto/custom-not-found.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
 
-export class WeekendExchangeNotFoundDto extends CustomNotFoundDto {
+export class UpdateWeekendNotFoundDto extends CustomNotFoundDto {
   @ApiProperty({ example: "User not found" })
   declare message: string;
 
-  @ApiProperty({ example: Methods.POST })
-  declare method: Methods.POST;
+  @ApiProperty({ example: Methods.PATCH })
+  declare method: Methods.PATCH;
 
-  @ApiProperty({ example: "api/attendance/weekend-exchange/:userId" })
+  @ApiProperty({ example: "api/attendance/update-weekend/:userId" })
   declare endpoint: string;
 
   @ApiProperty({ example: "2026-02-23T12:00:00.000Z" })

@@ -5,11 +5,11 @@ import {
 } from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
 
-export class WeekendExchangeValidationDto extends ValidationErrorResponseDto {
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
+export class UpdateWeekendValidationDto extends ValidationErrorResponseDto {
+  @ApiProperty({ example: Methods.PATCH })
+  declare method: Methods.PATCH;
 
-  @ApiProperty({ example: "api/attendance/weekend-exchange/:userId" })
+  @ApiProperty({ example: "api/attendance/update-weekend/:userId" })
   declare endpoint: string;
 
   @ApiProperty({

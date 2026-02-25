@@ -484,8 +484,6 @@ export class UserService {
     userId: UserIdDto["userId"],
     weekEndOff: WeekEndOff,
   ): Promise<any> {
-    console.log(userId);
-
     const updatedUser = await this.userModel
       .findByIdAndUpdate(
         new Types.ObjectId(userId),

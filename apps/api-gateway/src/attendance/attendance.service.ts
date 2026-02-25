@@ -19,10 +19,10 @@ import { USER_COMMANDS } from "@shared/constants";
 import { ATTENDANCE_COMMANDS } from "@shared/constants/attendance-command.constants";
 import { UserIdDto } from "@shared/dto/mongo-id.dto";
 import { AuthUser } from "@shared/interfaces/auth-user.interface";
-import { WeekendExchangeDto } from "apps/api-gateway/src/attendance/weekend-exchange.dto";
 import { GetAttendanceDto } from "apps/workforce-service/src/attendance/dto/get-attendance.dto";
 import { firstValueFrom } from "rxjs";
 import { buildResponse } from "../common/response.util";
+import { WeekendSetDto } from "./weekend-set.dto";
 
 @Injectable()
 export class AttendanceService {
@@ -115,15 +115,15 @@ export class AttendanceService {
   }
 
   /**
-   * Exchanges the weekend off for a user by sending a command to the User micro-service to update the user's weekend off preferences.
+   * Sets the weekend off for a user by sending a command to the User micro-service to update the user's weekend off preferences.
    *
-   * @param userId - The ID of the user whose weekend off is being exchanged.
-   * @param weekEndOff - An array of strings representing the new weekend off values to be set for the user (e.g., ["SUNDAY", "SATURDAY"]).
-   * @return A promise that resolves to a success message if the weekend exchange was successful, or an object containing a message and exception if there was an error during the exchange process (e.g., user not found, invalid weekend off values).
+   * @param userId - The ID of the user whose weekend off is being set.
+   * @param weekEndOff - An array of strings representing the weekend off values to be set for the user (e.g., ["SUNDAY", "SATURDAY"]).
+   * @return A promise that resolves to a success message if the weekend off was set successfully, or an object containing a message and exception if there was an error during the process (e.g., user not found, invalid weekend off values).
    */
-  async exchangeWeekend(
+  async UpdateWeekendOff(
     userId: UserIdDto["userId"],
-    weekEndOff: WeekendExchangeDto["weekEndOff"],
+    weekEndOff: WeekendSetDto["weekEndOff"],
   ) {
     const result = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.UPDATE_WEEKEND_OFF, {
@@ -137,6 +137,6 @@ export class AttendanceService {
         throw new NotFoundException(result.message);
     }
 
-    return buildResponse("Weekend exchanged successfully", result);
+    return buildResponse("Weekend set successfully", result);
   }
 }
