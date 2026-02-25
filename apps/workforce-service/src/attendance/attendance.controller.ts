@@ -102,7 +102,13 @@ export class AttendanceController {
    * @return {Promise<any>} A promise that resolves to the created or updated attendance record if successfully marked, or an object containing a message and exception if there was an error during the marking process.
    */
   @MessagePattern(ATTENDANCE_COMMANDS.MARK_ATTENDANCE_BY_AUTHORITY)
-  async markAttendanceAsAuthority(payload: AttendanceByAuthorityDto) {
-    return await this.attendanceService.markAttendanceAsAuthority(payload);
+  async markAttendanceAsAuthority(payload: {
+    userId: UserIdDto["userId"];
+    attendanceDetails: AttendanceByAuthorityDto;
+  }) {
+    return await this.attendanceService.markAttendanceAsAuthority(
+      payload.userId,
+      payload.attendanceDetails,
+    );
   }
 }

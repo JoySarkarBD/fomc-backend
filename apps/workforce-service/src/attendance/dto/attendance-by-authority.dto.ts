@@ -6,13 +6,7 @@
  */
 
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsDateString,
-  IsEnum,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-} from "class-validator";
+import { IsDateString, IsEnum, IsOptional } from "class-validator";
 import {
   AttendanceInType,
   ShiftTypeForOperations,
@@ -30,15 +24,6 @@ import {
  * The AttendanceByAuthorityDto is used in the attendance service to handle requests for marking attendance on behalf of a user by an authority, ensuring that the provided data meets the required format and validation rules before processing the request to create or update attendance records in the system.
  */
 export class AttendanceByAuthorityDto {
-  @ApiProperty({
-    required: true,
-    description: "The user ID for whom to mark attendance",
-    example: "60d0fe4f5311236168a109ca",
-  })
-  @IsMongoId({ message: "User ID must be a valid MongoDB ObjectId" })
-  @IsNotEmpty({ message: "User ID is required" })
-  userId!: string;
-
   @ApiProperty({
     required: false,
     description: "The check-in time for the attendance record (optional)",

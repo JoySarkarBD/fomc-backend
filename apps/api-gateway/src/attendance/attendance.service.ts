@@ -22,8 +22,8 @@ import { AuthUser } from "@shared/interfaces/auth-user.interface";
 import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance/dto/attendance-by-authority.dto";
 import { GetAttendanceDto } from "apps/workforce-service/src/attendance/dto/get-attendance.dto";
 import { firstValueFrom } from "rxjs";
+import { WeekendSetDto } from "../../../workforce-service/src/attendance/dto/update-weekend-by-authority.dto";
 import { buildResponse } from "../common/response.util";
-import { WeekendSetDto } from "./dto/weekend-set.dto";
 
 @Injectable()
 export class AttendanceService {
@@ -148,12 +148,17 @@ export class AttendanceService {
    * @param attendanceDetails - The details of the attendance to be marked.
    * @return A promise that resolves to a success message if the attendance was marked successfully, or an object containing a message and exception if there was an error during the process (e.g., user not found, invalid attendance details).
    */
-  async markAttendanceAsAuthority(attendanceDetails: AttendanceByAuthorityDto) {
+  async markAttendanceAsAuthority(
+    userId: UserIdDto["userId"],
+    attendanceDetails: AttendanceByAuthorityDto,
+  ) {
     const result = await firstValueFrom(
       this.workforceClient.send(
         ATTENDANCE_COMMANDS.MARK_ATTENDANCE_BY_AUTHORITY,
-
-        attendanceDetails,
+        {
+          userId,
+          attendanceDetails,
+        },
       ),
     );
 

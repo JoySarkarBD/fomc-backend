@@ -5,7 +5,7 @@ import {
 } from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
 
-export class UpdateWeekendValidationDto extends ValidationErrorResponseDto {
+export class UpdateByAuthorityWeekendSetValidationDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: Methods.PATCH })
   declare method: Methods.PATCH;
 

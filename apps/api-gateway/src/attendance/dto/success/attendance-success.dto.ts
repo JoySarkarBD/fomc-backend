@@ -99,7 +99,7 @@ export class SingleUserAttendanceSuccessDto extends SuccessResponseDto<any[]> {
   declare data: any[];
 }
 
-export class UpdateWeekendSuccessDto extends SuccessResponseDto<any> {
+export class UpdateByAuthorityWeekendSetSuccessDto extends SuccessResponseDto<any> {
   @ApiProperty({ example: "Weekend updated successfully" })
   declare message: string;
 

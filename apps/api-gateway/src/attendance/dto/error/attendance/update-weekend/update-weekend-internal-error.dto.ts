@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { CustomInternalServerErrorDto } from "apps/api-gateway/src/common/dto/custom-internal-server-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
 
-export class UpdateWeekendInternalErrorDto extends CustomInternalServerErrorDto {
+export class UpdateByAuthorityWeekendSetInternalErrorDto extends CustomInternalServerErrorDto {
   @ApiProperty({ example: Methods.PATCH })
   declare method: Methods.PATCH;
 

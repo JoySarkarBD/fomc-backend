@@ -22,6 +22,7 @@ import { UserIdDto } from "@shared/dto/mongo-id.dto";
 import type { AuthUser } from "@shared/interfaces";
 import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance/dto/attendance-by-authority.dto";
 import { GetAttendanceDto } from "apps/workforce-service/src/attendance/dto/get-attendance.dto";
+import { UpdateByAuthorityWeekendSetDto } from "../../../workforce-service/src/attendance/dto/update-weekend-by-authority.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";
@@ -51,19 +52,18 @@ import { SingleUserAttendanceForbiddenDto } from "./dto/error/attendance/single-
 import { SingleUserAttendanceInternalErrorDto } from "./dto/error/attendance/single-user-attendance/single-user-attendance-internal-error.dto";
 import { SingleUserAttendanceUnauthorizedDto } from "./dto/error/attendance/single-user-attendance/single-user-attendance-unauthorized.dto";
 import { SingleUserAttendanceValidationDto } from "./dto/error/attendance/single-user-attendance/single-user-attendance-validation.dto";
-import { UpdateWeekendForbiddenDto } from "./dto/error/attendance/update-weekend/update-weekend-forbidden.dto";
-import { UpdateWeekendInternalErrorDto } from "./dto/error/attendance/update-weekend/update-weekend-internal-error.dto";
-import { UpdateWeekendNotFoundDto } from "./dto/error/attendance/update-weekend/update-weekend-not-found.dto";
-import { UpdateWeekendUnauthorizedDto } from "./dto/error/attendance/update-weekend/update-weekend-unauthorized.dto";
-import { UpdateWeekendValidationDto } from "./dto/error/attendance/update-weekend/update-weekend-validation.dto";
+import { UpdateByAuthorityWeekendSetForbiddenDto } from "./dto/error/attendance/update-weekend/update-weekend-forbidden.dto";
+import { UpdateByAuthorityWeekendSetInternalErrorDto } from "./dto/error/attendance/update-weekend/update-weekend-internal-error.dto";
+import { UpdateByAuthorityWeekendSetNotFoundDto } from "./dto/error/attendance/update-weekend/update-weekend-not-found.dto";
+import { UpdateByAuthorityWeekendSetUnauthorizedDto } from "./dto/error/attendance/update-weekend/update-weekend-unauthorized.dto";
+import { UpdateByAuthorityWeekendSetValidationDto } from "./dto/error/attendance/update-weekend/update-weekend-validation.dto";
 import {
   MarkAttendanceAsAuthoritySuccessDto,
   MarkAttendanceSuccessDto,
   MarkOutAttendanceSuccessDto,
   SingleUserAttendanceSuccessDto,
-  UpdateWeekendSuccessDto,
+  UpdateByAuthorityWeekendSetSuccessDto,
 } from "./dto/success/attendance-success.dto";
-import { WeekendSetDto } from "./dto/weekend-set.dto";
 
 @ApiTags("Attendance")
 @Controller("attendance")
@@ -256,22 +256,22 @@ export class AttendanceController {
   })
   @ApiBody({
     description: "The weekend off values to be set for the user",
-    type: WeekendSetDto,
+    type: UpdateByAuthorityWeekendSetDto,
   })
-  @ApiSuccessResponse(UpdateWeekendSuccessDto, 200)
+  @ApiSuccessResponse(UpdateByAuthorityWeekendSetSuccessDto, 200)
   @ApiErrorResponses({
-    unauthorized: UpdateWeekendUnauthorizedDto,
-    validation: UpdateWeekendValidationDto,
-    notFound: UpdateWeekendNotFoundDto,
-    forbidden: UpdateWeekendForbiddenDto,
-    internal: UpdateWeekendInternalErrorDto,
+    unauthorized: UpdateByAuthorityWeekendSetUnauthorizedDto,
+    validation: UpdateByAuthorityWeekendSetValidationDto,
+    notFound: UpdateByAuthorityWeekendSetNotFoundDto,
+    forbidden: UpdateByAuthorityWeekendSetForbiddenDto,
+    internal: UpdateByAuthorityWeekendSetInternalErrorDto,
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER")
-  @Patch("update-weekend-off/:userId")
+  @Patch("update-weekend-off-by-authority/:userId")
   async UpdateWeekendOff(
     @Param() params: UserIdDto,
-    @Body() body: WeekendSetDto,
+    @Body() body: UpdateByAuthorityWeekendSetDto,
   ) {
     return await this.attendanceService.UpdateWeekendOff(
       params.userId,
@@ -307,12 +307,19 @@ export class AttendanceController {
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER")
-  @Patch("mark-attendance-by-authority")
+  @Patch("mark-attendance-by-authority/:userId")
   async markAttendanceByAuthority(
+    @Param() params: UserIdDto,
     @Body() attendanceDetails: AttendanceByAuthorityDto,
   ) {
     return await this.attendanceService.markAttendanceAsAuthority(
+      params.userId,
       attendanceDetails,
     );
   }
+
+  // @Patch("weekend-exchange-by-authority")
+  // async weekendExchangeByAuthority() {
+  //   return await this.attendanceService.weekendExchangeByAuthority();
+  // }
 }

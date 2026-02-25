@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { WeekEndOff } from "apps/user-service/src/schemas/user.schema";
 import { IsArray, IsEnum } from "class-validator";
 
-export class WeekendSetDto {
+export class UpdateByAuthorityWeekendSetDto {
   @ApiProperty({
     required: true,
     description: "The weekend off value(s) to be set for the user",
