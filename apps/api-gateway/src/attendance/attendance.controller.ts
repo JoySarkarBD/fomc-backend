@@ -249,7 +249,7 @@ export class AttendanceController {
    * @remarks This endpoint allows HR, Project Managers, and Team Leaders to update the weekend off for a specific user. It checks if the authenticated user has the necessary roles to perform this action and then updates the user's weekend off based on the provided user ID and new weekend off values.
    */
   @ApiOperation({
-    summary: "Update weekend off",
+    summary: "Update weekend by authority",
     description:
       "Allows the authenticated user to update their and others weekend off.",
   })
@@ -278,7 +278,7 @@ export class AttendanceController {
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER")
-  @Patch("update-weekend-off-by-authority/:userId")
+  @Patch("update-weekend-by-authority/:userId")
   async UpdateWeekendOff(
     @Param() params: UserIdDto,
     @Body() body: UpdateByAuthorityWeekendSetDto,
