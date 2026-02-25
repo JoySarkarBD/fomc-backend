@@ -75,7 +75,9 @@ export class RoleService {
     total: number;
     totalPages: number;
   }> {
-    const { pageNo, pageSize, searchKey } = query;
+    const { pageNo, pageSize } = query;
+    const searchKey =
+      typeof query.searchKey === "string" ? query.searchKey : "";
 
     // Roles with associate user count and permission count
     const [roles, total] = await Promise.all([

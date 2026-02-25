@@ -78,7 +78,9 @@ export class DesignationService {
     total: number;
     totalPages: number;
   }> {
-    const { pageNo, pageSize, searchKey } = query;
+    const { pageNo, pageSize } = query;
+    const searchKey =
+      typeof query.searchKey === "string" ? query.searchKey : "";
 
     const matchStage: any = {};
 

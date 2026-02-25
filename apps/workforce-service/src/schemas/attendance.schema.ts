@@ -78,10 +78,6 @@ export class Attendance extends Document {
   })
   shiftType!: string;
 
-  // Weekend exchange can be done by only PROJECT_MANAGER
-  @Prop({ default: false })
-  weekendExchange?: boolean;
-
   // Optional field to track if the attendance record has been marked as late
   @Prop({ default: false })
   isLate?: boolean;
@@ -91,3 +87,6 @@ export class Attendance extends Document {
  * Mongoose schema for the Attendance class
  */
 export const AttendanceSchema = SchemaFactory.createForClass(Attendance);
+
+// Index for fast user-date lookup
+AttendanceSchema.index({ user: 1, date: 1 }, { unique: true });

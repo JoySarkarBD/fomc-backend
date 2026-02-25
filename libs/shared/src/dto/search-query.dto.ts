@@ -9,7 +9,14 @@
  */
 
 import { Type } from "class-transformer";
-import { IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateIf,
+} from "class-validator";
 
 export class SearchQueryDto {
   /** 1-based page number. */
@@ -31,8 +38,9 @@ export class SearchQueryDto {
   @Max(100, { message: "pageSize cannot exceed 100" })
   pageSize!: number;
 
-  /** Optional free-text search term applied to relevant fields. */
-  @IsString({ message: "searchKey must be a string" })
+  /** Optional free-text search term; can be null or empty. */
   @IsOptional()
-  searchKey?: string;
+  @ValidateIf((o) => o.searchKey !== null && o.searchKey !== undefined)
+  @IsString({ message: "searchKey must be a string" })
+  searchKey?: string | null;
 }

@@ -72,7 +72,9 @@ export class DepartmentService {
     total: number;
     totalPages: number;
   }> {
-    const { pageNo, pageSize, searchKey } = query;
+    const { pageNo, pageSize } = query;
+    const searchKey =
+      typeof query.searchKey === "string" ? query.searchKey : "";
 
     // Departments with associated designations count
     const [departments, total] = await Promise.all([

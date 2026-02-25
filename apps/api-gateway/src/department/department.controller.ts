@@ -110,6 +110,33 @@ export class DepartmentController {
     summary: "List departments",
     description: "Retrieves a list of departments with optional filtering.",
   })
+  @ApiRequestDetails({
+    queries: [
+      {
+        name: "pageNo",
+        description: "The page number for pagination (1-based index)",
+        required: true,
+        type: Number,
+        example: 1,
+      },
+      {
+        name: "pageSize",
+        description: "The number of items per page (1-100)",
+        required: true,
+        type: Number,
+        example: 10,
+      },
+      {
+        name: "searchKey",
+        description:
+          "Optional free-text search term to filter departments by name or description",
+        required: false,
+        type: String,
+        default: "",
+        example: "engineering",
+      },
+    ],
+  })
   @ApiSuccessResponse(DepartmentsListSuccessDto, 200)
   @ApiErrorResponses({
     validation: DepartmentsValidationDto,

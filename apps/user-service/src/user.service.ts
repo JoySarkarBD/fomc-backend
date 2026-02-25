@@ -49,8 +49,9 @@ export class UserService {
     | { users: any[]; total: number; totalPages: number }
     | { message: string; exception: any }
   > {
-    const { role, department, designation, pageNo, pageSize, searchKey } =
-      query;
+    const { role, department, designation, pageNo, pageSize } = query;
+    const searchKey =
+      typeof query.searchKey === "string" ? query.searchKey : "";
 
     const filter: any = {};
 

@@ -73,6 +73,32 @@ export class DesignationController {
     description:
       "Retrieves a list of job designations with optional filtering.",
   })
+  @ApiRequestDetails({
+    queries: [
+      {
+        name: "pageNo",
+        description: "The page number for pagination (1-based index)",
+        required: true,
+        type: Number,
+        example: 1,
+      },
+      {
+        name: "pageSize",
+        description: "The number of items per page (1-100)",
+        required: true,
+        type: Number,
+        example: 10,
+      },
+      {
+        name: "searchKey",
+        description: "Optional search term to filter designations",
+        required: false,
+        type: String,
+        default: "",
+        example: "manager",
+      },
+    ],
+  })
   @ApiSuccessResponse(DesignationListSuccessDto, 200)
   @ApiErrorResponses({
     // unauthorized: CustomUnauthorizedDto,

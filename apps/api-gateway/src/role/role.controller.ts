@@ -112,6 +112,32 @@ export class RoleController {
     summary: "List roles",
     description: "Retrieves a list of user roles with optional filtering.",
   })
+  @ApiRequestDetails({
+    queries: [
+      {
+        name: "pageNo",
+        description: "The page number for pagination",
+        required: true,
+        type: Number,
+        example: 1,
+      },
+      {
+        name: "pageSize",
+        description: "The number of items per page for pagination",
+        required: true,
+        type: Number,
+        example: 10,
+      },
+      {
+        name: "searchKey",
+        description: "Search term to filter roles by name or description",
+        required: false,
+        type: String,
+        default: "",
+        example: "admin",
+      },
+    ],
+  })
   @ApiSuccessResponse(RolesListSuccessDto, 200)
   @ApiErrorResponses({
     validation: RolesValidationDto,
