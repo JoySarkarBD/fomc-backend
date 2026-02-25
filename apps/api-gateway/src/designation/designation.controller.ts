@@ -29,8 +29,42 @@ import { ApiSuccessResponse } from "../common/decorators/api-success-response.de
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { DesignationService } from "./designation.service";
-import { DesignationListSuccessDto } from "./dto/designation-list-success.dto";
-import { DesignationSuccessDto } from "./dto/designation-success.dto";
+import {
+  DesignationCreateConflictDto,
+  DesignationUpdateConflictDto,
+} from "./dto/error/designation-conflict.dto";
+import {
+  DesignationCreateForbiddenDto,
+  DesignationGetByIdForbiddenDto,
+  DesignationsForbiddenDto,
+  DesignationUpdateForbiddenDto,
+} from "./dto/error/designation-forbidden.dto";
+import {
+  DesignationCreateInternalErrorDto,
+  DesignationInternalErrorDto,
+  DesignationsInternalErrorDto,
+  DesignationUpdateInternalErrorDto,
+} from "./dto/error/designation-internal-error.dto";
+import {
+  DesignationNotFoundDto,
+  DesignationUpdateByIdNotFoundDto,
+} from "./dto/error/designation-not-found.dto";
+import {
+  DesignationCreateUnauthorizedDto,
+  DesignationGetByIdUnauthorizedDto,
+  DesignationsUnauthorizedDto,
+  DesignationUpdateUnauthorizedDto,
+} from "./dto/error/designation-unauthorized.dto";
+import {
+  DesignationCreateValidationDto,
+  DesignationGetByIdValidationDto,
+  DesignationsValidationDto,
+  DesignationUpdateValidationDto,
+} from "./dto/error/designation-validation.dto";
+import {
+  DesignationListSuccessDto,
+  DesignationSuccessDto,
+} from "./dto/success/designation-success.dto";
 
 @ApiTags("Designation")
 @Controller("designation")
@@ -50,8 +84,11 @@ export class DesignationController {
   @ApiBearerAuth("authorization")
   @ApiSuccessResponse(DesignationSuccessDto, 201)
   @ApiErrorResponses({
-    // unauthorized: CustomUnauthorizedDto,
-    // internal: CustomInternalServerErrorDto,
+    validation: DesignationCreateValidationDto,
+    unauthorized: DesignationCreateUnauthorizedDto,
+    forbidden: DesignationCreateForbiddenDto,
+    conflict: DesignationCreateConflictDto,
+    internal: DesignationCreateInternalErrorDto,
   })
   @Roles("SUPER ADMIN")
   @UseGuards(JwtAuthGuard)
@@ -101,8 +138,10 @@ export class DesignationController {
   })
   @ApiSuccessResponse(DesignationListSuccessDto, 200)
   @ApiErrorResponses({
-    // unauthorized: CustomUnauthorizedDto,
-    // internal: CustomInternalServerErrorDto,
+    validation: DesignationsValidationDto,
+    unauthorized: DesignationsUnauthorizedDto,
+    forbidden: DesignationsForbiddenDto,
+    internal: DesignationsInternalErrorDto,
   })
   @Get()
   async findDesignations(@Query() query: SearchQueryDto) {
@@ -130,9 +169,11 @@ export class DesignationController {
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
-    // notFound: CustomNotFoundDto,
-    // unauthorized: CustomUnauthorizedDto,
-    // internal: CustomInternalServerErrorDto,
+    validation: DesignationGetByIdValidationDto,
+    unauthorized: DesignationGetByIdUnauthorizedDto,
+    forbidden: DesignationGetByIdForbiddenDto,
+    notFound: DesignationNotFoundDto,
+    internal: DesignationInternalErrorDto,
   })
   @Get(":id")
   async findDesignationById(@Param() params: MongoIdDto) {
@@ -162,10 +203,12 @@ export class DesignationController {
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
-    // notFound: CustomNotFoundDto,
-    // conflict: CustomConflictDto,
-    // unauthorized: CustomUnauthorizedDto,
-    // internal: CustomInternalServerErrorDto,
+    validation: DesignationUpdateValidationDto,
+    unauthorized: DesignationUpdateUnauthorizedDto,
+    forbidden: DesignationUpdateForbiddenDto,
+    notFound: DesignationUpdateByIdNotFoundDto,
+    conflict: DesignationUpdateConflictDto,
+    internal: DesignationUpdateInternalErrorDto,
   })
   @UseGuards(JwtAuthGuard)
   @Roles("SUPER ADMIN")
