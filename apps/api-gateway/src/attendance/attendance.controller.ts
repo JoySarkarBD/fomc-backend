@@ -223,6 +223,15 @@ export class AttendanceController {
     );
   }
 
+  /**
+   * Updates the weekend off for a specific user.
+   *
+   * @guards RolesGuard - Ensures that only users with specific roles can access this endpoint.
+   * @param params - The parameters containing the user ID for whom the weekend off is being updated.
+   * @param body - The body containing the new weekend off values to be set for the user.
+   * @returns Result of the weekend off update process.
+   * @remarks This endpoint allows HR, Project Managers, and Team Leaders to update the weekend off for a specific user. It checks if the authenticated user has the necessary roles to perform this action and then updates the user's weekend off based on the provided user ID and new weekend off values.
+   */
   @ApiOperation({
     summary: "Update weekend off",
     description:
