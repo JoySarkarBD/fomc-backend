@@ -16,10 +16,9 @@ export enum AttendanceInType {
   PRESENT = "PRESENT",
   LATE = "LATE",
   ABSENT = "ABSENT",
-  OFF_DAY = "OFF_DAY",
   ON_LEAVE = "ON_LEAVE",
+  WEEKEND = "WEEKEND",
   WORK_FROM_HOME = "WORK_FROM_HOME",
-  WEEKEND_EXCHANGE = "WEEKEND_EXCHANGE",
 }
 
 /**
@@ -70,13 +69,13 @@ export class Attendance extends Document {
 
   // Type of shift (e.g., morning, evening, night)
   @Prop({
-    required: true,
     enum: [
       ...Object.values(ShiftTypeForSales),
       ...Object.values(ShiftTypeForOperations),
     ],
+    default: null,
   })
-  shiftType!: string;
+  shiftType?: string;
 
   // Optional field to track if the attendance record has been marked as late
   @Prop({ default: false })

@@ -23,6 +23,7 @@ import {
   ShiftTypeForOperations,
   ShiftTypeForSales,
 } from "../schemas/attendance.schema";
+import { WeekendExchangeDocument } from "../schemas/weekend-exchange.schema";
 import { GetAttendanceDto } from "./dto/get-attendance.dto";
 
 /* 
@@ -39,6 +40,7 @@ export class AttendanceService {
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
     @InjectModel(Attendance.name)
     private readonly attendanceModel: Model<AttendanceDocument>,
+    private readonly weekendExchangeModel: Model<WeekendExchangeDocument>,
   ) {}
 
   /**
@@ -52,7 +54,7 @@ export class AttendanceService {
   ): Promise<Attendance | { message: string; exception: string }> {
     const userId = (user.id ?? user._id) as string;
 
-    // Check user existence from user-service
+    // Fetch user from user-service
     const userExist = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.GET_USER, {
         id: userId,
@@ -75,9 +77,14 @@ export class AttendanceService {
       nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
     );
 
-    // Today's date (without time)
+    // Today's date without time
     const todayDate = new Date(bdNow);
     todayDate.setHours(0, 0, 0, 0);
+
+    // Day of week like SATURDAY, SUNDAY...
+    const todayDay = bdNow
+      .toLocaleString("en-US", { timeZone: "Asia/Dhaka", weekday: "long" })
+      .toUpperCase();
 
     // Prevent duplicate attendance
     const existingAttendance = await this.attendanceModel.findOne({
@@ -92,59 +99,88 @@ export class AttendanceService {
       };
     }
 
-    const currentMinutes = bdNow.getHours() * 60 + bdNow.getMinutes();
+    // Check WeekendExchange for today
+    const exchangeToday = await this.weekendExchangeModel.findOne({
+      user: userId,
+      newOffDate: todayDate,
+    });
 
-    let shiftType: string;
+    const exchangeOriginal = await this.weekendExchangeModel.findOne({
+      user: userId,
+      originalWeekendDate: todayDate,
+    });
+
+    // Determine Attendance Type
+    let attendanceType: AttendanceInType;
+    let shiftType: string = ShiftTypeForOperations.DAY; // default shift type
     let shiftStartMinutes = 0;
 
-    // Fixed shift for HR
-    if (user.role === "HR") {
-      shiftType = ShiftTypeForOperations.DAY; // 09:00 → 18:00
-      shiftStartMinutes = 9 * 60; // 09:00 AM
-    } else {
-      // SWITCH BASED ON DEPARTMENT
-      switch (user.department) {
-        case "OPERATIONS":
-          shiftType = ShiftTypeForOperations.DAY;
-          shiftStartMinutes = 9 * 60;
-          break;
-        case "SALES": {
-          const morningStart = 7 * 60;
-          const morningEnd = 15 * 60;
-          const eveningStart = 15 * 60;
-          const eveningEnd = 23 * 60;
-          const nightStart = 23 * 60;
-          const nightEnd = 7 * 60;
-
-          if (currentMinutes >= morningStart && currentMinutes < morningEnd) {
-            shiftType = ShiftTypeForSales.MORNING;
-            shiftStartMinutes = morningStart;
-          } else if (
-            currentMinutes >= eveningStart &&
-            currentMinutes < eveningEnd
-          ) {
-            shiftType = ShiftTypeForSales.EVENING;
-            shiftStartMinutes = eveningStart;
-          } else {
-            shiftType = ShiftTypeForSales.NIGHT;
-            shiftStartMinutes = nightStart;
-          }
-          break;
-        }
-        default:
-          return {
-            message: "Department not found",
-            exception: "HttpException",
-          };
-      }
+    // Case 1: Today is user's exchanged new off date → OFF_DAY
+    if (exchangeToday) {
+      attendanceType = AttendanceInType.WEEKEND;
     }
+    // Case 2: Today is user's original weekend that was exchanged → WORKING
+    else if (exchangeOriginal) {
+      attendanceType = AttendanceInType.PRESENT;
+      shiftType = ShiftTypeForOperations.DAY;
+    }
+    // Case 3: Today is normal weekend → WEEKEND_OFF
+    else if (userExist.weekendOff?.includes(todayDay)) {
+      attendanceType = AttendanceInType.WEEKEND;
+    }
+    // Case 4: Normal working day → calculate shift & late
+    else {
+      const currentMinutes = bdNow.getHours() * 60 + bdNow.getMinutes();
 
-    const graceLimit = shiftStartMinutes + 15;
-    let isLate = currentMinutes > graceLimit;
+      if (user.role === "HR") {
+        shiftType = ShiftTypeForOperations.DAY;
+        shiftStartMinutes = 9 * 60;
+      } else {
+        switch (user.department) {
+          case "OPERATIONS":
+            shiftType = ShiftTypeForOperations.DAY;
+            shiftStartMinutes = 9 * 60;
+            break;
 
-    const attendanceType = isLate
-      ? AttendanceInType.LATE
-      : AttendanceInType.PRESENT;
+          case "SALES": {
+            const morningStart = 7 * 60;
+            const morningEnd = 15 * 60;
+            const eveningStart = 15 * 60;
+            const eveningEnd = 23 * 60;
+            const nightStart = 23 * 60;
+            const nightEnd = 7 * 60;
+
+            if (currentMinutes >= morningStart && currentMinutes < morningEnd) {
+              shiftType = ShiftTypeForSales.MORNING;
+              shiftStartMinutes = morningStart;
+            } else if (
+              currentMinutes >= eveningStart &&
+              currentMinutes < eveningEnd
+            ) {
+              shiftType = ShiftTypeForSales.EVENING;
+              shiftStartMinutes = eveningStart;
+            } else {
+              shiftType = ShiftTypeForSales.NIGHT;
+              shiftStartMinutes = nightStart;
+            }
+            break;
+          }
+
+          default:
+            return {
+              message: "Department not found",
+              exception: "HttpException",
+            };
+        }
+      }
+
+      const graceLimit = shiftStartMinutes + 15; // 15 min grace
+      const isLate = currentMinutes > graceLimit;
+
+      attendanceType = isLate
+        ? AttendanceInType.LATE
+        : AttendanceInType.PRESENT;
+    }
 
     // Save Attendance
     const attendance = await this.attendanceModel.create({
@@ -153,7 +189,7 @@ export class AttendanceService {
       date: todayDate,
       inType: attendanceType,
       shiftType,
-      isLate,
+      isLate: attendanceType === AttendanceInType.LATE,
     });
 
     return attendance;
@@ -183,6 +219,13 @@ export class AttendanceService {
       user: new Types.ObjectId(userId),
       date: todayDate,
     });
+
+    if (attendance && attendance.inType === AttendanceInType.WEEKEND) {
+      return {
+        message: "Cannot mark out attendance for weekend off",
+        exception: "HttpException",
+      };
+    }
 
     if (!attendance) {
       return {
