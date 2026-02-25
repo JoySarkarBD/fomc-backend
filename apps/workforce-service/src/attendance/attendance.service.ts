@@ -23,7 +23,10 @@ import {
   ShiftTypeForOperations,
   ShiftTypeForSales,
 } from "../schemas/attendance.schema";
-import { WeekendExchangeDocument } from "../schemas/weekend-exchange.schema";
+import {
+  WeekendExchange,
+  WeekendExchangeDocument,
+} from "../schemas/weekend-exchange.schema";
 import { AttendanceByAuthorityDto } from "./dto/attendance-by-authority.dto";
 import { GetAttendanceDto } from "./dto/get-attendance.dto";
 
@@ -41,6 +44,7 @@ export class AttendanceService {
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
     @InjectModel(Attendance.name)
     private readonly attendanceModel: Model<AttendanceDocument>,
+    @InjectModel(WeekendExchange.name)
     private readonly weekendExchangeModel: Model<WeekendExchangeDocument>,
   ) {}
 

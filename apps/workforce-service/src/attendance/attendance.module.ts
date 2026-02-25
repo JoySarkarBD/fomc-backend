@@ -10,6 +10,10 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
 import { MongooseModule } from "@nestjs/mongoose";
 import config from "@shared/config/app.config";
 import { Attendance, AttendanceSchema } from "../schemas/attendance.schema";
+import {
+  WeekendExchange,
+  WeekendExchangeSchema,
+} from "../schemas/weekend-exchange.schema";
 import { AttendanceController } from "./attendance.controller";
 import { AttendanceService } from "./attendance.service";
 
@@ -32,6 +36,7 @@ import { AttendanceService } from "./attendance.service";
 
     MongooseModule.forFeature([
       { name: Attendance.name, schema: AttendanceSchema },
+      { name: WeekendExchange.name, schema: WeekendExchangeSchema },
     ]),
   ],
   controllers: [AttendanceController],

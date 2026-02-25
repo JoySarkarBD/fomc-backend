@@ -63,7 +63,7 @@ import {
   SingleUserAttendanceSuccessDto,
   UpdateWeekendSuccessDto,
 } from "./dto/success/attendance-success.dto";
-import { WeekendSetDto } from "./weekend-set.dto";
+import { WeekendSetDto } from "./dto/weekend-set.dto";
 
 @ApiTags("Attendance")
 @Controller("attendance")
@@ -312,7 +312,6 @@ export class AttendanceController {
     @Body() attendanceDetails: AttendanceByAuthorityDto,
   ) {
     return await this.attendanceService.markAttendanceAsAuthority(
-      attendanceDetails.userId,
       attendanceDetails,
     );
   }
