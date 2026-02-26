@@ -39,3 +39,10 @@ export class AssignedByDto {
   @IsNotEmpty({ message: "AssignedBy ID is required" })
   assignedBy!: string;
 }
+
+export class ExchangeIdDto {
+  /** A valid 24-character MongoDB ObjectId representing the ID of a shift exchange request. */
+  @IsMongoId({ message: "Exchange ID must be a valid MongoDB ObjectId" })
+  @IsNotEmpty({ message: "Exchange ID is required" })
+  exchangeId!: string;
+}

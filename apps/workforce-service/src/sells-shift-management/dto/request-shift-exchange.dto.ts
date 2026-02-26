@@ -43,3 +43,21 @@ export class RequestShiftExchangeDto {
   @IsString()
   reason?: string;
 }
+
+export class ApproveShiftExchangeDto {
+  @ApiProperty({
+    description: "ID of the shift exchange request to approve",
+    example: "60d5ec49f1a4c12d4c8e4b2a",
+  })
+  @IsNotEmpty()
+  @IsString()
+  exchangeId!: string;
+
+  @ApiProperty({
+    description: "Optional reason for approving the shift exchange",
+    example: "Approved due to valid reason provided",
+  })
+  @IsOptional()
+  @IsString()
+  reason?: string;
+}

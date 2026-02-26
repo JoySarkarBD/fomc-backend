@@ -22,7 +22,7 @@ import {
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
-import { UserIdDto } from "@shared/dto/mongo-id.dto";
+import { ExchangeIdDto, UserIdDto } from "@shared/dto/mongo-id.dto";
 import type { AuthUser } from "@shared/interfaces";
 import { CreateSellsShiftManagementDto } from "apps/workforce-service/src/sells-shift-management/dto/create-sells-shift-management.dto";
 import { GetSellsShiftDto } from "apps/workforce-service/src/sells-shift-management/dto/get-sells-shift.dto";
@@ -47,12 +47,38 @@ import {
   GetUserSellsShiftValidationDto,
 } from "./dto/error/get-user-sells-shift/get-user-sells-shift.dto";
 import {
-  ShiftExchangeForbiddenDto,
-  ShiftExchangeInternalErrorDto,
-  ShiftExchangeNotFoundDto,
-  ShiftExchangeUnauthorizedDto,
-  ShiftExchangeValidationDto,
-} from "./dto/error/shift-exchange/shift-exchange-error.dto";
+  ApproveShiftExchangeForbiddenDto,
+  ApproveShiftExchangeInternalErrorDto,
+  ApproveShiftExchangeNotFoundDto,
+  ApproveShiftExchangeUnauthorizedDto,
+  ApproveShiftExchangeValidationDto,
+} from "./dto/error/shift-exchange/approve-shift-exchange";
+import {
+  GetMyShiftExchangesForbiddenDto,
+  GetMyShiftExchangesInternalErrorDto,
+  GetMyShiftExchangesNotFoundDto,
+  GetMyShiftExchangesUnauthorizedDto,
+} from "./dto/error/shift-exchange/get-my-shift-exchanges";
+import {
+  GetPendingShiftExchangesForbiddenDto,
+  GetPendingShiftExchangesInternalErrorDto,
+  GetPendingShiftExchangesNotFoundDto,
+  GetPendingShiftExchangesUnauthorizedDto,
+} from "./dto/error/shift-exchange/get-pending-shift-exchanges";
+import {
+  RejectShiftExchangeForbiddenDto,
+  RejectShiftExchangeInternalErrorDto,
+  RejectShiftExchangeNotFoundDto,
+  RejectShiftExchangeUnauthorizedDto,
+  RejectShiftExchangeValidationDto,
+} from "./dto/error/shift-exchange/reject-shift-exchange";
+import {
+  RequestShiftExchangeForbiddenDto,
+  RequestShiftExchangeInternalErrorDto,
+  RequestShiftExchangeNotFoundDto,
+  RequestShiftExchangeUnauthorizedDto,
+  RequestShiftExchangeValidationDto,
+} from "./dto/error/shift-exchange/request-shift-exchange";
 import {
   CreateSellsShiftManagementSuccessDto,
   GetUserSellsShiftSuccessDto,
@@ -137,11 +163,11 @@ export class SellsShiftManagementController {
   })
   @ApiSuccessResponse(ShiftExchangeRequestSuccessDto, 201)
   @ApiErrorResponses({
-    unauthorized: ShiftExchangeUnauthorizedDto,
-    forbidden: ShiftExchangeForbiddenDto,
-    notFound: ShiftExchangeNotFoundDto,
-    validation: ShiftExchangeValidationDto,
-    internal: ShiftExchangeInternalErrorDto,
+    unauthorized: RequestShiftExchangeUnauthorizedDto,
+    forbidden: RequestShiftExchangeForbiddenDto,
+    notFound: RequestShiftExchangeNotFoundDto,
+    validation: RequestShiftExchangeValidationDto,
+    internal: RequestShiftExchangeInternalErrorDto,
   })
   @UseGuards(RolesGuard)
   @Roles("PROJECT MANAGER", "EMPLOYEE")
@@ -180,21 +206,21 @@ export class SellsShiftManagementController {
   })
   @ApiSuccessResponse(ApproveShiftExchangeSuccessDto, 200)
   @ApiErrorResponses({
-    unauthorized: ShiftExchangeUnauthorizedDto,
-    forbidden: ShiftExchangeForbiddenDto,
-    notFound: ShiftExchangeNotFoundDto,
-    validation: ShiftExchangeValidationDto,
-    internal: ShiftExchangeInternalErrorDto,
+    unauthorized: ApproveShiftExchangeUnauthorizedDto,
+    forbidden: ApproveShiftExchangeForbiddenDto,
+    notFound: ApproveShiftExchangeNotFoundDto,
+    validation: ApproveShiftExchangeValidationDto,
+    internal: ApproveShiftExchangeInternalErrorDto,
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "DIRECTOR", "PROJECT MANAGER")
   @Patch("exchange/approve/:exchangeId")
   async approveShiftExchange(
     @GetUser() user: AuthUser,
-    @Param("exchangeId") exchangeId: string,
+    @Param() param: ExchangeIdDto,
   ) {
     return this.sellsShiftManagementService.approveShiftExchange(
-      exchangeId,
+      param.exchangeId,
       user._id!,
     );
   }
@@ -223,22 +249,22 @@ export class SellsShiftManagementController {
   })
   @ApiSuccessResponse(RejectShiftExchangeSuccessDto, 200)
   @ApiErrorResponses({
-    unauthorized: ShiftExchangeUnauthorizedDto,
-    forbidden: ShiftExchangeForbiddenDto,
-    notFound: ShiftExchangeNotFoundDto,
-    validation: ShiftExchangeValidationDto,
-    internal: ShiftExchangeInternalErrorDto,
+    unauthorized: RejectShiftExchangeUnauthorizedDto,
+    forbidden: RejectShiftExchangeForbiddenDto,
+    notFound: RejectShiftExchangeNotFoundDto,
+    validation: RejectShiftExchangeValidationDto,
+    internal: RejectShiftExchangeInternalErrorDto,
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "DIRECTOR", "PROJECT MANAGER")
   @Patch("exchange/reject/:exchangeId")
   async rejectShiftExchange(
     @GetUser() user: AuthUser,
-    @Param("exchangeId") exchangeId: string,
+    @Param() param: ExchangeIdDto,
     @Body("reason") reason?: string,
   ) {
     return this.sellsShiftManagementService.rejectShiftExchange(
-      exchangeId,
+      param.exchangeId,
       user._id!,
       reason,
     );
@@ -259,10 +285,10 @@ export class SellsShiftManagementController {
   })
   @ApiSuccessResponse(GetMyShiftExchangesSuccessDto, 200)
   @ApiErrorResponses({
-    unauthorized: ShiftExchangeUnauthorizedDto,
-    forbidden: ShiftExchangeForbiddenDto,
-    notFound: ShiftExchangeNotFoundDto,
-    internal: ShiftExchangeInternalErrorDto,
+    unauthorized: GetMyShiftExchangesUnauthorizedDto,
+    forbidden: GetMyShiftExchangesForbiddenDto,
+    notFound: GetMyShiftExchangesNotFoundDto,
+    internal: GetMyShiftExchangesInternalErrorDto,
   })
   @Get("exchange/my")
   async getMyShiftExchanges(@GetUser() user: AuthUser) {
@@ -284,10 +310,10 @@ export class SellsShiftManagementController {
   })
   @ApiSuccessResponse(GetPendingShiftExchangesSuccessDto, 200)
   @ApiErrorResponses({
-    unauthorized: ShiftExchangeUnauthorizedDto,
-    forbidden: ShiftExchangeForbiddenDto,
-    notFound: ShiftExchangeNotFoundDto,
-    internal: ShiftExchangeInternalErrorDto,
+    unauthorized: GetPendingShiftExchangesUnauthorizedDto,
+    forbidden: GetPendingShiftExchangesForbiddenDto,
+    notFound: GetPendingShiftExchangesNotFoundDto,
+    internal: GetPendingShiftExchangesInternalErrorDto,
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN", "DIRECTOR", "PROJECT MANAGER")
