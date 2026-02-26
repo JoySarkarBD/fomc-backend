@@ -218,6 +218,7 @@ export class AttendanceController {
         example: 2026,
       },
     ],
+    paramDto: UserIdDto,
     queryDto: GetAttendanceDto,
   })
   @ApiSuccessResponse(SingleUserAttendanceSuccessDto, 200)
@@ -265,6 +266,7 @@ export class AttendanceController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: UserIdDto,
   })
   @ApiBody({
     description: "The weekend off values to be set for the user",
@@ -319,6 +321,7 @@ export class AttendanceController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: UserIdDto,
   })
   @ApiSuccessResponse(MarkAttendanceAsAuthoritySuccessDto, 200)
   @ApiErrorResponses({
@@ -369,6 +372,7 @@ export class AttendanceController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: UserIdDto,
   })
   @ApiSuccessResponse(MarkWeekendExchangeByAuthoritySuccessDto, 200)
   @ApiErrorResponses({

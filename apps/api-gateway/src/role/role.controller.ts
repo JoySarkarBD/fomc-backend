@@ -169,6 +169,7 @@ export class RoleController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(RoleByIdSuccessDto, 200)
   @ApiErrorResponses({
@@ -202,6 +203,7 @@ export class RoleController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(RolePatchSuccessDto, 200)
   @ApiErrorResponses({
@@ -237,6 +239,7 @@ export class RoleController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(RoleDeleteSuccessDto, 200)
   @ApiErrorResponses({

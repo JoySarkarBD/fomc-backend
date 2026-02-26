@@ -168,6 +168,7 @@ export class DepartmentController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(DepartmentByIdSuccessDto, 200)
   @ApiErrorResponses({
@@ -202,6 +203,7 @@ export class DepartmentController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(DepartmentPatchSuccessDto, 200)
   @ApiErrorResponses({
@@ -240,6 +242,7 @@ export class DepartmentController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(DepartmentDeleteSuccessDto, 200)
   @ApiErrorResponses({

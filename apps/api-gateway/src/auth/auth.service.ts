@@ -141,16 +141,12 @@ export class AuthService {
     user.role = role?.name ?? user.role;
 
     // Fetch department and designation names based on their IDs to provide more meaningful information in the response. If the department or designation is not found, fallback to the original ID values from the user object.
-    const department = await this.departmentService.findDepartmentById(
-      user.department,
-    );
+    const department = await this.departmentService.findOne(user.department);
 
     user.department = department?.data?.name ?? user.department;
 
     // Fetch designation name based on its ID to provide more meaningful information in the response. If the designation is not found, fallback to the original ID value from the user object.
-    const designation = await this.designationService.findDesignationById(
-      user.designation,
-    );
+    const designation = await this.designationService.findOne(user.designation);
 
     user.designation = designation?.data?.name ?? user.designation;
 

@@ -165,6 +165,7 @@ export class DesignationController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
@@ -199,6 +200,7 @@ export class DesignationController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
@@ -241,6 +243,7 @@ export class DesignationController {
       type: String,
       example: "65f1b2c3d4e5f67890123456",
     },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({

@@ -13,6 +13,7 @@ interface SwaggerRequestConfig {
   params?: SingleOrArray<ApiParamOptions>;
   queries?: SingleOrArray<ApiQueryOptions>;
   queryDto?: Type<unknown>;
+  paramDto?: Type<unknown>;
 }
 
 export function ApiRequestDetails(
@@ -41,6 +42,11 @@ export function ApiRequestDetails(
   // 🔥 DTO Query Support
   if (config?.queryDto) {
     decorators.push(ApiExtraModels(config.queryDto));
+  }
+
+  // 🔥 DTO Param Support
+  if (config?.paramDto) {
+    decorators.push(ApiExtraModels(config.paramDto));
   }
 
   return applyDecorators(...decorators);
