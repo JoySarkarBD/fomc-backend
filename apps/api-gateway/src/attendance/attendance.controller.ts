@@ -97,7 +97,7 @@ export class AttendanceController {
     summary: "Mark attendance",
     description: "Marks the authenticated user as present.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -129,7 +129,7 @@ export class AttendanceController {
     summary: "Get my attendance",
     description: "Retrieves attendance records for the authenticated user.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -181,7 +181,7 @@ export class AttendanceController {
     summary: "Mark out attendance",
     description: "Marks the authenticated user as out for the day.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -215,7 +215,7 @@ export class AttendanceController {
       "Get specific user attendance records - HR, PROJECT MANAGER, TEAM LEADER only",
     description: "Retrieves attendance records for a specific user.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -282,7 +282,7 @@ export class AttendanceController {
     description:
       "Allows the authenticated user to update their and others weekend off.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -338,7 +338,7 @@ export class AttendanceController {
     description:
       "Allows an authority (e.g., manager) to mark attendance for a user by providing the necessary details in the request body.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -394,7 +394,7 @@ export class AttendanceController {
     description:
       "Allows an authority (e.g., manager) to mark the weekend exchange for a user by providing the original weekend date and new off date in the request body.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",

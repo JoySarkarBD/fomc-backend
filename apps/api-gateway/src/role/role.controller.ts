@@ -88,7 +88,7 @@ export class RoleController {
     summary: "Create role",
     description: "Creates a new user role in the system.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -196,7 +196,7 @@ export class RoleController {
     summary: "Update role",
     description: "Updates an existing user role's details.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -237,7 +237,7 @@ export class RoleController {
     summary: "Delete role",
     description: "Deletes a user role by its ID.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",

@@ -141,7 +141,7 @@ export class AuthController {
     summary: "Change password",
     description: "Changes the authenticated user's password.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -169,7 +169,7 @@ export class AuthController {
     summary: "User logout",
     description: "Invalidates the current authentication token.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",

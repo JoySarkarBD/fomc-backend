@@ -87,7 +87,7 @@ export class DepartmentController {
     summary: "Create department",
     description: "Creates a new department in the organization.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -196,7 +196,7 @@ export class DepartmentController {
     summary: "Update department",
     description: "Updates an existing department's details.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -240,7 +240,7 @@ export class DepartmentController {
     summary: "Delete department",
     description: "Deletes a department by its ID.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",

@@ -34,7 +34,7 @@ export class SellsShiftManagementController {
     description:
       "Creates a new sells shift management entry for a user. This endpoint is protected and requires the user to have the SUPER ADMIN role.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",

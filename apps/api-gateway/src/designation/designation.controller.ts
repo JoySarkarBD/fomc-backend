@@ -86,7 +86,7 @@ export class DesignationController {
     summary: "Create designation",
     description: "Creates a new job designation in the organization.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -197,7 +197,7 @@ export class DesignationController {
     summary: "Update designation",
     description: "Updates an existing job designation's details.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -245,7 +245,7 @@ export class DesignationController {
     summary: "Delete designation",
     description: "Deletes a job designation by its ID.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",

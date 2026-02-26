@@ -88,7 +88,7 @@ export class UserController {
     summary: "List users",
     description: "Retrieves a list of users with optional filtering.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -146,7 +146,7 @@ export class UserController {
       example: "65f1b2c3d4e5f67890123456",
     },
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -179,7 +179,7 @@ export class UserController {
     summary: "Get my profile",
     description: "Retrieves the profile of the authenticated user.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
@@ -211,7 +211,7 @@ export class UserController {
     summary: "Update my profile",
     description: "Updates the authenticated user's name and/or avatar.",
   })
-  @ApiBearerAuth("authorization")
+  @ApiBearerAuth("Authorization")
   @ApiHeader({
     name: "Authorization",
     description: "Bearer token",
