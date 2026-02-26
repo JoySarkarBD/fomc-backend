@@ -6,6 +6,7 @@
  * (e.g., client, project). Validates required fields, enums, date formats,
  * and array contents.
  */
+import { ApiProperty } from "@nestjs/swagger";
 import {
   IsArray,
   IsDateString,
@@ -71,38 +72,82 @@ export function IsMongoIdOrString(validationOptions?: ValidationOptions) {
  * The validation rules defined in this DTO help maintain data integrity and ensure that tasks are created with the necessary information while allowing for flexibility in how clients and projects are referenced.
  */
 export class CreateTaskDto {
+  @ApiProperty({
+    required: true,
+    description: "The name of the task",
+    example: "Complete project documentation",
+  })
   @IsString({ message: "Name must be a string" })
   @IsNotEmpty({ message: "Name is required" })
   name!: string;
 
+  @ApiProperty({
+    required: true,
+    description: "The client associated with the task (ID or name)",
+    example: "60c72b2f9b1d8e5a5c8f9e7d or Acme Corporation",
+  })
   @IsMongoIdOrString({ message: "Client must be a valid ID or plain string" })
   @IsNotEmpty({ message: "Client is required" })
   client!: string;
 
+  @ApiProperty({
+    required: true,
+    description: "The project associated with the task (ID or name)",
+    example: "60c72b2f9b1d8e5a5c8f9e7d or Website Redesign",
+  })
   @IsMongoIdOrString({ message: "Project must be a valid ID or plain string" })
   @IsNotEmpty({ message: "Project is required" })
   project!: string;
 
+  @ApiProperty({
+    required: true,
+    description: "The due date for the task (ISO date string)",
+    example: "2024-06-30T23:59:59.000Z",
+  })
   @IsDateString({}, { message: "dueDate must be a valid ISO date string" })
   @IsNotEmpty({ message: "dueDate is required" })
   dueDate!: Date;
 
+  @ApiProperty({
+    description: "The priority level of the task",
+    enum: TaskPriority,
+    example: TaskPriority.HIGH,
+  })
   @IsEnum(TaskPriority, { message: "Invalid priority level" })
   @IsOptional()
   priority?: TaskPriority;
 
+  @ApiProperty({
+    description: "A brief description of the task",
+    example:
+      "This task involves creating comprehensive documentation for the project.",
+  })
   @IsString({ message: "Description must be a string" })
   @IsOptional()
   description?: string;
 
+  @ApiProperty({
+    description: "The current status of the task",
+    enum: TaskStatus,
+    example: TaskStatus.WIP,
+  })
   @IsEnum(TaskStatus, { message: "Invalid status" })
   @IsOptional()
   status?: TaskStatus;
 
+  @ApiProperty({
+    required: true,
+    description: "The ID of the user creating the task",
+    example: "60c72b2f9b1d8e5a5c8f9e7d",
+  })
   @IsMongoId({ message: "createdBy must be a valid ObjectId" })
   @IsNotEmpty({ message: "Creator ID is required" })
   createdBy!: string;
 
+  @ApiProperty({
+    description: "List of user IDs to assign the task to",
+    example: ["60c72b2f9b1d8e5a5c8f9e7d", "60c72b2f9b1d8e5a5c8f9e7e"],
+  })
   @IsArray({ message: "assignTo must be an array" })
   @IsMongoId({ each: true, message: "Each assignee must be a valid ObjectId" })
   @IsOptional()
