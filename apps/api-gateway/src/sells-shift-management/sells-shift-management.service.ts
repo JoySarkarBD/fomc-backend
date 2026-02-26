@@ -57,10 +57,13 @@ export class SellsShiftManagementService {
    */
   async findShiftForUser(userId: UserIdDto["userId"], query: GetSellsShiftDto) {
     const result = await firstValueFrom(
-      this.workforceClient.send(SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_USER_SELLS_SHIFT, {
-        userId,
-        query,
-      }),
+      this.workforceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_USER_SELLS_SHIFT,
+        {
+          userId,
+          query,
+        },
+      ),
     );
 
     this.handleException(result);
@@ -73,48 +76,70 @@ export class SellsShiftManagementService {
    */
   async requestShiftExchange(userId: string, data: RequestShiftExchangeDto) {
     const result = await firstValueFrom(
-      this.workforceClient.send(SELLS_SHIFT_MANAGEMENT_COMMANDS.REQUEST_SHIFT_EXCHANGE, {
-        userId,
-        requestShiftExchangeDto: data,
-      }),
+      this.workforceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.REQUEST_SHIFT_EXCHANGE,
+        {
+          userId,
+          requestShiftExchangeDto: data,
+        },
+      ),
     );
 
     this.handleException(result);
 
-    return buildResponse("Shift exchange request submitted successfully", result);
+    return buildResponse(
+      "Shift exchange request submitted successfully",
+      result,
+    );
   }
 
   /**
    * Approve a shift exchange.
    */
-  async approveShiftExchange(exchangeId: string, managerId: string) {
+  async approveShiftExchange(exchangeId: string, approvedBy: string) {
     const result = await firstValueFrom(
-      this.workforceClient.send(SELLS_SHIFT_MANAGEMENT_COMMANDS.APPROVE_SHIFT_EXCHANGE, {
-        exchangeId,
-        managerId,
-      }),
+      this.workforceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.APPROVE_SHIFT_EXCHANGE,
+        {
+          exchangeId,
+          approvedBy,
+        },
+      ),
     );
 
     this.handleException(result);
 
-    return buildResponse("Shift exchange request approved successfully", result);
+    return buildResponse(
+      "Shift exchange request approved successfully",
+      result,
+    );
   }
 
   /**
    * Reject a shift exchange.
    */
-  async rejectShiftExchange(exchangeId: string, managerId: string, reason?: string) {
+  async rejectShiftExchange(
+    exchangeId: string,
+    approvedBy: string,
+    reason?: string,
+  ) {
     const result = await firstValueFrom(
-      this.workforceClient.send(SELLS_SHIFT_MANAGEMENT_COMMANDS.REJECT_SHIFT_EXCHANGE, {
-        exchangeId,
-        managerId,
-        reason,
-      }),
+      this.workforceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.REJECT_SHIFT_EXCHANGE,
+        {
+          exchangeId,
+          approvedBy,
+          reason,
+        },
+      ),
     );
 
     this.handleException(result);
 
-    return buildResponse("Shift exchange request rejected successfully", result);
+    return buildResponse(
+      "Shift exchange request rejected successfully",
+      result,
+    );
   }
 
   /**
@@ -122,9 +147,12 @@ export class SellsShiftManagementService {
    */
   async getUserShiftExchanges(userId: string) {
     const result = await firstValueFrom(
-      this.workforceClient.send(SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_USER_SHIFT_EXCHANGES, {
-        userId,
-      }),
+      this.workforceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_USER_SHIFT_EXCHANGES,
+        {
+          userId,
+        },
+      ),
     );
 
     this.handleException(result);
@@ -137,7 +165,10 @@ export class SellsShiftManagementService {
    */
   async getPendingShiftExchanges() {
     const result = await firstValueFrom(
-      this.workforceClient.send(SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_PENDING_SHIFT_EXCHANGES, {}),
+      this.workforceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_PENDING_SHIFT_EXCHANGES,
+        {},
+      ),
     );
 
     this.handleException(result);
@@ -155,7 +186,10 @@ export class SellsShiftManagementService {
         case "ConflictException":
           throw new HttpException(result.message, HttpStatus.CONFLICT);
         default:
-          throw new HttpException(result.message, HttpStatus.INTERNAL_SERVER_ERROR);
+          throw new HttpException(
+            result.message,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
       }
     }
   }

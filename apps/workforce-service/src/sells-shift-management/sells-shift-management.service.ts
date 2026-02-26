@@ -200,10 +200,10 @@ export class SellsShiftManagementService {
 
     // Find Sales department ID
     const salesDept = await this.departmentModel.findOne({ name: "Sales" });
-    const managerIds: string[] = [];
+    const userIds: string[] = [];
 
     if (salesDept) {
-      // Find managers in Sales department
+      // Find users in Sales department
       const usersRes = await firstValueFrom(
         this.userClient.send(USER_COMMANDS.GET_USERS, {
           department: [salesDept._id.toString()],
@@ -214,20 +214,20 @@ export class SellsShiftManagementService {
 
       // Assuming that the user service returns a list of users in the "users" property of the response
       if (usersRes && Array.isArray(usersRes.users)) {
-        const managers = usersRes.users.filter(
+        const users = usersRes.users.filter(
           (u: any) => u.role === "SUPER ADMIN",
         );
-        managers.forEach((m: any) => managerIds.push(m._id.toString()));
+        users.forEach((m: any) => userIds.push(m._id.toString()));
       }
     }
 
-    if (managerIds.length > 0) {
+    if (userIds.length > 0) {
       await firstValueFrom(
         this.notificationClient.send(
           NOTIFICATION_COMMANDS.CREATE_NOTIFICATION,
           {
-            receiver: managerIds,
-            sender: userId,
+            receiver: userIds.map((id) => new Types.ObjectId(id)),
+            sender: new Types.ObjectId(userId),
             title: "Shift Exchange Request",
             message: `${user.name} has requested a shift exchange on ${exchangeDate.toDateString()}.`,
             type: NotificationType.SHIFT_EXCHANGE_REQUEST,
@@ -245,10 +245,10 @@ export class SellsShiftManagementService {
    * Approve a shift exchange request.
    *
    * @param {string} exchangeId - The ID of the shift exchange request to be approved.
-   * @param {string} managerId - The ID of the manager approving the shift exchange request.
+   * @param {string} approvedBy - The ID of the user approving the shift exchange request.
    * @return {Promise<any>} The result of the shift exchange approval, which may include the updated shift exchange record or an error message if the exchange request is not found or if it has already been processed.
    */
-  async approveShiftExchange(exchangeId: string, managerId: string) {
+  async approveShiftExchange(exchangeId: string, approvedBy: string) {
     const exchange = await this.shiftExchangeModel.findById(exchangeId);
     if (!exchange) {
       return {
@@ -265,7 +265,7 @@ export class SellsShiftManagementService {
     }
 
     exchange.status = ShiftExchangeStatus.APPROVED;
-    exchange.approvedBy = new Types.ObjectId(managerId);
+    exchange.approvedBy = new Types.ObjectId(approvedBy);
     await exchange.save();
 
     // Update the actual shift assignment
@@ -281,8 +281,8 @@ export class SellsShiftManagementService {
     // Notify user
     await firstValueFrom(
       this.notificationClient.send(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {
-        receiver: [exchange.user.toString()],
-        sender: managerId,
+        receiver: [new Types.ObjectId(exchange.user)],
+        sender: new Types.ObjectId(approvedBy),
         title: "Shift Exchange Approved",
         message: `Your shift exchange request for ${exchange.exchangeDate.toDateString()} has been approved.`,
         type: NotificationType.SHIFT_EXCHANGE_APPROVED,
@@ -298,13 +298,13 @@ export class SellsShiftManagementService {
    * Reject a shift exchange request.
    *
    * @param {string} exchangeId - The ID of the shift exchange request to be rejected.
-   * @param {string} managerId - The ID of the manager rejecting the shift exchange request.
+   * @param {string} approvedBy - The ID of the user rejecting the shift exchange request.
    * @param {string} [reason] - Optional reason for rejecting the shift exchange request.
    * @return {Promise<any>} The result of the shift exchange rejection, which may include the updated shift exchange record or an error message if the exchange request is not found or if it has already been processed.
    */
   async rejectShiftExchange(
     exchangeId: string,
-    managerId: string,
+    approvedBy: string,
     reason?: string,
   ) {
     const exchange = await this.shiftExchangeModel.findById(exchangeId);
@@ -323,7 +323,7 @@ export class SellsShiftManagementService {
     }
 
     exchange.status = ShiftExchangeStatus.REJECTED;
-    exchange.approvedBy = new Types.ObjectId(managerId);
+    exchange.approvedBy = new Types.ObjectId(approvedBy);
     if (reason)
       exchange.reason = `Rejected: ${reason}. Original reason: ${exchange.reason}`;
     await exchange.save();
@@ -331,8 +331,8 @@ export class SellsShiftManagementService {
     // Notify user
     await firstValueFrom(
       this.notificationClient.send(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {
-        receiver: [exchange.user.toString()],
-        sender: managerId,
+        receiver: [new Types.ObjectId(exchange.user)],
+        sender: new Types.ObjectId(approvedBy),
         title: "Shift Exchange Rejected",
         message: `Your shift exchange request for ${exchange.exchangeDate.toDateString()} has been rejected.`,
         type: NotificationType.SHIFT_EXCHANGE_REJECTED,

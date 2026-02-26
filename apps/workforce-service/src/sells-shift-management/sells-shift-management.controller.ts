@@ -105,12 +105,12 @@ export class SellsShiftManagementController {
     @Payload()
     payload: {
       exchangeId: string;
-      managerId: string;
+      approvedBy: string;
     },
   ) {
     return await this.sellsShiftManagementService.approveShiftExchange(
       payload.exchangeId,
-      payload.managerId,
+      payload.approvedBy,
     );
   }
 
@@ -127,13 +127,13 @@ export class SellsShiftManagementController {
     @Payload()
     payload: {
       exchangeId: string;
-      managerId: string;
+      approvedBy: string;
       reason?: string;
     },
   ) {
     return await this.sellsShiftManagementService.rejectShiftExchange(
       payload.exchangeId,
-      payload.managerId,
+      payload.approvedBy,
       payload.reason,
     );
   }

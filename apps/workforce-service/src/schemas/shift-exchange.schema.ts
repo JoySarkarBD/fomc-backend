@@ -37,7 +37,7 @@ export class ShiftExchange extends Document {
   @Prop({ default: null })
   reason?: string;
 
-  @Prop({ type: Types.ObjectId, ref: "User", default: null })
+  @Prop({ type: Types.ObjectId, default: null })
   approvedBy?: mongo.ObjectId;
 
   @Prop({
