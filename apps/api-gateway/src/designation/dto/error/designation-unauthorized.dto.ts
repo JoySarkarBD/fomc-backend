@@ -9,23 +9,6 @@ export class DesignationCreateUnauthorizedDto extends CustomUnauthorizedDto {
   @ApiProperty({ example: Methods.POST })
   declare method: Methods.POST;
 }
-
-export class DesignationsUnauthorizedDto extends CustomUnauthorizedDto {
-  @ApiProperty({ example: "api/designation" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
-export class DesignationGetByIdUnauthorizedDto extends CustomUnauthorizedDto {
-  @ApiProperty({ example: "api/designation/:id" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
 export class DesignationUpdateUnauthorizedDto extends CustomUnauthorizedDto {
   @ApiProperty({ example: "api/designation/:id" })
   declare endpoint: string;

@@ -35,8 +35,6 @@ import {
 } from "./dto/error/designation-conflict.dto";
 import {
   DesignationCreateForbiddenDto,
-  DesignationGetByIdForbiddenDto,
-  DesignationsForbiddenDto,
   DesignationUpdateForbiddenDto,
 } from "./dto/error/designation-forbidden.dto";
 import {
@@ -51,8 +49,6 @@ import {
 } from "./dto/error/designation-not-found.dto";
 import {
   DesignationCreateUnauthorizedDto,
-  DesignationGetByIdUnauthorizedDto,
-  DesignationsUnauthorizedDto,
   DesignationUpdateUnauthorizedDto,
 } from "./dto/error/designation-unauthorized.dto";
 import {
@@ -138,8 +134,6 @@ export class DesignationController {
   @ApiSuccessResponse(DesignationListSuccessDto, 200)
   @ApiErrorResponses({
     validation: DesignationsValidationDto,
-    unauthorized: DesignationsUnauthorizedDto,
-    forbidden: DesignationsForbiddenDto,
     internal: DesignationsInternalErrorDto,
   })
   @Get()
@@ -170,8 +164,6 @@ export class DesignationController {
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
     validation: DesignationGetByIdValidationDto,
-    unauthorized: DesignationGetByIdUnauthorizedDto,
-    forbidden: DesignationGetByIdForbiddenDto,
     notFound: DesignationNotFoundDto,
     internal: DesignationInternalErrorDto,
   })

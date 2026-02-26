@@ -34,8 +34,6 @@ import {
 } from "./dto/error/department-conflict.dto";
 import {
   DepartmentDeleteForbiddenDto,
-  DepartmentGetByIdForbiddenDto,
-  DepartmentsForbiddenDto,
   DepartmentUpdateForbiddenDto,
 } from "./dto/error/department-forbidden.dto";
 import {
@@ -52,8 +50,6 @@ import {
 import {
   DepartmentCreateUnauthorizedDto,
   DepartmentDeleteUnauthorizedDto,
-  DepartmentGetByIdUnauthorizedDto,
-  DepartmentsUnauthorizedDto,
   DepartmentUpdateUnauthorizedDto,
 } from "./dto/error/department-unauthorized.dto";
 import {
@@ -141,8 +137,6 @@ export class DepartmentController {
   @ApiSuccessResponse(DepartmentsListSuccessDto, 200)
   @ApiErrorResponses({
     validation: DepartmentsValidationDto,
-    unauthorized: DepartmentsUnauthorizedDto,
-    forbidden: DepartmentsForbiddenDto,
     internal: DepartmentInternalErrorDto,
   })
   @Get()
@@ -173,8 +167,6 @@ export class DepartmentController {
   @ApiSuccessResponse(DepartmentByIdSuccessDto, 200)
   @ApiErrorResponses({
     validation: DepartmentGetByIdValidationDto,
-    unauthorized: DepartmentGetByIdUnauthorizedDto,
-    forbidden: DepartmentGetByIdForbiddenDto,
     notFound: DepartmentNotFoundDto,
     internal: DepartmentInternalErrorDto,
   })

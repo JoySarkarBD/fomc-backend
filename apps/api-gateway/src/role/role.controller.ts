@@ -33,8 +33,6 @@ import {
 import {
   RoleCreateForbiddenDto,
   RoleDeleteForbiddenDto,
-  RoleGetByIdForbiddenDto,
-  RolesForbiddenDto,
   RoleUpdateForbiddenDto,
 } from "./dto/error/role-forbidden.dto";
 import {
@@ -52,8 +50,6 @@ import {
 import {
   RoleCreateUnauthorizedDto,
   RoleDeleteUnauthorizedDto,
-  RoleGetByIdUnauthorizedDto,
-  RolesUnauthorizedDto,
   RoleUpdateUnauthorizedDto,
 } from "./dto/error/role-unauthorized.dto";
 import {
@@ -142,8 +138,6 @@ export class RoleController {
   @ApiSuccessResponse(RolesListSuccessDto, 200)
   @ApiErrorResponses({
     validation: RolesValidationDto,
-    unauthorized: RolesUnauthorizedDto,
-    forbidden: RolesForbiddenDto,
     internal: RolesInternalErrorDto,
   })
   @Get()
@@ -174,8 +168,6 @@ export class RoleController {
   @ApiSuccessResponse(RoleByIdSuccessDto, 200)
   @ApiErrorResponses({
     validation: RoleGetByIdValidationDto,
-    unauthorized: RoleGetByIdUnauthorizedDto,
-    forbidden: RoleGetByIdForbiddenDto,
     notFound: RoleNotFoundDto,
     internal: RoleInternalErrorDto,
   })

@@ -10,22 +10,6 @@ export class RoleCreateUnauthorizedDto extends CustomUnauthorizedDto {
   declare method: Methods.POST;
 }
 
-export class RolesUnauthorizedDto extends CustomUnauthorizedDto {
-  @ApiProperty({ example: "api/role" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
-export class RoleGetByIdUnauthorizedDto extends CustomUnauthorizedDto {
-  @ApiProperty({ example: "api/role/:id" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
 export class RoleUpdateUnauthorizedDto extends CustomUnauthorizedDto {
   @ApiProperty({ example: "api/role/:id" })
   declare endpoint: string;

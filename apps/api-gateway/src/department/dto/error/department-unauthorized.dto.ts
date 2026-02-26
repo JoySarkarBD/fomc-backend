@@ -10,22 +10,6 @@ export class DepartmentCreateUnauthorizedDto extends CustomUnauthorizedDto {
   declare method: Methods.POST;
 }
 
-export class DepartmentsUnauthorizedDto extends CustomUnauthorizedDto {
-  @ApiProperty({ example: "api/department" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
-export class DepartmentGetByIdUnauthorizedDto extends CustomUnauthorizedDto {
-  @ApiProperty({ example: "api/department/:id" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
 export class DepartmentUpdateUnauthorizedDto extends CustomUnauthorizedDto {
   @ApiProperty({ example: "api/department/:id" })
   declare endpoint: string;

@@ -10,22 +10,6 @@ export class RoleCreateForbiddenDto extends CustomForbiddenDto {
   declare method: Methods.POST;
 }
 
-export class RolesForbiddenDto extends CustomForbiddenDto {
-  @ApiProperty({ example: "api/role" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
-export class RoleGetByIdForbiddenDto extends CustomForbiddenDto {
-  @ApiProperty({ example: "api/role/:id" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
 export class RoleUpdateForbiddenDto extends CustomForbiddenDto {
   @ApiProperty({ example: "api/role/:id" })
   declare endpoint: string;

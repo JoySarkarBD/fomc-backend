@@ -10,22 +10,6 @@ export class DepartmentCreateForbiddenDto extends CustomForbiddenDto {
   declare method: Methods.POST;
 }
 
-export class DepartmentsForbiddenDto extends CustomForbiddenDto {
-  @ApiProperty({ example: "api/department" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
-export class DepartmentGetByIdForbiddenDto extends CustomForbiddenDto {
-  @ApiProperty({ example: "api/department/:id" })
-  declare endpoint: string;
-
-  @ApiProperty({ example: Methods.GET })
-  declare method: Methods.GET;
-}
-
 export class DepartmentUpdateForbiddenDto extends CustomForbiddenDto {
   @ApiProperty({ example: "api/department/:id" })
   declare endpoint: string;
