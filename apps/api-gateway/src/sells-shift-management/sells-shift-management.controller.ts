@@ -9,6 +9,7 @@
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiHeader, ApiOperation } from "@nestjs/swagger";
 import { CreateSellsShiftManagementDto } from "apps/workforce-service/src/sells-shift-management/dto/create-sells-shift-management.dto";
+import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
@@ -39,6 +40,14 @@ export class SellsShiftManagementController {
     name: "Authorization",
     description: "Bearer token",
     required: true,
+  })
+  @ApiRequestDetails({
+    params: {
+      name: "userId",
+      description:
+        "The ID of the user for whom the sells shift management entry is being created",
+      required: true,
+    },
   })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN")
