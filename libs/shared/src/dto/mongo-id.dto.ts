@@ -40,6 +40,13 @@ export class AssignedByDto {
   assignedBy!: string;
 }
 
+export class ApprovedByDto {
+  /** A valid 24-character MongoDB ObjectId representing the ID of the user who approved a shift exchange request. */
+  @IsMongoId({ message: "ApprovedBy ID must be a valid MongoDB ObjectId" })
+  @IsNotEmpty({ message: "ApprovedBy ID is required" })
+  approvedBy!: string;
+}
+
 export class ExchangeIdDto {
   /** A valid 24-character MongoDB ObjectId representing the ID of a shift exchange request. */
   @IsMongoId({ message: "Exchange ID must be a valid MongoDB ObjectId" })

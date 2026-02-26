@@ -6,7 +6,12 @@
 import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { SELLS_SHIFT_MANAGEMENT_COMMANDS } from "@shared/constants/sells-shift-management.constants";
-import { AssignedByDto, UserIdDto } from "@shared/dto/mongo-id.dto";
+import {
+  ApprovedByDto,
+  AssignedByDto,
+  ExchangeIdDto,
+  UserIdDto,
+} from "@shared/dto/mongo-id.dto";
 import { CreateSellsShiftManagementDto } from "./dto/create-sells-shift-management.dto";
 import { GetSellsShiftDto } from "./dto/get-sells-shift.dto";
 import { RequestShiftExchangeDto } from "./dto/request-shift-exchange.dto";
@@ -82,7 +87,7 @@ export class SellsShiftManagementController {
   async requestShiftExchange(
     @Payload()
     payload: {
-      userId: string;
+      userId: UserIdDto["userId"];
       requestShiftExchangeDto: RequestShiftExchangeDto;
     },
   ) {
@@ -104,8 +109,8 @@ export class SellsShiftManagementController {
   async approveShiftExchange(
     @Payload()
     payload: {
-      exchangeId: string;
-      approvedBy: string;
+      exchangeId: ExchangeIdDto["exchangeId"];
+      approvedBy: ApprovedByDto["approvedBy"];
     },
   ) {
     return await this.sellsShiftManagementService.approveShiftExchange(
@@ -126,8 +131,8 @@ export class SellsShiftManagementController {
   async rejectShiftExchange(
     @Payload()
     payload: {
-      exchangeId: string;
-      approvedBy: string;
+      exchangeId: ExchangeIdDto["exchangeId"];
+      approvedBy: ApprovedByDto["approvedBy"];
       reason?: string;
     },
   ) {
@@ -147,7 +152,9 @@ export class SellsShiftManagementController {
    * @returns {Promise<any>} The shift exchanges associated with the specified user.
    */
   @MessagePattern(SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_USER_SHIFT_EXCHANGES)
-  async getUserShiftExchanges(@Payload() payload: { userId: string }) {
+  async getUserShiftExchanges(
+    @Payload() payload: { userId: UserIdDto["userId"] },
+  ) {
     return await this.sellsShiftManagementService.getUserShiftExchanges(
       payload.userId,
     );

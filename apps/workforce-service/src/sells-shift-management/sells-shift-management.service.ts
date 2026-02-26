@@ -24,7 +24,9 @@ import {
   ShiftExchangeStatus,
 } from "../schemas/shift-exchange.schema";
 import {
+  ApprovedByDto,
   AssignedByDto,
+  ExchangeIdDto,
   UserIdDto,
 } from "./../../../../libs/shared/src/dto/mongo-id.dto";
 import { CreateSellsShiftManagementDto } from "./dto/create-sells-shift-management.dto";
@@ -248,7 +250,10 @@ export class SellsShiftManagementService {
    * @param {string} approvedBy - The ID of the user approving the shift exchange request.
    * @return {Promise<any>} The result of the shift exchange approval, which may include the updated shift exchange record or an error message if the exchange request is not found or if it has already been processed.
    */
-  async approveShiftExchange(exchangeId: string, approvedBy: string) {
+  async approveShiftExchange(
+    exchangeId: ExchangeIdDto["exchangeId"],
+    approvedBy: ApprovedByDto["approvedBy"],
+  ) {
     const exchange = await this.shiftExchangeModel.findById(exchangeId);
     if (!exchange) {
       return {
@@ -303,8 +308,8 @@ export class SellsShiftManagementService {
    * @return {Promise<any>} The result of the shift exchange rejection, which may include the updated shift exchange record or an error message if the exchange request is not found or if it has already been processed.
    */
   async rejectShiftExchange(
-    exchangeId: string,
-    approvedBy: string,
+    exchangeId: ExchangeIdDto["exchangeId"],
+    approvedBy: ApprovedByDto["approvedBy"],
     reason?: string,
   ) {
     const exchange = await this.shiftExchangeModel.findById(exchangeId);
