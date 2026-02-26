@@ -15,7 +15,11 @@ import {
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { SELLS_SHIFT_MANAGEMENT_COMMANDS } from "@shared/constants/sells-shift-management.constants";
-import { AssignedByDto, UserIdDto } from "@shared/dto/mongo-id.dto";
+import {
+  AssignedByDto,
+  ExchangeIdDto,
+  UserIdDto,
+} from "@shared/dto/mongo-id.dto";
 import { CreateSellsShiftManagementDto } from "apps/workforce-service/src/sells-shift-management/dto/create-sells-shift-management.dto";
 import { GetSellsShiftDto } from "apps/workforce-service/src/sells-shift-management/dto/get-sells-shift.dto";
 import { RequestShiftExchangeDto } from "apps/workforce-service/src/sells-shift-management/dto/request-shift-exchange.dto";
@@ -74,7 +78,10 @@ export class SellsShiftManagementService {
   /**
    * Request a shift exchange.
    */
-  async requestShiftExchange(userId: string, data: RequestShiftExchangeDto) {
+  async requestShiftExchange(
+    userId: UserIdDto["userId"],
+    data: RequestShiftExchangeDto,
+  ) {
     const result = await firstValueFrom(
       this.workforceClient.send(
         SELLS_SHIFT_MANAGEMENT_COMMANDS.REQUEST_SHIFT_EXCHANGE,
@@ -96,7 +103,10 @@ export class SellsShiftManagementService {
   /**
    * Approve a shift exchange.
    */
-  async approveShiftExchange(exchangeId: string, approvedBy: string) {
+  async approveShiftExchange(
+    exchangeId: ExchangeIdDto["exchangeId"],
+    approvedBy: string,
+  ) {
     const result = await firstValueFrom(
       this.workforceClient.send(
         SELLS_SHIFT_MANAGEMENT_COMMANDS.APPROVE_SHIFT_EXCHANGE,
@@ -119,7 +129,7 @@ export class SellsShiftManagementService {
    * Reject a shift exchange.
    */
   async rejectShiftExchange(
-    exchangeId: string,
+    exchangeId: ExchangeIdDto["exchangeId"],
     approvedBy: string,
     reason?: string,
   ) {
@@ -145,7 +155,7 @@ export class SellsShiftManagementService {
   /**
    * Get user's shift exchanges.
    */
-  async getUserShiftExchanges(userId: string) {
+  async getUserShiftExchanges(userId: UserIdDto["userId"]) {
     const result = await firstValueFrom(
       this.workforceClient.send(
         SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_USER_SHIFT_EXCHANGES,
