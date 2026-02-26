@@ -11,7 +11,7 @@ export const NOTIFICATION_COMMANDS = {
   /** Create a new notification. */
   CREATE_NOTIFICATION: { cmd: "create_notification" },
 
-  /** Retrieve notifications for a specific user, optionally filtered by read status. */
+  /** Retrieve notifications for a specific user, optionally filtered. */
   GET_USER_NOTIFICATIONS: { cmd: "get_user_notifications" },
 
   /** Mark a notification as read. */

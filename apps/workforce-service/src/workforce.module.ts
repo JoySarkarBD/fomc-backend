@@ -16,6 +16,7 @@ import { Department, DepartmentSchema } from "./schemas/department.schema";
 import { Leave, LeaveSchema } from "./schemas/leave.schema";
 import { SeedDepartmentAndDesignationModule } from "./seed/seed-department-and-designation.module";
 import { TaskModule } from "./task/task.module";
+import { SellsShiftManagementModule } from './sells-shift-management/sells-shift-management.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { TaskModule } from "./task/task.module";
     SeedDepartmentAndDesignationModule,
     DepartmentModule,
     DesignationModule,
+    SellsShiftManagementModule,
   ],
 })
 export class WorkforceModule {}
