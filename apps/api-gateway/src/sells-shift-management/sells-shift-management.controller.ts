@@ -7,7 +7,7 @@
  */
 
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiHeader, ApiOperation } from "@nestjs/swagger";
 import { CreateSellsShiftManagementDto } from "apps/workforce-service/src/sells-shift-management/dto/create-sells-shift-management.dto";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
@@ -15,6 +15,7 @@ import { RolesGuard } from "../common/guards/roles.guard";
 import { SellsShiftManagementService } from "./sells-shift-management.service";
 
 @Controller("sells-shift-management")
+@UseGuards(JwtAuthGuard)
 export class SellsShiftManagementController {
   constructor(
     private readonly sellsShiftManagementService: SellsShiftManagementService,
@@ -34,7 +35,11 @@ export class SellsShiftManagementController {
       "Creates a new sells shift management entry for a user. This endpoint is protected and requires the user to have the SUPER ADMIN role.",
   })
   @ApiBearerAuth("authorization")
-  @UseGuards(JwtAuthGuard)
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @UseGuards(RolesGuard)
   @Roles("SUPER ADMIN")
   @Post(":userId")

@@ -18,7 +18,12 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
 import { CreateDesignationDto } from "apps/workforce-service/src/designation/dto/create-designation.dto";
@@ -39,20 +44,24 @@ import {
 } from "./dto/error/designation-forbidden.dto";
 import {
   DesignationCreateInternalErrorDto,
+  DesignationDeleteInternalErrorDto,
   DesignationInternalErrorDto,
   DesignationsInternalErrorDto,
   DesignationUpdateInternalErrorDto,
 } from "./dto/error/designation-internal-error.dto";
 import {
+  DesignationDeleteByIdNotFoundDto,
   DesignationNotFoundDto,
   DesignationUpdateByIdNotFoundDto,
 } from "./dto/error/designation-not-found.dto";
 import {
   DesignationCreateUnauthorizedDto,
+  DesignationDeleteUnauthorizedDto,
   DesignationUpdateUnauthorizedDto,
 } from "./dto/error/designation-unauthorized.dto";
 import {
   DesignationCreateValidationDto,
+  DesignationDeleteValidationDto,
   DesignationGetByIdValidationDto,
   DesignationsValidationDto,
   DesignationUpdateValidationDto,
@@ -78,6 +87,11 @@ export class DesignationController {
     description: "Creates a new job designation in the organization.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(DesignationSuccessDto, 201)
   @ApiErrorResponses({
     validation: DesignationCreateValidationDto,
@@ -184,6 +198,11 @@ export class DesignationController {
     description: "Updates an existing job designation's details.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "id",
@@ -227,6 +246,11 @@ export class DesignationController {
     description: "Deletes a job designation by its ID.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "id",
@@ -239,9 +263,10 @@ export class DesignationController {
   })
   @ApiSuccessResponse(DesignationSuccessDto, 200)
   @ApiErrorResponses({
-    // notFound: CustomNotFoundDto,
-    // unauthorized: CustomUnauthorizedDto,
-    // internal: CustomInternalServerErrorDto,
+    validation: DesignationDeleteValidationDto,
+    unauthorized: DesignationDeleteUnauthorizedDto,
+    notFound: DesignationDeleteByIdNotFoundDto,
+    internal: DesignationDeleteInternalErrorDto,
   })
   @UseGuards(JwtAuthGuard)
   @Roles("SUPER ADMIN")

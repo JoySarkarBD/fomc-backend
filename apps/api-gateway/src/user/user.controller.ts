@@ -21,6 +21,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiBearerAuth,
+  ApiHeader,
   ApiOperation,
   ApiQuery,
   ApiTags,
@@ -88,6 +89,11 @@ export class UserController {
     description: "Retrieves a list of users with optional filtering.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiQuery({
     name: "pageNo",
     required: true,
@@ -141,6 +147,11 @@ export class UserController {
     },
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(UserSuccessDto, 200)
   @ApiErrorResponses({
     validation: UserValidationDto,
@@ -169,6 +180,11 @@ export class UserController {
     description: "Retrieves the profile of the authenticated user.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(UserProfileSuccessDto, 200)
   @ApiErrorResponses({
     unauthorized: UserProfileUnauthorizedDto,
@@ -196,6 +212,11 @@ export class UserController {
     description: "Updates the authenticated user's name and/or avatar.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(UserProfileUpdateSuccessDto, 200)
   @ApiErrorResponses({
     validation: UserProfileUpdateValidationDto,

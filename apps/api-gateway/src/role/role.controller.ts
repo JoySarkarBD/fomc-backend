@@ -18,7 +18,12 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { MongoIdDto, SearchQueryDto } from "@shared/dto";
 import { CreateRoleDto } from "apps/user-service/src/role/dto/create-role.dto";
 import { UpdateRoleDto } from "apps/user-service/src/role/dto/update-role.dto";
@@ -84,6 +89,11 @@ export class RoleController {
     description: "Creates a new user role in the system.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(RoleCreateSuccessDto, 201)
   @ApiErrorResponses({
     validation: RoleCreateValidationDto,
@@ -187,6 +197,11 @@ export class RoleController {
     description: "Updates an existing user role's details.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "id",
@@ -223,6 +238,11 @@ export class RoleController {
     description: "Deletes a user role by its ID.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "id",

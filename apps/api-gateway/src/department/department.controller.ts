@@ -18,7 +18,12 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
 import { CreateDepartmentDto } from "../../../workforce-service/src/department/dto/create-department.dto";
@@ -83,6 +88,11 @@ export class DepartmentController {
     description: "Creates a new department in the organization.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(DepartmentCreateSuccessDto, 201)
   @ApiErrorResponses({
     validation: DepartmentCreateValidationDto,
@@ -187,6 +197,11 @@ export class DepartmentController {
     description: "Updates an existing department's details.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "id",
@@ -226,6 +241,11 @@ export class DepartmentController {
     description: "Deletes a department by its ID.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "id",

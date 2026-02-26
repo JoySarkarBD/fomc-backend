@@ -17,7 +17,13 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { UserIdDto } from "@shared/dto/mongo-id.dto";
 import type { AuthUser } from "@shared/interfaces";
 import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance/dto/attendance-by-authority.dto";
@@ -92,6 +98,11 @@ export class AttendanceController {
     description: "Marks the authenticated user as present.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(MarkAttendanceSuccessDto, 201)
   @ApiErrorResponses({
     unauthorized: MarkAttendanceUnauthorizedDto,
@@ -119,6 +130,11 @@ export class AttendanceController {
     description: "Retrieves attendance records for the authenticated user.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     queries: [
       {
@@ -166,6 +182,11 @@ export class AttendanceController {
     description: "Marks the authenticated user as out for the day.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(MarkOutAttendanceSuccessDto, 200)
   @ApiErrorResponses({
     unauthorized: MarkOutAttendanceUnauthorizedDto,
@@ -195,6 +216,11 @@ export class AttendanceController {
     description: "Retrieves attendance records for a specific user.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "userId",
@@ -257,6 +283,11 @@ export class AttendanceController {
       "Allows the authenticated user to update their and others weekend off.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiRequestDetails({
     params: {
       name: "userId",
@@ -308,6 +339,11 @@ export class AttendanceController {
       "Allows an authority (e.g., manager) to mark attendance for a user by providing the necessary details in the request body.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiBody({
     description: "The details of the attendance to be marked",
     type: AttendanceByAuthorityDto,
@@ -359,6 +395,11 @@ export class AttendanceController {
       "Allows an authority (e.g., manager) to mark the weekend exchange for a user by providing the original weekend date and new off date in the request body.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiBody({
     description: "The details of the weekend exchange to be marked",
     type: WeekendExchangeByAuthorityDto,

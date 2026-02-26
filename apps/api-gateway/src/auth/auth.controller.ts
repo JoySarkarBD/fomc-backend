@@ -17,7 +17,12 @@ import {
   UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import type { AuthUser } from "@shared/interfaces/auth-user.interface";
 import type { Request } from "express";
 import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
@@ -137,6 +142,11 @@ export class AuthController {
     description: "Changes the authenticated user's password.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(ChangePasswordSuccessDto, 200)
   @ApiErrorResponses({
     validation: ChangePasswordValidationDto,
@@ -160,6 +170,11 @@ export class AuthController {
     description: "Invalidates the current authentication token.",
   })
   @ApiBearerAuth("authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
   @ApiSuccessResponse(LogoutSuccessDto, 200)
   @ApiErrorResponses({
     unauthorized: LogoutUnauthorizedDto,
