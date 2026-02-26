@@ -16,6 +16,7 @@ import { DepartmentModule } from "./department/department.module";
 import { RoleModule } from "./role/role.module";
 import { UserModule } from "./user/user.module";
 import { DesignationModule } from './designation/designation.module';
+import { SellsShiftManagementModule } from './sells-shift-management/sells-shift-management.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DesignationModule } from './designation/designation.module';
     DepartmentModule,
     AttendanceModule,
     DesignationModule,
+    SellsShiftManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService],

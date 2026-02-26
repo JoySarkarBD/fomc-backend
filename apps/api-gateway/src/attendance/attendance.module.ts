@@ -17,21 +17,19 @@ import { AttendanceService } from "./attendance.service";
   imports: [
     ClientsModule.register([
       {
-        name: "WORKFORCE_SERVICE",
-        transport: Transport.TCP,
-        options: {
-          host: config.WORKFORCE_SERVICE_HOST ?? "127.0.0.1",
-          port: Number(config.WORKFORCE_SERVICE_PORT ?? 3002),
-        },
-      },
-    ]),
-    ClientsModule.register([
-      {
         name: "USER_SERVICE",
         transport: Transport.TCP,
         options: {
           host: config.USER_SERVICE_HOST ?? "127.0.0.1",
           port: Number(config.USER_SERVICE_PORT ?? 3001),
+        },
+      },
+      {
+        name: "WORKFORCE_SERVICE",
+        transport: Transport.TCP,
+        options: {
+          host: config.WORKFORCE_SERVICE_HOST ?? "127.0.0.1",
+          port: Number(config.WORKFORCE_SERVICE_PORT ?? 3002),
         },
       },
     ]),

@@ -43,9 +43,6 @@ import { JwtStrategy } from "./jwt.strategy";
           port: Number(config.USER_SERVICE_PORT ?? 3001),
         },
       },
-    ]),
-
-    ClientsModule.register([
       {
         name: "WORKFORCE_SERVICE",
         transport: Transport.TCP,
