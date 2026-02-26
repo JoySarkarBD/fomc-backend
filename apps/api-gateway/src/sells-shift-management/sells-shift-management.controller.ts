@@ -6,7 +6,7 @@
  * @module api-gateway/sells-shift-management
  */
 
-import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiHeader,
@@ -28,8 +28,16 @@ import {
   GetUserSellsShiftUnauthorizedDto,
   GetUserSellsShiftValidationDto,
 } from "./dto/error/get-user-sells-shift/get-user-sells-shift.dto";
-import { GetUserSellsShiftSuccessDto } from "./dto/success/sells-shift-management-success.dto";
+import { CreateSellsShiftManagementSuccessDto, GetUserSellsShiftSuccessDto } from "./dto/success/sells-shift-management-success.dto";
 import { SellsShiftManagementService } from "./sells-shift-management.service";
+import { CreateSellsShiftUnauthorizedDto } from "./dto/error/create-sells-shift/create-sells-shift-unauthorized.dto";
+import { CreateSellsShiftForbiddenDto } from "./dto/error/create-sells-shift/create-sells-shift-forbidden.dto";
+import { CreateSellsShiftNotFoundDto } from "./dto/error/create-sells-shift/create-sells-shift-not-found.dto";
+import { CreateSellsShiftValidationDto } from "./dto/error/create-sells-shift/create-sells-shift-validation.dto";
+import { CreateSellsShiftInternalErrorDto } from "./dto/error/create-sells-shift/create-sells-shift-internal-error.dto";
+import type { AuthUser } from "@shared/interfaces";
+import { GetUser } from "../common/decorators/get-user.decorator";
+import { CreateSellsShiftManagementDto } from "apps/workforce-service/src/sells-shift-management/dto/create-sells-shift-management.dto";
 
 @ApiTags("Sells Shift Management")
 @Controller("sells-shift-management")
@@ -47,50 +55,50 @@ export class SellsShiftManagementController {
    * @param data - The data for creating a new sells shift management entry.
    * @returns Result of the creation operation.
    */
-  // @ApiOperation({
-  //   summary: "Create a new sells shift management entry for a user",
-  //   description:
-  //     "Creates a new sells shift management entry for a user. This endpoint is protected and requires the user to have the SUPER ADMIN role.",
-  // })
-  // @ApiBearerAuth("Authorization")
-  // @ApiHeader({
-  //   name: "Authorization",
-  //   description: "Bearer token",
-  //   required: true,
-  // })
-  // @ApiRequestDetails({
-  //   params: {
-  //     name: "userId",
-  //     description:
-  //       "The ID of the user for whom the sells shift management entry is being created",
-  //     required: true,
-  //     type: String,
-  //     example: "65f1b2c3d4e5f67890123456",
-  //   },
-  //   paramDto: UserIdDto,
-  // })
-  // @ApiSuccessResponse(CreateSellsShiftManagementSuccessDto, 201)
-  // @ApiErrorResponses({
-  //   unauthorized: CreateSellsShiftUnauthorizedDto,
-  //   forbidden: CreateSellsShiftForbiddenDto,
-  //   notFound: CreateSellsShiftNotFoundDto,
-  //   validation: CreateSellsShiftValidationDto,
-  //   internal: CreateSellsShiftInternalErrorDto,
-  // })
-  // @UseGuards(RolesGuard)
-  // @Roles("SUPER ADMIN")
-  // @Post(":userId")
-  // async create(
-  //   @GetUser() user: AuthUser,
-  //   @Param() params: UserIdDto,
-  //   @Body() data: CreateSellsShiftManagementDto,
-  // ) {
-  //   return this.sellsShiftManagementService.create(
-  //     user.id,
-  //     params.userId,
-  //     data,
-  //   );
-  // }
+  @ApiOperation({
+    summary: "Create a new sells shift management entry for a user",
+    description:
+      "Creates a new sells shift management entry for a user. This endpoint is protected and requires the user to have the SUPER ADMIN role.",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiRequestDetails({
+    params: {
+      name: "userId",
+      description:
+        "The ID of the user for whom the sells shift management entry is being created",
+      required: true,
+      type: String,
+      example: "65f1b2c3d4e5f67890123456",
+    },
+    paramDto: UserIdDto,
+  })
+  @ApiSuccessResponse(CreateSellsShiftManagementSuccessDto, 201)
+  @ApiErrorResponses({
+    unauthorized: CreateSellsShiftUnauthorizedDto,
+    forbidden: CreateSellsShiftForbiddenDto,
+    notFound: CreateSellsShiftNotFoundDto,
+    validation: CreateSellsShiftValidationDto,
+    internal: CreateSellsShiftInternalErrorDto,
+  })
+  @UseGuards(RolesGuard)
+  @Roles("SUPER ADMIN")
+  @Post(":userId")
+  async create(
+    @GetUser() user: AuthUser,
+    @Param() params: UserIdDto,
+    @Body() data: CreateSellsShiftManagementDto,
+  ) {
+    return this.sellsShiftManagementService.create(
+      user._id!,
+      params.userId,
+      data,
+    );
+  }
 
   /**
    * Retrieves sells shift management records for a specific user.

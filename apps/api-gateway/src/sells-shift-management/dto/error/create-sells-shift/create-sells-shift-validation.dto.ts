@@ -1,8 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ValidationErrorDto } from "apps/api-gateway/src/common/dto/validation-error.dto";
+import {
+  FieldErrorDto,
+  ValidationErrorResponseDto,
+} from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
 
-export class CreateSellsShiftValidationDto extends ValidationErrorDto {
+export class CreateSellsShiftValidationDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: Methods.POST })
   declare method: Methods.POST;
 
@@ -10,11 +13,21 @@ export class CreateSellsShiftValidationDto extends ValidationErrorDto {
   declare endpoint: string;
 
   @ApiProperty({
-    example: {
-      weekStartDate: ["Date must be a valid UTC date string"],
-      weekEndDate: ["Date must be a valid UTC date string"],
-      shiftType: ["shiftType must be a valid ShiftTypeForSales"],
-    },
+    type: [FieldErrorDto],
+    example: [
+      {
+        field: "weekStartDate",
+        message: "Date must be a valid UTC date string",
+      },
+      {
+        field: "weekEndDate",
+        message: "Date must be a valid UTC date string",
+      },
+      {
+        field: "shiftType",
+        message: "shiftType must be a valid ShiftTypeForSales",
+      },
+    ],
   })
   declare errors: any;
 }
