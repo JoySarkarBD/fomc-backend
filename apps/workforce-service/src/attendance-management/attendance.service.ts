@@ -401,7 +401,7 @@ export class AttendanceService {
     userId: UserIdDto["userId"],
     attendanceDetails: AttendanceByAuthorityDto,
   ) {
-    const { inType, date, shiftType, isLate, checkInTime, checkOutTime } =
+    let { inType, date, shiftType, isLate, checkInTime, checkOutTime } =
       attendanceDetails;
 
     const userExist = await firstValueFrom(
@@ -423,43 +423,64 @@ export class AttendanceService {
       nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
     );
 
-    // If date is not provided, use today's date
-    const attendanceDate = date
-      ? new Date(date)
-      : new Date(bdNow.getFullYear(), bdNow.getMonth(), bdNow.getDate());
+    // Convert date into BD timezone and remove time part
+    const convertToBDDate = (date: Date) => {
+      const utcDate = new Date(date);
+      const bdDate = new Date(
+        utcDate.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
+      );
+      bdDate.setHours(0, 0, 0, 0);
+      return bdDate;
+    };
 
-    // Check if attendance already exists for the given date
-    const existingAttendance = await this.attendanceModel.findOne({
-      user: new Types.ObjectId(userId),
-      date: attendanceDate,
-    });
+    // Validation: For certain inTypes, check-in/check-out times should not be provided
+    const noTimesAllowed = [
+      AttendanceInType.ABSENT,
+      AttendanceInType.ON_LEAVE,
+      AttendanceInType.WEEKEND,
+    ];
 
-    if (existingAttendance) {
-      // Update existing attendance
-      existingAttendance.inType = inType;
-      existingAttendance.shiftType = shiftType;
-      existingAttendance.isLate = isLate;
-      if (checkInTime) {
-        existingAttendance.checkInTime = checkInTime;
-      }
-      if (checkOutTime) {
-        existingAttendance.checkOutTime = checkOutTime;
-      }
-      return await existingAttendance.save();
+    // For inTypes where times are not allowed, we will upsert the record without check-in/check-out times
+    if (noTimesAllowed.includes(inType)) {
+      const attendance = await this.attendanceModel.findOneAndUpdate(
+        {
+          user: new Types.ObjectId(userId),
+          date: convertToBDDate(date ? new Date(date) : bdNow),
+        },
+        {
+          user: new Types.ObjectId(userId),
+          date: convertToBDDate(date ? new Date(date) : bdNow),
+          inType,
+          shiftType,
+          isLate,
+          checkInTime: null,
+          checkOutTime: null,
+        },
+        { upsert: true, new: true },
+      );
+
+      return attendance;
     }
 
-    // Create new attendance record
-    const attendance = new this.attendanceModel({
-      user: new Types.ObjectId(userId),
-      date: attendanceDate,
-      inType,
-      shiftType,
-      isLate,
-      checkInTime: checkInTime ?? bdNow,
-      checkOutTime: checkOutTime ?? null,
-    });
+    // If check-in/check-out times are provided, update the attendance record with them
+    const attendance = await this.attendanceModel.findOneAndUpdate(
+      {
+        user: new Types.ObjectId(userId),
+        date: convertToBDDate(date ? new Date(date) : bdNow),
+      },
+      {
+        user: new Types.ObjectId(userId),
+        date: convertToBDDate(date ? new Date(date) : bdNow),
+        inType,
+        shiftType,
+        isLate,
+        checkInTime: checkInTime ? new Date(checkInTime) : bdNow,
+        checkOutTime: checkOutTime ? new Date(checkOutTime) : null,
+      },
+      { upsert: true, new: true },
+    );
 
-    return await attendance.save();
+    return attendance;
   }
 
   /**

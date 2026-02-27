@@ -139,7 +139,7 @@ export class SellsShiftManagementController {
     internal: CreateSellsShiftInternalErrorDto,
   })
   @UseGuards(RolesGuard)
-  @Roles("SUPER ADMIN")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Post(":userId")
   async create(
     @GetUser() user: AuthUser,
@@ -181,7 +181,7 @@ export class SellsShiftManagementController {
     internal: RequestShiftExchangeInternalErrorDto,
   })
   @UseGuards(RolesGuard)
-  @Roles("PROJECT MANAGER", "EMPLOYEE")
+  @Roles("PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
   @Post("exchange/request")
   async requestShiftExchange(
     @GetUser() user: AuthUser,
@@ -231,7 +231,7 @@ export class SellsShiftManagementController {
     internal: ApproveShiftExchangeInternalErrorDto,
   })
   @UseGuards(RolesGuard)
-  @Roles("SUPER ADMIN", "DIRECTOR", "PROJECT MANAGER")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Patch("exchange/approve/:exchangeId")
   async approveShiftExchange(
     @GetUser() user: AuthUser,
@@ -282,7 +282,7 @@ export class SellsShiftManagementController {
     internal: RejectShiftExchangeInternalErrorDto,
   })
   @UseGuards(RolesGuard)
-  @Roles("SUPER ADMIN", "DIRECTOR", "PROJECT MANAGER")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Patch("exchange/reject/:exchangeId")
   async rejectShiftExchange(
     @GetUser() user: AuthUser,
