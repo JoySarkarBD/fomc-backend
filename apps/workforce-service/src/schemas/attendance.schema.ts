@@ -52,11 +52,11 @@ export class Attendance extends Document {
   user!: mongo.ObjectId;
 
   // Check-in time for the attendance record
-  @Prop({ default: null })
+  @Prop({ default: null, nullable: true })
   checkInTime?: Date;
 
   // Check-out time for the attendance record (optional)
-  @Prop({ default: null })
+  @Prop({ default: null, nullable: true })
   checkOutTime?: Date;
 
   // Date of the attendance record
