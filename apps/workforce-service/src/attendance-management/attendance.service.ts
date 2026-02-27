@@ -62,7 +62,7 @@ export class AttendanceService {
   ): Promise<Attendance | { message: string; exception: string }> {
     const userId = (user.id ?? user._id) as string;
 
-    // 1️⃣ Fetch user
+    // Fetch user
     const userExist = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.GET_USER, { id: userId }),
     );
@@ -71,7 +71,7 @@ export class AttendanceService {
       return { message: userExist.message, exception: userExist.exception };
     }
 
-    // 2️⃣ Current BD time
+    // Current BD time
     const nowUTC = new Date();
     const bdNow = new Date(
       nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
@@ -84,7 +84,7 @@ export class AttendanceService {
       .toLocaleString("en-US", { timeZone: "Asia/Dhaka", weekday: "long" })
       .toUpperCase();
 
-    // 3️⃣ Prevent duplicate attendance
+    // Prevent duplicate attendance
     const existingAttendance = await this.attendanceModel.findOne({
       user: new Types.ObjectId(userId),
       date: todayDate,
@@ -96,7 +96,7 @@ export class AttendanceService {
       };
     }
 
-    // 4️⃣ Check weekend exchanges
+    // Check weekend exchanges
     const exchangeToday = await this.weekendExchangeModel.findOne({
       user: userId,
       newOffDate: todayDate,
@@ -107,7 +107,7 @@ export class AttendanceService {
       originalWeekendDate: todayDate,
     });
 
-    // 5️⃣ Determine attendance type and shift
+    // Determine attendance type and shift
     let attendanceType: AttendanceInType;
     let shiftType: string = ShiftTypeForOperations.DAY;
     let shiftStartMinutes = 9 * 60; // default 9 AM
@@ -172,7 +172,7 @@ export class AttendanceService {
         }
       }
 
-      // 6️⃣ Late calculation
+      // Late calculation
       let isLate = false;
       let adjustedCurrent = currentMinutes;
 
@@ -189,7 +189,7 @@ export class AttendanceService {
         ? AttendanceInType.LATE
         : AttendanceInType.PRESENT;
 
-      // 7️⃣ Check if marking outside allowed window (4 hours before shift)
+      // Check if marking outside allowed window (4 hours before shift)
       const windowMinutes = 4 * 60;
       let diff = adjustedCurrent - shiftStartMinutes;
 
@@ -201,7 +201,7 @@ export class AttendanceService {
       }
     }
 
-    // 8️⃣ Save attendance
+    // Save attendance
     const attendance = await this.attendanceModel.create({
       user: new Types.ObjectId(userId),
       date: todayDate,
