@@ -29,7 +29,7 @@ import { UpdateUserProfileDto } from "apps/user-service/src/user-management/dto/
 import { UserSearchQueryDto } from "apps/user-service/src/user-management/dto/user-search-query.dto";
 import * as fs from "fs";
 import type { File } from "multer";
-import { diskStorage } from "multer";
+import { memoryStorage } from "multer";
 import * as path from "path";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
@@ -38,6 +38,7 @@ import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
+import { removeFile, uploadFile } from "../common/utils/minio.client";
 import {
   UserForbiddenDto,
   UsersForbiddenDto,
@@ -242,20 +243,7 @@ export class UserController {
   @Patch("profile/me")
   @UseInterceptors(
     FileInterceptor("avatar", {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          const uploadDir = path.join(process.cwd(), "uploads", "avatars");
-          if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-          }
-          cb(null, uploadDir);
-        },
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-          cb(null, `${unique}${ext}`);
-        },
-      }),
+      storage: memoryStorage(),
     }),
   )
   async updateProfile(
@@ -273,9 +261,14 @@ export class UserController {
       | null
       | undefined;
 
-    const avatarPath = avatarFile
-      ? path.join("uploads", "avatars", avatarFile.filename).replace(/\\/g, "/")
-      : undefined;
+    let avatarPath: string | undefined = undefined;
+    if (avatarFile && avatarFile.buffer) {
+      avatarPath = await uploadFile(
+        avatarFile.buffer,
+        avatarFile.originalname,
+        avatarFile.mimetype,
+      );
+    }
 
     const updated = await this.userService.updateUserProfile(
       (user._id ?? user.id) as MongoIdDto["id"],
@@ -292,6 +285,8 @@ export class UserController {
         if (fs.existsSync(absolutePath)) {
           fs.unlinkSync(absolutePath);
         }
+      } else if (existingAvatarPath.startsWith("minio://")) {
+        await removeFile(existingAvatarPath);
       }
     }
 
