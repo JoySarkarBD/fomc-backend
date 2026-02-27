@@ -22,8 +22,8 @@ import { firstValueFrom } from "rxjs";
 import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
 import { RedisTokenService } from "../common/redis/redis-services/auth/redis-token.service";
 import { buildResponse } from "../common/response.util";
-import { DepartmentService } from "../department/department.service";
-import { DesignationService } from "../designation/designation.service";
+import { DepartmentService } from "../department-management/department.service";
+import { DesignationService } from "../designation-management/designation.service";
 import { MailService } from "../utils/mail.service";
 
 @Injectable()

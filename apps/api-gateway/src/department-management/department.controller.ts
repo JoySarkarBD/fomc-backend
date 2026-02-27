@@ -24,8 +24,8 @@ import {
 } from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
-import { CreateDepartmentDto } from "../../../workforce-service/src/department/dto/create-department.dto";
-import { UpdateDepartmentDto } from "../../../workforce-service/src/department/dto/update-department.dto";
+import { CreateDepartmentDto } from "../../../workforce-service/src/department-management/dto/create-department.dto";
+import { UpdateDepartmentDto } from "../../../workforce-service/src/department-management/dto/update-department.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";

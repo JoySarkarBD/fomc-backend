@@ -15,8 +15,8 @@ import { ClientProxy } from "@nestjs/microservices";
 import { DESIGNATION_COMMANDS } from "@shared/constants/designation-command.constants";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
-import { CreateDesignationDto } from "apps/workforce-service/src/designation/dto/create-designation.dto";
-import { UpdateDesignationDto } from "apps/workforce-service/src/designation/dto/update-designation.dto";
+import { CreateDesignationDto } from "apps/workforce-service/src/designation-management/dto/create-designation.dto";
+import { UpdateDesignationDto } from "apps/workforce-service/src/designation-management/dto/update-designation.dto";
 import { firstValueFrom } from "rxjs";
 import { buildResponse } from "../common/response.util";
 

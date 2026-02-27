@@ -17,10 +17,10 @@ import { USER_COMMANDS } from "@shared/constants";
 import { ATTENDANCE_COMMANDS } from "@shared/constants/attendance-command.constants";
 import { UserIdDto } from "@shared/dto/mongo-id.dto";
 import { AuthUser } from "@shared/interfaces/auth-user.interface";
-import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance/dto/attendance-by-authority.dto";
-import { GetAttendanceDto } from "apps/workforce-service/src/attendance/dto/get-attendance.dto";
-import { UpdateByAuthorityWeekendSetDto } from "apps/workforce-service/src/attendance/dto/update-weekend-by-authority.dto";
-import { WeekendExchangeByAuthorityDto } from "apps/workforce-service/src/attendance/dto/weekend-exchange-by-authority.dto";
+import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance-management/dto/attendance-by-authority.dto";
+import { GetAttendanceDto } from "apps/workforce-service/src/attendance-management/dto/get-attendance.dto";
+import { UpdateByAuthorityWeekendSetDto } from "apps/workforce-service/src/attendance-management/dto/update-weekend-by-authority.dto";
+import { WeekendExchangeByAuthorityDto } from "apps/workforce-service/src/attendance-management/dto/weekend-exchange-by-authority.dto";
 import { firstValueFrom } from "rxjs";
 import { buildResponse } from "../common/response.util";
 

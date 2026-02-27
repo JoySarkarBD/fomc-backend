@@ -7,7 +7,7 @@
 
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Request } from "express";
-import { RESET_PASSWORD } from "../../auth/constants/auth-throttle.constants";
+import { RESET_PASSWORD } from "../../authentication/constants/auth-throttle.constants";
 import { RedisClientService } from "../../common/redis/redis.client";
 import {
   BaseThrottleGuard,

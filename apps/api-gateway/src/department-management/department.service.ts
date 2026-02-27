@@ -12,14 +12,14 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { CreateDepartmentDto } from "../../../workforce-service/src/department/dto/create-department.dto";
+import { CreateDepartmentDto } from "../../../workforce-service/src/department-management/dto/create-department.dto";
 
 import { ClientProxy } from "@nestjs/microservices";
 import { DEPARTMENT_COMMANDS } from "@shared/constants/department-command.constants";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
 import { firstValueFrom } from "rxjs";
-import { UpdateDepartmentDto } from "../../../workforce-service/src/department/dto/update-department.dto";
+import { UpdateDepartmentDto } from "../../../workforce-service/src/department-management/dto/update-department.dto";
 import { buildResponse } from "../common/response.util";
 
 @Injectable()

@@ -8,13 +8,13 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { AttendanceModule } from "./attendance/attendance.module";
-import { AuthModule } from "./auth/auth.module";
-import { DepartmentModule } from "./department/department.module";
-import { DesignationModule } from "./designation/designation.module";
-import { RoleModule } from "./role/role.module";
+import { AttendanceModule } from "./attendance-management/attendance.module";
+import { AuthModule } from "./authentication/auth.module";
+import { DepartmentModule } from "./department-management/department.module";
+import { DesignationModule } from "./designation-management/designation.module";
+import { RoleModule } from "./role-management/role.module";
 import { SellsShiftManagementModule } from "./sells-shift-management/sells-shift-management.module";
-import { UserModule } from "./user/user.module";
+import { UserModule } from "./user-management/user.module";
 
 @Module({
   imports: [

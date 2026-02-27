@@ -14,7 +14,7 @@ import { firstValueFrom } from "rxjs";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserProfileDto } from "./dto/update-user-profile.dto";
 import { UserSearchQueryDto } from "./dto/user-search-query.dto";
-import { RoleService } from "./role/role.service";
+import { RoleService } from "./role-management/role.service";
 import { User, UserDocument, WeekEndOff } from "./schemas/user.schema";
 
 @Injectable()

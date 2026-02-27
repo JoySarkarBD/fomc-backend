@@ -23,8 +23,8 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { MongoIdDto, SearchQueryDto } from "@shared/dto";
-import { CreateRoleDto } from "apps/user-service/src/role/dto/create-role.dto";
-import { UpdateRoleDto } from "apps/user-service/src/role/dto/update-role.dto";
+import { CreateRoleDto } from "apps/user-service/src/role-management/dto/create-role.dto";
+import { UpdateRoleDto } from "apps/user-service/src/role-management/dto/update-role.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";

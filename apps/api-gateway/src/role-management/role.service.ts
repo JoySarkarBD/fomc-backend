@@ -16,9 +16,9 @@ import { ClientProxy } from "@nestjs/microservices";
 import { ROLE_COMMANDS } from "@shared/constants/role-command.constants";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
-import { UpdateRoleDto } from "apps/user-service/src/role/dto/update-role.dto";
+import { UpdateRoleDto } from "apps/user-service/src/role-management/dto/update-role.dto";
 import { firstValueFrom } from "rxjs";
-import { CreateRoleDto } from "../../../user-service/src/role/dto/create-role.dto";
+import { CreateRoleDto } from "../../../user-service/src/role-management/dto/create-role.dto";
 import { buildResponse } from "../common/response.util";
 
 @Injectable()

@@ -24,10 +24,10 @@ import {
 } from "@nestjs/swagger";
 import { UserIdDto } from "@shared/dto/mongo-id.dto";
 import type { AuthUser } from "@shared/interfaces";
-import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance/dto/attendance-by-authority.dto";
-import { GetAttendanceDto } from "apps/workforce-service/src/attendance/dto/get-attendance.dto";
-import { WeekendExchangeByAuthorityDto } from "apps/workforce-service/src/attendance/dto/weekend-exchange-by-authority.dto";
-import { UpdateByAuthorityWeekendSetDto } from "../../../workforce-service/src/attendance/dto/update-weekend-by-authority.dto";
+import { AttendanceByAuthorityDto } from "apps/workforce-service/src/attendance-management/dto/attendance-by-authority.dto";
+import { GetAttendanceDto } from "apps/workforce-service/src/attendance-management/dto/get-attendance.dto";
+import { WeekendExchangeByAuthorityDto } from "apps/workforce-service/src/attendance-management/dto/weekend-exchange-by-authority.dto";
+import { UpdateByAuthorityWeekendSetDto } from "../../../workforce-service/src/attendance-management/dto/update-weekend-by-authority.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";
