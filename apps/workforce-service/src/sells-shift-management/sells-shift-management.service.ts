@@ -72,17 +72,21 @@ export class SellsShiftManagementService {
       };
     }
 
+    // Convert date into BD timezone and remove time part
+    const convertToBDDate = (date: Date) => {
+      const utcDate = new Date(date);
+      const bdDate = new Date(
+        utcDate.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
+      );
+      bdDate.setHours(0, 0, 0, 0);
+      return bdDate;
+    };
+
     // Convert to BD Time
-    const utcStart = new Date(
-      createSellsShiftManagementDto.weekStartDate.toLocaleString("en-US", {
-        timeZone: "Asia/Dhaka",
-      }),
+    const utcStart = convertToBDDate(
+      createSellsShiftManagementDto.weekStartDate,
     );
-    const utcEnd = new Date(
-      createSellsShiftManagementDto.weekEndDate.toLocaleString("en-US", {
-        timeZone: "Asia/Dhaka",
-      }),
-    );
+    const utcEnd = convertToBDDate(createSellsShiftManagementDto.weekEndDate);
 
     if (utcStart >= utcEnd) {
       return {
@@ -92,8 +96,9 @@ export class SellsShiftManagementService {
     }
 
     // Check if the shift assignment covers exactly 7 days
-    const diffInDays =
-      (utcEnd.getTime() - utcStart.getTime()) / (1000 * 60 * 60 * 24);
+    const diffInDays = Math.round(
+      (utcEnd.getTime() - utcStart.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
     if (diffInDays !== 6) {
       return {
