@@ -422,7 +422,7 @@ export class AttendanceController {
     internal: MarkWeekendExchangeAsAuthorityInternalErrorDto,
   })
   @UseGuards(RolesGuard)
-  @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
+  @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER")
   @Patch("weekend-exchange-by-authority/:userId")
   async weekendExchangeByAuthority(
     @Param() params: UserIdDto,
