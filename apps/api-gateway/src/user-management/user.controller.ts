@@ -25,8 +25,8 @@ import {
 } from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto";
 import type { AuthUser } from "@shared/interfaces";
-import { UpdateUserProfileDto } from "apps/user-service/src/dto/update-user-profile.dto";
-import { UserSearchQueryDto } from "apps/user-service/src/dto/user-search-query.dto";
+import { UpdateUserProfileDto } from "apps/user-service/src/user-management/dto/update-user-profile.dto";
+import { UserSearchQueryDto } from "apps/user-service/src/user-management/dto/user-search-query.dto";
 import * as fs from "fs";
 import type { File } from "multer";
 import { diskStorage } from "multer";

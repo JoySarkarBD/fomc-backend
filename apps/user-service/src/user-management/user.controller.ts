@@ -7,10 +7,10 @@ import { MessagePattern } from "@nestjs/microservices";
 import { USER_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto";
 import { UserIdDto } from "@shared/dto/mongo-id.dto";
-import { CreateUserDto } from "../dto/create-user.dto";
-import { UpdateUserProfileDto } from "../dto/update-user-profile.dto";
-import { UserSearchQueryDto } from "../dto/user-search-query.dto";
 import { WeekEndOff } from "../schemas/user.schema";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserProfileDto } from "./dto/update-user-profile.dto";
+import { UserSearchQueryDto } from "./dto/user-search-query.dto";
 import { UserService } from "./user.service";
 
 @Controller()

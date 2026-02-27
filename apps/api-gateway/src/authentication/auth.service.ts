@@ -19,7 +19,7 @@ import { USER_COMMANDS } from "@shared/constants/user-command.constants";
 import * as bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { firstValueFrom } from "rxjs";
-import { CreateUserDto } from "../../../user-service/src/dto/create-user.dto";
+import { CreateUserDto } from "../../../user-service/src/user-management/dto/create-user.dto";
 import { RedisTokenService } from "../common/redis/redis-services/auth/redis-token.service";
 import { buildResponse } from "../common/response.util";
 import { DepartmentService } from "../department-management/department.service";

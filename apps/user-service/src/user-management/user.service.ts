@@ -11,11 +11,11 @@ import { MongoIdDto, UserIdDto } from "@shared/dto/mongo-id.dto";
 import * as bcrypt from "bcrypt";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
-import { CreateUserDto } from "../dto/create-user.dto";
-import { UpdateUserProfileDto } from "../dto/update-user-profile.dto";
-import { UserSearchQueryDto } from "../dto/user-search-query.dto";
 import { RoleService } from "../role-management/role.service";
 import { User, UserDocument, WeekEndOff } from "../schemas/user.schema";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserProfileDto } from "./dto/update-user-profile.dto";
+import { UserSearchQueryDto } from "./dto/user-search-query.dto";
 
 @Injectable()
 export class UserService {

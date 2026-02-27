@@ -9,8 +9,8 @@ import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { USER_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto";
-import { UpdateUserProfileDto } from "apps/user-service/src/dto/update-user-profile.dto";
-import { UserSearchQueryDto } from "apps/user-service/src/dto/user-search-query.dto";
+import { UpdateUserProfileDto } from "apps/user-service/src/user-management/dto/update-user-profile.dto";
+import { UserSearchQueryDto } from "apps/user-service/src/user-management/dto/user-search-query.dto";
 import { firstValueFrom } from "rxjs";
 import { buildResponse } from "../common/response.util";
 
