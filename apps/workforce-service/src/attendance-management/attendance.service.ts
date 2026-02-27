@@ -62,7 +62,7 @@ export class AttendanceService {
   ): Promise<Attendance | { message: string; exception: string }> {
     const userId = (user.id ?? user._id) as string;
 
-    // Fetch user from user-service
+    // Fetch user details
     const userExist = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.GET_USER, { id: userId }),
     );
@@ -70,7 +70,7 @@ export class AttendanceService {
       return { message: userExist.message, exception: userExist.exception };
     }
 
-    // Current BD time
+    // Current time in Bangladesh
     const nowUTC = new Date();
     const bdNow = new Date(
       nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
@@ -83,41 +83,44 @@ export class AttendanceService {
       .toLocaleString("en-US", { timeZone: "Asia/Dhaka", weekday: "long" })
       .toUpperCase();
 
-    // Prevent duplicate attendance
-    const existingAttendance = await this.attendanceModel.findOne({
+    // Prevent duplicate
+    const existing = await this.attendanceModel.findOne({
       user: new Types.ObjectId(userId),
       date: todayDate,
     });
-    if (existingAttendance) {
+    if (existing) {
       return {
         message: "Attendance already marked for today",
         exception: "HttpException",
       };
     }
 
-    // Check weekend exchanges
-    const exchangeToday = await this.weekendExchangeModel.findOne({
-      user: userId,
-      newOffDate: todayDate,
-    });
-    const exchangeOriginal = await this.weekendExchangeModel.findOne({
-      user: userId,
-      originalWeekendDate: todayDate,
+    // Weekend exchange checks
+    const exchangeTodayOff = await this.weekendExchangeModel.findOne({
+      user: new Types.ObjectId(userId),
+      newOffDate: todayDate, // today became OFF
     });
 
-    // Determine attendance type and shift
-    let attendanceType: AttendanceInType;
-    let shiftType: string = ShiftTypeForOperations.DAY;
-    let shiftStartMinutes = 9 * 60; // default 9 AM
+    const exchangeTodayWorking = await this.weekendExchangeModel.findOne({
+      user: new Types.ObjectId(userId),
+      originalWeekendDate: todayDate, // today was weekend → now working
+    });
 
-    // WEEKEND / EXCHANGE OFF
-    if (exchangeToday || userExist.weekEndOff?.includes(todayDay)) {
-      attendanceType = AttendanceInType.WEEKEND;
+    // Determine if today is a working day or not
+    const isNormallyWeekend = userExist.weekEndOff?.includes(todayDay) ?? false;
+    const isTodayOffDueToExchange = !!exchangeTodayOff;
+    const isTodayWorkingDueToExchange = !!exchangeTodayWorking;
 
+    const isWorkingDay =
+      !isTodayOffDueToExchange &&
+      (!isNormallyWeekend || isTodayWorkingDueToExchange);
+
+    if (!isWorkingDay) {
+      // Weekend / exchanged OFF day → mark as WEEKEND, no shift, no time
       return this.attendanceModel.create({
         user: new Types.ObjectId(userId),
         date: todayDate,
-        inType: attendanceType,
+        inType: AttendanceInType.WEEKEND,
         shiftType: undefined,
         checkInTime: undefined,
         checkOutTime: undefined,
@@ -125,89 +128,101 @@ export class AttendanceService {
       });
     }
 
-    // Original weekend exchanged to working day → PRESENT
-    if (exchangeOriginal) {
-      attendanceType = AttendanceInType.PRESENT;
-    } else {
-      // Normal working day logic
-      const currentMinutes = bdNow.getHours() * 60 + bdNow.getMinutes();
+    // From here: today is a WORKING day (normal or exchanged)
 
-      // Set shift & start time
-      if (user.role === "HR" || user.department === "OPERATIONS") {
-        shiftType = ShiftTypeForOperations.DAY;
-        shiftStartMinutes = 9 * 60;
-      } else if (user.department === "SALES") {
-        const assignedShift =
-          await this.sellsShiftManagementService.getShiftForDate(
-            userId,
-            todayDate,
-          );
-        if (!assignedShift) {
-          return {
-            message: "No shift assigned for this week. Please contact admin.",
-            exception: "HttpException",
-          };
-        }
+    let shiftType: string = ShiftTypeForOperations.DAY;
+    let shiftStartMinutes = 9 * 60; // default fallback
 
-        shiftType = assignedShift.shiftType;
-        const shiftStartMap = {
-          [ShiftTypeForSales.MORNING]: 7 * 60,
-          [ShiftTypeForSales.EVENING]: 15 * 60,
-          [ShiftTypeForSales.NIGHT]: 23 * 60,
-        };
+    // SALES department needs dynamic shift
+    if (user.department === "SALES") {
+      // ─── Which date to use for shift lookup? ───
+      // We want the shift that was actually assigned to "the working day"
+      const shiftLookupDate = isTodayWorkingDueToExchange
+        ? exchangeTodayWorking.originalWeekendDate // ← most important fix
+        : todayDate;
 
-        shiftStartMinutes =
-          shiftStartMap[shiftType as keyof typeof shiftStartMap];
-        if (shiftStartMinutes === undefined) {
-          return {
-            message: "Invalid shift assigned",
-            exception: "HttpException",
-          };
-        }
-      } else {
-        return { message: "Department not found", exception: "HttpException" };
-      }
+      const assignedShift =
+        await this.sellsShiftManagementService.getShiftForDate(
+          userId,
+          shiftLookupDate,
+        );
 
-      // Calculate late
-      let adjustedCurrent = currentMinutes;
-      if (shiftType === ShiftTypeForSales.NIGHT) {
-        // night shift crosses midnight
-        adjustedCurrent =
-          currentMinutes < 12 * 60 ? 24 * 60 + currentMinutes : currentMinutes;
-      }
-
-      const graceLimit = shiftStartMinutes + 15;
-      const windowMinutes = 4 * 60;
-
-      // Check allowed marking window (4 hours before to 4 hours after shift)
-      const diff = adjustedCurrent - shiftStartMinutes;
-      if (diff < -windowMinutes || diff > 4 * 60) {
+      if (!assignedShift) {
         return {
-          message: `It is not your shift time. Your shift starts at ${Math.floor(shiftStartMinutes / 60)}:00`,
+          message: "No shift assigned for this period. Contact admin.",
           exception: "HttpException",
         };
       }
 
-      const isLate = adjustedCurrent > graceLimit;
-      attendanceType = isLate
-        ? AttendanceInType.LATE
-        : AttendanceInType.PRESENT;
+      shiftType = assignedShift.shiftType;
+
+      const shiftStartMap = {
+        [ShiftTypeForSales.MORNING]: 7 * 60,
+        [ShiftTypeForSales.EVENING]: 15 * 60,
+        [ShiftTypeForSales.NIGHT]: 23 * 60,
+      };
+
+      shiftStartMinutes =
+        shiftStartMap[shiftType as keyof typeof shiftStartMap];
+
+      if (shiftStartMinutes === undefined) {
+        return {
+          message: "Invalid shift type assigned",
+          exception: "HttpException",
+        };
+      }
+    } else if (user.role === "HR" || user.department === "OPERATIONS") {
+      shiftType = ShiftTypeForOperations.DAY;
+      shiftStartMinutes = 9 * 60;
+    } else {
+      return {
+        message: "Department not supported",
+        exception: "HttpException",
+      };
     }
 
-    // Save attendance
+    // Late check & time window validation
+    let currentMinutes = bdNow.getHours() * 60 + bdNow.getMinutes();
+
+    // Handle night shift crossing midnight
+    let adjustedCurrent = currentMinutes;
+    if (shiftType === ShiftTypeForSales.NIGHT) {
+      if (currentMinutes < 12 * 60) {
+        adjustedCurrent = 24 * 60 + currentMinutes; // treat as next day
+      }
+    }
+
+    const graceLimit = shiftStartMinutes + 15;
+    const earlyWindow = 8 * 60 + 59; // allow marking 8h 59min early
+    const lateWindow = 8 * 60 + 59; // allow marking 8h 59min late (adjust as needed)
+
+    const diff = adjustedCurrent - shiftStartMinutes;
+
+    if (diff < -earlyWindow || diff > lateWindow) {
+      const startHour = Math.floor(shiftStartMinutes / 60);
+      const startMin = shiftStartMinutes % 60;
+      const startStr = `${startHour.toString().padStart(2, "0")}:${startMin.toString().padStart(2, "0")}`;
+
+      return {
+        message: `Outside your shift window. Shift starts at ${startStr}`,
+        exception: "HttpException",
+      };
+    }
+
+    const isLate = adjustedCurrent > graceLimit;
+
+    const attendanceType = isLate
+      ? AttendanceInType.LATE
+      : AttendanceInType.PRESENT;
+
+    // Create attendance record
     const attendance = await this.attendanceModel.create({
       user: new Types.ObjectId(userId),
       date: todayDate,
       inType: attendanceType,
       shiftType,
-      checkInTime: [
-        AttendanceInType.PRESENT,
-        AttendanceInType.LATE,
-        AttendanceInType.WORK_FROM_HOME,
-      ].includes(attendanceType)
-        ? bdNow
-        : undefined, // weekends → undefined
-      isLate: attendanceType === AttendanceInType.LATE,
+      checkInTime: bdNow,
+      isLate,
     });
 
     return attendance;
@@ -458,7 +473,7 @@ export class AttendanceService {
     userId: UserIdDto["userId"],
     weekEndExchange: WeekendExchangeByAuthorityDto,
   ) {
-    const { originalWeekendDate, newOffDate } = weekEndExchange;
+    let { originalWeekendDate, newOffDate } = weekEndExchange;
 
     // Check if user exists
     const userExist = await firstValueFrom(
@@ -486,6 +501,19 @@ export class AttendanceService {
         exception: "HttpException",
       };
     }
+
+    // Convert dates in BD timezone
+    const convertToBDDate = (date: Date) => {
+      const utcDate = new Date(date);
+      const bdDate = new Date(
+        utcDate.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
+      );
+      bdDate.setHours(0, 0, 0, 0);
+      return bdDate;
+    };
+
+    originalWeekendDate = convertToBDDate(originalWeekendDate);
+    newOffDate = convertToBDDate(newOffDate);
 
     // Create new weekend exchange record
     const exchange = new this.weekendExchangeModel({
