@@ -3,8 +3,6 @@
  *
  * Registers a TCP client for the Workforce micro-service (which owns
  * departments) and wires DepartmentController + DepartmentService.
- *
- * @module api-gateway/department
  */
 
 import { Module } from "@nestjs/common";

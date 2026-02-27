@@ -4,8 +4,6 @@
  * Provides and exports RedisClientService and RedisTokenService
  * application-wide. Marked `@Global()` so consumers do not need
  * to import this module explicitly.
- *
- * @module api-gateway/common/redis
  */
 
 import { Global, Module } from "@nestjs/common";

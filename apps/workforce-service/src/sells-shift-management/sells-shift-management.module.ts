@@ -8,24 +8,20 @@ import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { MongooseModule } from "@nestjs/mongoose";
 import config from "@shared/config/app.config";
-import { MongooseConnectionsModule } from "@shared/database/mongoose-connections.module";
+import { Department, DepartmentSchema } from "../schemas/department.schema";
 import {
   SalesShiftAssignment,
   SalesShiftAssignmentSchema,
 } from "../schemas/sales-shift-assignment.schema";
-import { ShiftExchange, ShiftExchangeSchema } from "../schemas/shift-exchange.schema";
-import { Department, DepartmentSchema } from "../schemas/department.schema";
+import {
+  ShiftExchange,
+  ShiftExchangeSchema,
+} from "../schemas/shift-exchange.schema";
 import { SellsShiftManagementController } from "./sells-shift-management.controller";
 import { SellsShiftManagementService } from "./sells-shift-management.service";
 
 @Module({
   imports: [
-    /**
-     * Mongoose Module configured to connect to the MongoDB database using the connection string provided in the environment variables.
-     * This allows the Role Service to interact with the MongoDB database for storing and retrieving role data, enabling persistence and data management for role-related operations.
-     */
-    MongooseConnectionsModule,
-
     /**
      * Mongoose Module configured with the Sales shift management schema, defining the structure of department documents in the MongoDB database.
      * This allows the Sells Shift Management Service to perform CRUD operations on the data, ensuring that department documents adhere to the defined schema and enabling efficient data management and retrieval.
@@ -47,6 +43,7 @@ import { SellsShiftManagementService } from "./sells-shift-management.service";
 
     /**
      * Clients Module configured to register microservice clients, enabling communication between the Workforce Service and other services over TCP.
+     * This allows the Sells Shift Management Service to interact with the User Service and Notification Service microservices, facilitating operations such as retrieving user information and sending notifications related to sells shift management activities, while maintaining a decoupled architecture and promoting scalability within the API Gateway.
      */
     ClientsModule.register([
       {

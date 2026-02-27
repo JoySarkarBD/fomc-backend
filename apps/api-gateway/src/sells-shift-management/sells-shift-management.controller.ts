@@ -2,8 +2,6 @@
  * @fileoverview Sells shift management controller.
  *
  * Defines the REST API endpoints for managing sells shift schedules, including creating new shift entries for users. This controller is protected by JWT authentication and role-based access control, allowing only users with the SUPER ADMIN role to create sells shift management entries.
- *
- * @module api-gateway/sells-shift-management
  */
 
 import {

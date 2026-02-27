@@ -3,8 +3,6 @@
  *
  * Extracts the authenticated user object attached to the request
  * by JwtAuthGuard and provides it as a controller-method parameter.
- *
- * @module api-gateway/common/decorators
  */
 
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";

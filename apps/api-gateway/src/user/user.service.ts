@@ -3,8 +3,6 @@
  *
  * Handles communication with the User micro-service via TCP ClientProxy.
  * Route-handler methods will be uncommented as the service API stabilises.
- *
- * @module api-gateway/user
  */
 
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";

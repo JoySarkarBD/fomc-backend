@@ -3,8 +3,6 @@
  *
  * Registers a TCP client for the User micro-service (which owns roles)
  * and wires RoleController + RoleService.
- *
- * @module api-gateway/role
  */
 
 import { Module } from "@nestjs/common";

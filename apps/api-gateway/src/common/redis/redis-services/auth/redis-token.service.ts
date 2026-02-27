@@ -3,8 +3,6 @@
  *
  * Manages JWT authentication tokens in Redis — store with TTL,
  * retrieve, and delete. Used by JwtStrategy and AuthService.
- *
- * @module api-gateway/common/redis
  */
 
 import { Injectable, Logger } from "@nestjs/common";

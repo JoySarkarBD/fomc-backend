@@ -3,8 +3,6 @@
  *
  * Exposes attendance-related HTTP endpoints. Currently a stub — route
  * handlers will be uncommented as the Workforce micro-service API stabilises.
- *
- * @module api-gateway/attendance
  */
 
 import {

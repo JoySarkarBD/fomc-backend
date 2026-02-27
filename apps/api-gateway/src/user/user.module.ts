@@ -3,8 +3,6 @@
  *
  * Registers a TCP client for the User micro-service and wires
  * UserController + UserService.
- *
- * @module api-gateway/user
  */
 
 import { Module } from "@nestjs/common";

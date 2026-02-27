@@ -3,8 +3,6 @@
  *
  * Protects routes by requiring a valid JWT token in the
  * Authorization header via the Passport "jwt" strategy.
- *
- * @module api-gateway/common/guards
  */
 
 import { ExecutionContext, Injectable } from "@nestjs/common";

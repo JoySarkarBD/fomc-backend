@@ -3,8 +3,6 @@
  *
  * Sends TCP commands to the Workforce micro-service for attendance
  * operations and normalises the response for the API layer.
- *
- * @module api-gateway/attendance
  */
 
 import {

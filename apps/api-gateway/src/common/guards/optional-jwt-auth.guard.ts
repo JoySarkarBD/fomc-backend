@@ -4,8 +4,6 @@
  * Allows a route to be accessed by both authenticated and
  * unauthenticated users. If a valid JWT is present the user object
  * is attached; otherwise `req.user` is `null`.
- *
- * @module api-gateway/common/guards
  */
 
 import { Injectable } from "@nestjs/common";

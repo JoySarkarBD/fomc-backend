@@ -2,8 +2,6 @@
  * @fileoverview Sells Shift Management Module
  *
  * Register a TCP client for the Workforce micro-service (which owns sells shift management) and wires SellsShiftManagementController + SellsShiftManagementService.
- *
- * @module api-gateway/sells-shift-management
  */
 
 import { Module } from "@nestjs/common";

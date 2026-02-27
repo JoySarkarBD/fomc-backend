@@ -3,8 +3,6 @@
  *
  * Limits how often a single device can request a password-reset OTP
  * using the `FORGOT_PASSWORD` rate-limit constants.
- *
- * @module api-gateway/common/throttles
  */
 
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";

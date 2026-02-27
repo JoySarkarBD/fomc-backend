@@ -6,7 +6,6 @@
  */
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { MongooseConnectionsModule } from "@shared/database/mongoose-connections.module";
 import {
   User,
   UserSchema,
@@ -21,12 +20,6 @@ import { DepartmentService } from "./department.service";
  */
 @Module({
   imports: [
-    /**
-     * Mongoose Module configured to connect to the MongoDB database using the connection string provided in the environment variables.
-     * This allows the Role Service to interact with the MongoDB database for storing and retrieving role data, enabling persistence and data management for role-related operations.
-     */
-    MongooseConnectionsModule,
-
     /**
      * Mongoose Module configured with the Department schema, defining the structure of department documents in the MongoDB database.
      * This allows the Department Service to perform CRUD operations on department data, ensuring that department documents adhere to the defined schema and enabling efficient data management and retrieval.

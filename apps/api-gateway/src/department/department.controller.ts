@@ -3,8 +3,6 @@
  *
  * Exposes CRUD endpoints for department management and delegates
  * business logic to DepartmentService.
- *
- * @module api-gateway/department
  */
 
 import {

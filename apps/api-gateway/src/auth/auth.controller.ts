@@ -4,8 +4,6 @@
  * Exposes public endpoints for registration, login, forgot/reset
  * password, as well as authenticated endpoints for password change
  * and logout.
- *
- * @module api-gateway/auth/controller
  */
 
 import {

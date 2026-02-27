@@ -3,8 +3,6 @@
  *
  * Exposes user-related HTTP endpoints. Currently a stub — route
  * handlers will be uncommented as the User micro-service API stabilises.
- *
- * @module api-gateway/user
  */
 
 import {

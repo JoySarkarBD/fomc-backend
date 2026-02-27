@@ -2,8 +2,6 @@
  * @fileoverview Sells shift management service.
  *
  * Sends TCP commands to the Workforce micro-service for managing sells shift schedules, including creating new shift entries for users. This service acts as an intermediary between the API layer and the Workforce micro-service, handling the communication and data transformation required for sells shift management operations.
- *
- * @module api-gateway/sells-shift-management
  */
 
 import {

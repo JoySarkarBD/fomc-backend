@@ -3,8 +3,6 @@
  *
  * Exposes CRUD endpoints for designation management and delegates
  * business logic to DesignationService.
- *
- * @module api-gateway/designation
  */
 
 import {

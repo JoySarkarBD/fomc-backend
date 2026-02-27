@@ -1,4 +1,4 @@
-/** @fileoverview User controller stub. All message-pattern handlers are currently commented out. @module user-service/user.controller */
+/** @fileoverview User controller stub. All message-pattern handlers are currently commented out.  */
 
 import { Controller } from "@nestjs/common";
 // import { UpdateUserMessageDto } from "./dto/update-user.dto";
@@ -13,12 +13,6 @@ import { UserSearchQueryDto } from "./dto/user-search-query.dto";
 import { WeekEndOff } from "./schemas/user.schema";
 import { UserService } from "./user.service";
 
-/**
- * User Controller
- *
- * Handles all user-related microservice message patterns.
- * Communicates through message-based transport (e.g., TCP, RMQ, Kafka).
- */
 @Controller()
 export class UserController {
   /**

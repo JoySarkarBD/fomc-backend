@@ -1,6 +1,5 @@
 /**
  * @fileoverview Health-check controller for the API Gateway.
- * @module api-gateway/app.controller
  */
 
 import { Controller, Get } from "@nestjs/common";

@@ -7,22 +7,6 @@
  *
  * Because roles are stored in MongoDB and can be created or deleted
  * at any time, we accept plain strings rather than a fixed enum.
- *
- * @example
- * ```ts
- * // Single role
- * @Roles('DIRECTOR')
- *
- * // Multiple roles
- * @Roles('DIRECTOR', 'HR', 'PROJECT MANAGER')
- *
- * // Class-level (applies to every route in the controller)
- * @Roles('SUPER ADMIN')
- * @Controller('admin')
- * export class AdminController { ... }
- * ```
- *
- * @module api-gateway/common/decorators
  */
 
 import { SetMetadata } from "@nestjs/common";

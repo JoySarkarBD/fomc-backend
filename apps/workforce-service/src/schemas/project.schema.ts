@@ -9,6 +9,9 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from "mongoose";
 export type ProjectDocument = Project & Document;
 
+/**
+ * Enum for project status within the workforce management system.
+ */
 export enum ProjectStatus {
   NULL = "NULL",
   NRA = "NRA",

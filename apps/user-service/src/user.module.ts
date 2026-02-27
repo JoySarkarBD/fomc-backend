@@ -1,4 +1,4 @@
-/** @fileoverview User module. Registers Mongoose schemas, controllers, providers, and sub-modules for the user microservice. @module user-service/user.module */
+/** @fileoverview User module. Registers Mongoose schemas, controllers, providers, and sub-modules for the user microservice. */
 import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { MongooseModule } from "@nestjs/mongoose";

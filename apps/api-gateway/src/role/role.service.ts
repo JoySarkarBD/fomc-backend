@@ -3,8 +3,6 @@
  *
  * Sends TCP commands to the User micro-service (which owns roles)
  * and normalises the response for the API layer.
- *
- * @module api-gateway/role
  */
 
 import {

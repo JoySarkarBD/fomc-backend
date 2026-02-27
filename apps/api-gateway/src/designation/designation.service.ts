@@ -3,8 +3,6 @@
  *
  * Sends TCP commands to the Workforce micro-service (which owns
  * departments) and normalises the response for the API layer.
- *
- * @module api-gateway/designation
  */
 
 import {

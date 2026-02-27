@@ -3,8 +3,6 @@
  *
  * Registers a TCP client for the Workforce micro-service (which owns
  * designations) and wires DesignationController + DesignationService.
- *
- * @module api-gateway/designation
  */
 
 import { Module } from "@nestjs/common";

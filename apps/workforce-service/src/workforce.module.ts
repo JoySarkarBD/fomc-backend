@@ -6,18 +6,13 @@
  * along with the department/designation seed module.
  */
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 import { MongooseConnectionsModule } from "@shared/database/mongoose-connections.module";
 import { AttendanceModule } from "./attendance/attendance.module";
 import { DepartmentModule } from "./department/department.module";
 import { DesignationModule } from "./designation/designation.module";
-import { Attendance, AttendanceSchema } from "./schemas/attendance.schema";
-import { Department, DepartmentSchema } from "./schemas/department.schema";
-import { Leave, LeaveSchema } from "./schemas/leave.schema";
-import { ShiftExchange, ShiftExchangeSchema } from "./schemas/shift-exchange.schema";
 import { SeedDepartmentAndDesignationModule } from "./seed/seed-department-and-designation.module";
+import { SellsShiftManagementModule } from "./sells-shift-management/sells-shift-management.module";
 import { TaskModule } from "./task/task.module";
-import { SellsShiftManagementModule } from './sells-shift-management/sells-shift-management.module';
 
 @Module({
   imports: [
@@ -27,24 +22,6 @@ import { SellsShiftManagementModule } from './sells-shift-management/sells-shift
      */
     MongooseConnectionsModule,
 
-    MongooseModule.forFeature([
-      {
-        name: Attendance.name,
-        schema: AttendanceSchema,
-      },
-      {
-        name: Department.name,
-        schema: DepartmentSchema,
-      },
-      {
-        name: Leave.name,
-        schema: LeaveSchema,
-      },
-      {
-        name: ShiftExchange.name,
-        schema: ShiftExchangeSchema,
-      },
-    ]),
     AttendanceModule,
     TaskModule,
     SeedDepartmentAndDesignationModule,

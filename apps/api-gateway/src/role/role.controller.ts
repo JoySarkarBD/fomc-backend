@@ -3,8 +3,6 @@
  *
  * Exposes CRUD endpoints for role management and delegates
  * business logic to RoleService.
- *
- * @module api-gateway/role
  */
 
 import {

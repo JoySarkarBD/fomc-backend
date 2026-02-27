@@ -4,8 +4,6 @@
  * Catches every thrown exception (including raw validation-error
  * arrays produced by the global ValidationPipe) and normalises
  * them into a predictable JSON response envelope.
- *
- * @module api-gateway/common/http-exception.filter
  */
 
 import {

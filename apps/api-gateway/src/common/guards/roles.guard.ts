@@ -15,8 +15,6 @@
  *   a database role stored as `"DIRECTOR"`.
  * - Throws `ForbiddenException` with a descriptive message when
  *   the user is missing or does not hold an allowed role.
- *
- * @module api-gateway/common/guards
  */
 
 import {

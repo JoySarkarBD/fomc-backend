@@ -1,3 +1,6 @@
+/**
+ * @fileoverview This file defines the Data Transfer Objects (DTOs) for handling shift exchange requests and approvals in the Sells Shift Management module of the Workforce Service. The DTOs include validation rules and Swagger documentation to ensure that incoming data is properly structured and validated when employees request shift exchanges or when managers approve them.
+ */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsDateString,
@@ -8,6 +11,13 @@ import {
 } from "class-validator";
 import { ShiftTypeForSales } from "../../schemas/attendance.schema";
 
+/**
+ * Data Transfer Object for requesting a shift exchange in the Sells Shift Management module.
+ * Contains fields for the date of the shift exchange, the original shift, the new requested shift, and an optional reason for the request.
+ * The DTO includes validation rules to ensure that the provided data is in the correct format and adheres to the defined constraints, such as valid date strings and allowed shift types.
+ * This DTO is used when an employee submits a request to exchange their assigned shift with another shift, allowing the system to process the request and determine if it can be approved based on the provided information.
+ * The validation rules defined in this DTO help maintain data integrity and ensure that only valid shift exchange requests are processed by the Sells Shift Management service, facilitating a smooth and efficient shift exchange process within the workforce management system.
+ */
 export class RequestShiftExchangeDto {
   @ApiProperty({
     description: "Date for which the shift exchange is requested",

@@ -1,4 +1,6 @@
-/** @fileoverview User service stub. Business logic methods are currently commented out. @module user-service/user.service */
+/**
+ * @fileoverview User service stub. Business logic methods are currently commented out.
+ */
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
@@ -15,12 +17,6 @@ import { UserSearchQueryDto } from "./dto/user-search-query.dto";
 import { RoleService } from "./role/role.service";
 import { User, UserDocument, WeekEndOff } from "./schemas/user.schema";
 
-/**
- * UserService
- *
- * Handles all business logic related to User management.
- * Responsible for database interaction using Mongoose model.
- */
 @Injectable()
 export class UserService {
   /**

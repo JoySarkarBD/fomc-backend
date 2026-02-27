@@ -3,8 +3,6 @@
  *
  * Limits how often a single device can submit a password-reset
  * using the `RESET_PASSWORD` rate-limit constants.
- *
- * @module api-gateway/common/throttles
  */
 
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";

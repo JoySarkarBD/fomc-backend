@@ -3,8 +3,6 @@
  *
  * Imports all feature modules (Auth, User, Role, Department,
  * Attendance) and wires up the health-check controller.
- *
- * @module api-gateway/app
  */
 
 import { Module } from "@nestjs/common";
@@ -13,10 +11,10 @@ import { AppService } from "./app.service";
 import { AttendanceModule } from "./attendance/attendance.module";
 import { AuthModule } from "./auth/auth.module";
 import { DepartmentModule } from "./department/department.module";
+import { DesignationModule } from "./designation/designation.module";
 import { RoleModule } from "./role/role.module";
+import { SellsShiftManagementModule } from "./sells-shift-management/sells-shift-management.module";
 import { UserModule } from "./user/user.module";
-import { DesignationModule } from './designation/designation.module';
-import { SellsShiftManagementModule } from './sells-shift-management/sells-shift-management.module';
 
 @Module({
   imports: [
