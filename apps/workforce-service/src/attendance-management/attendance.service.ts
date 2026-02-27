@@ -111,15 +111,16 @@ export class AttendanceService {
     let shiftStartMinutes = 9 * 60; // default 9 AM
 
     // WEEKEND / EXCHANGE OFF
-    if (exchangeToday || userExist.weekendOff?.includes(todayDay)) {
+    if (exchangeToday || userExist.weekEndOff?.includes(todayDay)) {
       attendanceType = AttendanceInType.WEEKEND;
 
       return this.attendanceModel.create({
         user: new Types.ObjectId(userId),
         date: todayDate,
         inType: attendanceType,
-        shiftType,
+        shiftType: undefined,
         checkInTime: undefined,
+        checkOutTime: undefined,
         isLate: undefined,
       });
     }
