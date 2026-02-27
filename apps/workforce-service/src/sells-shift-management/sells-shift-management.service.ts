@@ -10,6 +10,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
 import { NOTIFICATION_COMMANDS } from "@shared/constants";
 import { USER_COMMANDS } from "@shared/constants/user-command.constants";
+import { convertToBDDate } from "@shared/utils/convert-to-db-date";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import { NotificationType } from "../../../notification-service/src/schema/notification.schema";
@@ -71,16 +72,6 @@ export class SellsShiftManagementService {
         exception: userExist.exception,
       };
     }
-
-    // Convert date into BD timezone and remove time part
-    const convertToBDDate = (date: Date) => {
-      const utcDate = new Date(date);
-      const bdDate = new Date(
-        utcDate.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
-      );
-      bdDate.setHours(0, 0, 0, 0);
-      return bdDate;
-    };
 
     // Convert to BD Time
     const utcStart = convertToBDDate(

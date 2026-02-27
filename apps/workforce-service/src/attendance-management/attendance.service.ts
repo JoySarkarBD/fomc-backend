@@ -14,6 +14,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { USER_COMMANDS } from "@shared/constants/user-command.constants";
 import { UserIdDto } from "@shared/dto/mongo-id.dto";
 import { AuthUser } from "@shared/interfaces/auth-user.interface";
+import { convertToBDDate } from "@shared/utils/convert-to-db-date";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import {
@@ -72,9 +73,7 @@ export class AttendanceService {
 
     // Current time in Bangladesh
     const nowUTC = new Date();
-    const bdNow = new Date(
-      nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
-    );
+    const bdNow = convertToBDDate(nowUTC);
 
     const todayDate = new Date(bdNow);
     todayDate.setHours(0, 0, 0, 0);
@@ -254,9 +253,7 @@ export class AttendanceService {
 
     // Current BD Time
     const nowUTC = new Date();
-    const bdNow = new Date(
-      nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
-    );
+    const bdNow = convertToBDDate(nowUTC);
 
     // Today's date (without time)
     const todayDate = new Date(bdNow);
@@ -419,19 +416,7 @@ export class AttendanceService {
 
     // Current BD Time
     const nowUTC = new Date();
-    const bdNow = new Date(
-      nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
-    );
-
-    // Convert date into BD timezone and remove time part
-    const convertToBDDate = (date: Date) => {
-      const utcDate = new Date(date);
-      const bdDate = new Date(
-        utcDate.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
-      );
-      bdDate.setHours(0, 0, 0, 0);
-      return bdDate;
-    };
+    const bdNow = convertToBDDate(nowUTC);
 
     // Validation: For certain inTypes, check-in/check-out times should not be provided
     const noTimesAllowed = [
@@ -513,7 +498,7 @@ export class AttendanceService {
     // Check if an exchange already exists for the original weekend date
     const existingExchange = await this.weekendExchangeModel.findOne({
       user: new Types.ObjectId(userId),
-      originalWeekendDate,
+      originalWeekendDate: convertToBDDate(originalWeekendDate),
     });
 
     if (existingExchange) {
@@ -522,16 +507,6 @@ export class AttendanceService {
         exception: "HttpException",
       };
     }
-
-    // Convert dates in BD timezone
-    const convertToBDDate = (date: Date) => {
-      const utcDate = new Date(date);
-      const bdDate = new Date(
-        utcDate.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
-      );
-      bdDate.setHours(0, 0, 0, 0);
-      return bdDate;
-    };
 
     originalWeekendDate = convertToBDDate(originalWeekendDate);
     newOffDate = convertToBDDate(newOffDate);
