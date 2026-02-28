@@ -218,7 +218,7 @@ export class SellsShiftManagementService {
       return user;
     }
 
-    if (user.department !== "Sales") {
+    if (user.department !== "SALES") {
       return {
         message: "Shift exchange is only available for Sales users",
         exception: "HttpException",
