@@ -124,39 +124,41 @@ export class UserService {
       }
     }
 
-    const formattedUsers = users.map(async (user: any) => {
-      const designationData = user.designation
-        ? designationMap.get(user.designation.toString())
-        : null;
+    const formattedUsers = await Promise.all(
+      users.map(async (user: any) => {
+        const designationData = user.designation
+          ? designationMap.get(user.designation.toString())
+          : null;
 
-      delete user.password;
-      delete user.otp;
-      delete user.otpExpiry;
+        delete user.password;
+        delete user.otp;
+        delete user.otpExpiry;
 
-      return {
-        _id: user._id,
-        name: user.name,
-        avatar: user.avatar
-          ? await getSignedUrl(
-              user.avatar,
-              config.MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR,
-            )
-          : null,
-        employeeId: user.employeeId,
-        phoneNumber: user.phoneNumber,
-        email: user.email,
-        secondaryEmail: user.secondaryEmail ?? null,
-        role: user.role?.name || null,
-        department: designationData?.departmentId?.name || null,
-        designation: designationData?.name || null,
-        isBlocked: user.isBlocked,
-        employmentStatus: user.employmentStatus,
-        resignedDates: user.resignedDates || [],
-        reJoiningDates: user.reJoiningDates || [],
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
-    });
+        return {
+          _id: user._id,
+          name: user.name,
+          avatar: user.avatar
+            ? await getSignedUrl(
+                user.avatar,
+                config.MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR,
+              )
+            : null,
+          employeeId: user.employeeId,
+          phoneNumber: user.phoneNumber,
+          email: user.email,
+          secondaryEmail: user.secondaryEmail ?? null,
+          role: user.role?.name || null,
+          department: designationData?.departmentId?.name || null,
+          designation: designationData?.name || null,
+          isBlocked: user.isBlocked,
+          employmentStatus: user.employmentStatus,
+          resignedDates: user.resignedDates || [],
+          reJoiningDates: user.reJoiningDates || [],
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        };
+      }),
+    );
 
     return {
       users: formattedUsers,
