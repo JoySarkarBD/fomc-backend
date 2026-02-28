@@ -254,9 +254,10 @@ export class SellsShiftManagementService {
     const pendingExchange = await this.shiftExchangeModel.findOne({
       user: new Types.ObjectId(userId),
       exchangeDate: exchangeDate,
-      status: {
-        $in: [ShiftExchangeStatus.PENDING, ShiftExchangeStatus.APPROVED],
-      },
+      $or: [
+        { status: ShiftExchangeStatus.PENDING },
+        { status: ShiftExchangeStatus.APPROVED },
+      ],
     });
 
     if (pendingExchange) {
