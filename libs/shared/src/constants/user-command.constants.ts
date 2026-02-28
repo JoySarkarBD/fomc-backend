@@ -1,5 +1,5 @@
 /**
- * @fileoverview TCP message-pattern commands for the **User** domain.
+ * @fileoverview TCP message-pattern commands for the User domain.
  *
  * Both the API Gateway and the User microservice import these
  * constants so that producers and consumers always agree on
