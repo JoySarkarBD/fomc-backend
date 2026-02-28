@@ -73,10 +73,15 @@ export class SellsShiftManagementService {
       };
     }
 
+    const utcWeekStartDate = new Date(
+      createSellsShiftManagementDto.weekStartDate,
+    );
+    const utcWeekEndDate = new Date(createSellsShiftManagementDto.weekEndDate);
+
     // Check time Sunday to Saturday
     if (
-      createSellsShiftManagementDto.weekStartDate.getUTCDay() !== 0 ||
-      createSellsShiftManagementDto.weekEndDate.getUTCDay() !== 6
+      utcWeekStartDate.getUTCDay() !== 0 ||
+      utcWeekEndDate.getUTCDay() !== 6
     ) {
       return {
         message:
