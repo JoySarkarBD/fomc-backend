@@ -345,16 +345,6 @@ export class SellsShiftManagementService {
     exchange.approvedBy = new Types.ObjectId(approvedBy);
     await exchange.save();
 
-    // Update the actual shift assignment
-    const assignment = await this.getShiftForDate(
-      exchange.user.toString(),
-      exchange.exchangeDate,
-    );
-    if (assignment) {
-      assignment.shiftType = exchange.newShift;
-      await assignment.save();
-    }
-
     // Notify user
     await firstValueFrom(
       this.notificationClient.send(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {
