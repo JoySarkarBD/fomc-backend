@@ -11,6 +11,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { NOTIFICATION_COMMANDS } from "@shared/constants";
 import { USER_COMMANDS } from "@shared/constants/user-command.constants";
 import { convertToBDDate } from "@shared/utils/convert-to-db-date";
+import { WeekEndOff } from "apps/user-service/src/schemas/user.schema";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import { NotificationType } from "../../../notification-service/src/schema/notification.schema";
@@ -138,6 +139,12 @@ export class SellsShiftManagementService {
       weekStartDate: utcStart,
       weekEndDate: utcEnd,
       shiftType: createSellsShiftManagementDto.shiftType,
+      myWeekends: {
+        currentWeekends: userExist.weekEndOff || [],
+        updatedWeekends: [],
+        exchangedWeekendDates: [],
+      },
+      shiftExchanges: [],
       assignedBy: new Types.ObjectId(assignedBy),
       note: createSellsShiftManagementDto.note,
     });
@@ -434,5 +441,21 @@ export class SellsShiftManagementService {
       .find({ status: ShiftExchangeStatus.PENDING })
       .populate("user", "name employeeId")
       .sort({ createdAt: -1 });
+  }
+
+  async updateUserWeekend(
+    userId: UserIdDto["userId"],
+    newWeekends: WeekEndOff,
+    today: Date, // BD date
+  ) {
+    // Find the shifts which match the current week with the incoming today, and other upcoming shifts
+    const shifts = await this.salesShiftAssignmentModel.find({
+      user: new Types.ObjectId(userId),
+      weekEndDate: { $gte: today },
+    });
+
+    console.log(shifts);
+
+    return;
   }
 }

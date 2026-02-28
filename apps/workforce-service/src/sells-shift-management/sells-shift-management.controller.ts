@@ -12,6 +12,7 @@ import {
   ExchangeIdDto,
   UserIdDto,
 } from "@shared/dto/mongo-id.dto";
+import { WeekEndOff } from "apps/user-service/src/schemas/user.schema";
 import { CreateSellsShiftManagementDto } from "./dto/create-sells-shift-management.dto";
 import { GetSellsShiftDto } from "./dto/get-sells-shift.dto";
 import { RequestShiftExchangeDto } from "./dto/request-shift-exchange.dto";
@@ -170,5 +171,26 @@ export class SellsShiftManagementController {
   @MessagePattern(SELLS_SHIFT_MANAGEMENT_COMMANDS.GET_PENDING_SHIFT_EXCHANGES)
   async getPendingShiftExchanges() {
     return await this.sellsShiftManagementService.getPendingShiftExchanges();
+  }
+
+  /**
+   * Update user weekend off based on shift exchange or manual update.
+   *
+   * Message Pattern: { cmd: SELLS_SHIFT_MANAGEMENT_COMMANDS.USER_WEEKEND_UPDATE }
+   *
+   * @param {Object} payload - The payload containing the user ID and the new weekend off value to be updated for the user.
+   * @returns {Promise<any>} The result of the user weekend off update operation.
+   */
+  @MessagePattern(SELLS_SHIFT_MANAGEMENT_COMMANDS.USER_WEEKEND_UPDATE)
+  async updateUserWeekend(payload: {
+    userId: UserIdDto["userId"];
+    weekEndOff: WeekEndOff;
+    today: Date;
+  }) {
+    return await this.sellsShiftManagementService.updateUserWeekend(
+      payload.userId,
+      payload.weekEndOff,
+      payload.today,
+    );
   }
 }

@@ -7,11 +7,13 @@ import { InjectModel } from "@nestjs/mongoose";
 import config from "@shared/config/app.config";
 import { DEPARTMENT_COMMANDS } from "@shared/constants";
 import { DESIGNATION_COMMANDS } from "@shared/constants/designation-command.constants";
+import { SELLS_SHIFT_MANAGEMENT_COMMANDS } from "@shared/constants/sells-shift-management.constants";
 import {
   MongoIdDto,
   SalesDeptIdDto,
   UserIdDto,
 } from "@shared/dto/mongo-id.dto";
+import { convertToBDDate } from "@shared/utils/convert-to-db-date";
 import { getSignedUrl } from "@shared/utils/minio.client";
 import * as bcrypt from "bcrypt";
 import { Model, Types } from "mongoose";
@@ -548,6 +550,16 @@ export class UserService {
         exception: "NotFoundException",
       };
     }
+
+    // Notify the Workforce service about the user's weekend off update, so that any necessary adjustments can be made to the user's shift assignments or schedules based on the new weekend off value.
+    await this.workForceClient.send(
+      SELLS_SHIFT_MANAGEMENT_COMMANDS.USER_WEEKEND_UPDATE,
+      {
+        userId,
+        weekEndOff,
+        today: convertToBDDate(new Date()),
+      },
+    );
 
     const userObj = (await this.getUser(updatedUser._id.toString())) as any;
 

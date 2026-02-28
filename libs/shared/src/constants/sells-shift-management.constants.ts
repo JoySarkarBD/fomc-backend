@@ -26,4 +26,7 @@ export const SELLS_SHIFT_MANAGEMENT_COMMANDS = {
 
   /** Get all shift exchange requests for approval (for managers). */
   GET_PENDING_SHIFT_EXCHANGES: { cmd: "get_pending_shift_exchanges" },
+
+  /** Update user weekend off based on shift exchange or manual update. */
+  USER_WEEKEND_UPDATE: { cmd: "user_weekend_update" },
 };
