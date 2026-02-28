@@ -552,15 +552,16 @@ export class UserService {
     }
 
     // Notify the Workforce service about the user's weekend off update, so that any necessary adjustments can be made to the user's shift assignments or schedules based on the new weekend off value.
-    await this.workForceClient.send(
-      SELLS_SHIFT_MANAGEMENT_COMMANDS.USER_WEEKEND_UPDATE,
-      {
-        userId,
-        weekEndOff,
-        today: convertToBDDate(new Date()),
-      },
+    await firstValueFrom(
+      this.workForceClient.send(
+        SELLS_SHIFT_MANAGEMENT_COMMANDS.USER_WEEKEND_UPDATE,
+        {
+          userId,
+          weekEndOff,
+          today: convertToBDDate(new Date()),
+        },
+      ),
     );
-
     const userObj = (await this.getUser(updatedUser._id.toString())) as any;
 
     delete userObj.password;
