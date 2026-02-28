@@ -229,9 +229,10 @@ export class SellsShiftManagementService {
     const exchangeDate = new Date(data.exchangeDate);
     const existingShift = await this.getShiftForDate(userId, exchangeDate);
 
-    if (!existingShift || existingShift.shiftType !== data.originalShift) {
+    if (existingShift) {
       return {
-        message: "You do not have the specified original shift on this date",
+        message:
+          "You do not have the specified original shift on the exchange date",
         exception: "HttpException",
       };
     }
