@@ -32,12 +32,19 @@ import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
-import { CreateSellsShiftConflictDto } from "./dto/error/create-sells-shift/create-selles-shift-conflict.dto";
+import { CreateSellsShiftConflictDto } from "./dto/error/create-sells-shift/create-sells-shift-conflict.dto";
 import { CreateSellsShiftForbiddenDto } from "./dto/error/create-sells-shift/create-sells-shift-forbidden.dto";
 import { CreateSellsShiftInternalErrorDto } from "./dto/error/create-sells-shift/create-sells-shift-internal-error.dto";
 import { CreateSellsShiftNotFoundDto } from "./dto/error/create-sells-shift/create-sells-shift-not-found.dto";
 import { CreateSellsShiftUnauthorizedDto } from "./dto/error/create-sells-shift/create-sells-shift-unauthorized.dto";
 import { CreateSellsShiftValidationDto } from "./dto/error/create-sells-shift/create-sells-shift-validation.dto";
+import {
+  GetMyShiftForbiddenDto,
+  GetMyShiftInternalErrorDto,
+  GetMyShiftNotFoundDto,
+  GetMyShiftUnauthorizedDto,
+  GetMyShiftValidationDto,
+} from "./dto/error/get-my-shift/get-user-sells-shift.dto";
 import {
   GetUserSellsShiftForbiddenDto,
   GetUserSellsShiftInternalErrorDto,
@@ -80,6 +87,7 @@ import {
 } from "./dto/error/shift-exchange/request-shift-exchange";
 import {
   CreateSellsShiftManagementSuccessDto,
+  GetMyShiftSuccessDto,
   GetUserSellsShiftSuccessDto,
 } from "./dto/success/sells-shift-management-success.dto";
 import {
@@ -426,5 +434,59 @@ export class SellsShiftManagementController {
       params.userId,
       query,
     );
+  }
+
+  /**
+   * Retrieves the logged-in user's sells shift management records.
+   *
+   * This endpoint allows a user to retrieve their own sells shift management records. The request must include the month and year for which to retrieve the records as query parameters. The endpoint is protected by JWT authentication to ensure that only authorized users can access their shift management records.
+   *
+   * @param {AuthUser} user - The authenticated user making the request, extracted from the JWT token.
+   * @param {GetSellsShiftDto} query - The query parameters containing the month and year for which to retrieve the shift management records.
+   * @returns {Promise<any>} A response containing the sells shift management records for the authenticated user and specified time period.
+   */
+  @ApiOperation({
+    summary: "Get my sells shifts",
+    description:
+      "Retrieves the logged-in user's sells shift management records.",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiRequestDetails({
+    queries: [
+      {
+        name: "month",
+        required: true,
+        type: Number,
+        example: 8,
+      },
+      {
+        name: "year",
+        required: true,
+        type: Number,
+        example: 2026,
+      },
+    ],
+    queryDto: GetSellsShiftDto,
+  })
+  @ApiSuccessResponse(GetMyShiftSuccessDto, 200)
+  @ApiErrorResponses({
+    unauthorized: GetMyShiftUnauthorizedDto,
+    forbidden: GetMyShiftForbiddenDto,
+    notFound: GetMyShiftNotFoundDto,
+    validation: GetMyShiftValidationDto,
+    internal: GetMyShiftInternalErrorDto,
+  })
+  @Roles("SUPER ADMIN", "PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
+  @Get("my-shifts")
+  async getMyShifts(
+    @GetUser() user: AuthUser,
+    @Query() query: GetSellsShiftDto,
+  ) {
+    return this.sellsShiftManagementService.findShiftForUser(user._id!, query);
   }
 }
