@@ -79,6 +79,13 @@ export class SellsShiftManagementService {
     );
     const utcEnd = convertToBDDate(createSellsShiftManagementDto.weekEndDate);
 
+    console.log("IN-COMING PAYLOAD:", createSellsShiftManagementDto);
+
+    console.log("CONVERTED PAYLOAD:", {
+      weekStartDate: utcStart,
+      weekEndDate: utcEnd,
+    });
+
     if (utcStart >= utcEnd) {
       return {
         message: "weekStartDate must be before weekEndDate",
