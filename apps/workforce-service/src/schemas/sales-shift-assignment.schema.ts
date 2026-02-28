@@ -50,10 +50,9 @@ export class SalesShiftAssignment extends Document {
   // Weekend off for the assigned shift
   @Prop({
     type: Object,
-    required: true,
   })
-  myWeekends!: {
-    currentWeekends: WeekEndOff[];
+  myWeekends?: {
+    currentWeekends?: WeekEndOff[];
     updatedWeekends?: WeekEndOff[];
     exchangedWeekendDates?: Date[];
   };
