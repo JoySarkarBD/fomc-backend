@@ -228,9 +228,22 @@ export class SellsShiftManagementService {
     // Verify if the user has the original shift on that date
     const exchangeDate = convertToBDDate(new Date(data.exchangeDate));
 
-    const existingShift = await this.getShiftForDate(userId, exchangeDate);
+    // Check if the user has the original shift on that date
+    const existingShift = await this.salesShiftAssignmentModel.findOne({
+      user: new Types.ObjectId(userId),
+      weekStartDate: { $lte: exchangeDate },
+      weekEndDate: { $gte: exchangeDate },
+      shiftType: data.originalShift,
+    });
 
-    if (!existingShift || existingShift.shiftType !== data.originalShift) {
+    if (!existingShift) {
+      return {
+        message: "You do not have the specified original shift on this date",
+        exception: "HttpException",
+      };
+    }
+
+    if (existingShift.shiftType !== data.originalShift) {
       return {
         message: "You do not have the specified original shift on this date",
         exception: "HttpException",
