@@ -73,31 +73,28 @@ export class SellsShiftManagementService {
       };
     }
 
+    // Check time Sunday to Saturday
+    if (
+      createSellsShiftManagementDto.weekStartDate.getUTCDay() !== 0 ||
+      createSellsShiftManagementDto.weekEndDate.getUTCDay() !== 6
+    ) {
+      return {
+        message:
+          "weekStartDate must be Sunday and weekEndDate must be Saturday",
+        exception: "HttpException",
+      };
+    }
+
     // Convert to BD Time
     const utcStart = convertToBDDate(
       createSellsShiftManagementDto.weekStartDate,
     );
     const utcEnd = convertToBDDate(createSellsShiftManagementDto.weekEndDate);
 
-    console.log("IN-COMING PAYLOAD:", createSellsShiftManagementDto);
-
-    console.log("CONVERTED PAYLOAD:", {
-      weekStartDate: utcStart,
-      weekEndDate: utcEnd,
-    });
-
+    // Check if weekStartDate is before weekEndDate
     if (utcStart >= utcEnd) {
       return {
         message: "weekStartDate must be before weekEndDate",
-        exception: "HttpException",
-      };
-    }
-
-    // Utc start should have to be SUNDAY and utc end should have to be SATURDAY
-    if (utcStart.getUTCDay() !== 0 || utcEnd.getUTCDay() !== 6) {
-      return {
-        message:
-          "weekStartDate must be a Sunday and weekEndDate must be a Saturday",
         exception: "HttpException",
       };
     }
