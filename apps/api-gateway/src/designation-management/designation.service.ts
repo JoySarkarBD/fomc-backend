@@ -6,7 +6,8 @@
  */
 
 import {
-  ConflictException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -39,10 +40,7 @@ export class DesignationService {
         createDesignationDto,
       ),
     );
-    switch (result?.exception) {
-      case "Conflict":
-        throw new ConflictException(result.message);
-    }
+    this.handleException(result);
     return buildResponse("Designation created successfully", result);
   }
 
@@ -89,12 +87,8 @@ export class DesignationService {
         data,
       }),
     );
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "Conflict":
-        throw new ConflictException(result.message);
-    }
+
+    this.handleException(result);
 
     return buildResponse("Designation updated successfully", result);
   }
@@ -109,12 +103,32 @@ export class DesignationService {
     const result = await firstValueFrom(
       this.workforceClient.send(DESIGNATION_COMMANDS.DELETE_DESIGNATION, id),
     );
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "Forbidden":
-        throw new ConflictException(result.message);
-    }
+
+    this.handleException(result);
+
     return buildResponse("Designation deleted successfully", result);
+  }
+
+  /**
+   * Handle exceptions from the Workforce micro-service responses.
+   *
+   * @param result - The response result from the Workforce micro-service, which may contain an exception field indicating an error.
+   */
+  private handleException(result: any) {
+    if (result?.exception) {
+      switch (result.exception) {
+        case "NotFoundException":
+          throw new NotFoundException(result.message);
+        case "HttpException":
+          throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+        case "ConflictException":
+          throw new HttpException(result.message, HttpStatus.CONFLICT);
+        default:
+          throw new HttpException(
+            result.message,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+      }
+    }
   }
 }

@@ -4,7 +4,8 @@
  * by communicating with the User Service via TCP microservice transport.
  */
 import {
-  ConflictException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   Logger,
@@ -98,12 +99,7 @@ export class AuthService {
       this.userClient.send(USER_COMMANDS.CREATE_USER, data),
     );
 
-    switch (user?.exception) {
-      case "ConflictException":
-        throw new ConflictException(user.message);
-      case "NotFoundException":
-        throw new NotFoundException(user.message);
-    }
+    this.handleException(user);
 
     // Return a success response with the created user details (excluding sensitive fields)
     const safeUser = this.sanitizeUser(user);
@@ -264,5 +260,28 @@ export class AuthService {
   async logout(tokenId: string) {
     await this.redisTokenService.deleteToken(tokenId);
     return buildResponse("Logout successful", null);
+  }
+
+  /**
+   * Handle exceptions from the Workforce micro-service responses.
+   *
+   * @param result - The response result from the Workforce micro-service, which may contain an exception field indicating an error.
+   */
+  private handleException(result: any) {
+    if (result?.exception) {
+      switch (result.exception) {
+        case "NotFoundException":
+          throw new NotFoundException(result.message);
+        case "HttpException":
+          throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+        case "ConflictException":
+          throw new HttpException(result.message, HttpStatus.CONFLICT);
+        default:
+          throw new HttpException(
+            result.message,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+      }
+    }
   }
 }

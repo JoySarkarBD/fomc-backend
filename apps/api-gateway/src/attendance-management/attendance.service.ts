@@ -42,12 +42,8 @@ export class AttendanceService {
       this.workforceClient.send(ATTENDANCE_COMMANDS.PRESENT_ATTENDANCE, user),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "HttpException":
-        throw new HttpException(result.message, HttpStatus.FORBIDDEN);
-    }
+    this.handleException(result);
+
     return buildResponse("Attendance marked", result);
   }
 
@@ -80,12 +76,7 @@ export class AttendanceService {
       this.workforceClient.send(ATTENDANCE_COMMANDS.OUT_ATTENDANCE, user),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "HttpException":
-        throw new HttpException(result.message, HttpStatus.FORBIDDEN);
-    }
+    this.handleException(result);
 
     return buildResponse("Attendance marked as out", result);
   }
@@ -111,10 +102,7 @@ export class AttendanceService {
       ),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-    }
+    this.handleException(result);
 
     return buildResponse("Attendance retrieved", result);
   }
@@ -137,10 +125,7 @@ export class AttendanceService {
       }),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-    }
+    this.handleException(result);
 
     return buildResponse("Weekend set successfully", result);
   }
@@ -166,12 +151,7 @@ export class AttendanceService {
       ),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "HttpException":
-        throw new HttpException(result.message, HttpStatus.FORBIDDEN);
-    }
+    this.handleException(result);
 
     return buildResponse("Attendance marked by authority", result);
   }
@@ -197,13 +177,31 @@ export class AttendanceService {
       ),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "HttpException":
-        throw new HttpException(result.message, HttpStatus.FORBIDDEN);
-    }
+    this.handleException(result);
 
     return buildResponse("Weekend exchange marked by authority", result);
+  }
+
+  /**
+   * Handle exceptions from the Workforce micro-service responses.
+   *
+   * @param result - The response result from the Workforce micro-service, which may contain an exception field indicating an error.
+   */
+  private handleException(result: any) {
+    if (result?.exception) {
+      switch (result.exception) {
+        case "NotFoundException":
+          throw new NotFoundException(result.message);
+        case "HttpException":
+          throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+        case "ConflictException":
+          throw new HttpException(result.message, HttpStatus.CONFLICT);
+        default:
+          throw new HttpException(
+            result.message,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+      }
+    }
   }
 }

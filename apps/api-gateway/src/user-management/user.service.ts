@@ -5,7 +5,13 @@
  * Route-handler methods will be uncommented as the service API stabilises.
  */
 
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { USER_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto";
@@ -53,6 +59,8 @@ export class UserService {
       throw new NotFoundException("User not found");
     }
 
+    this.handleException(user);
+
     return buildResponse("User fetched successfully", user);
   }
 
@@ -74,10 +82,31 @@ export class UserService {
       }),
     );
 
-    if (user?.exception === "NotFoundException") {
-      throw new NotFoundException("User not found");
-    }
+    this.handleException(user);
 
     return buildResponse("User profile updated successfully", user);
+  }
+
+  /**
+   * Handle exceptions from the Workforce micro-service responses.
+   *
+   * @param result - The response result from the Workforce micro-service, which may contain an exception field indicating an error.
+   */
+  private handleException(result: any) {
+    if (result?.exception) {
+      switch (result.exception) {
+        case "NotFoundException":
+          throw new NotFoundException(result.message);
+        case "HttpException":
+          throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+        case "ConflictException":
+          throw new HttpException(result.message, HttpStatus.CONFLICT);
+        default:
+          throw new HttpException(
+            result.message,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+      }
+    }
   }
 }

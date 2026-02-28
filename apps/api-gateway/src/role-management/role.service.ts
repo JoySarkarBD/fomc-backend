@@ -6,8 +6,8 @@
  */
 
 import {
-  ConflictException,
-  ForbiddenException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -37,10 +37,9 @@ export class RoleService {
     const result = await firstValueFrom(
       this.roleClient.send(ROLE_COMMANDS.CREATE_ROLE, data),
     );
-    switch (result?.exception) {
-      case "Conflict":
-        throw new ConflictException(result.message);
-    }
+
+    this.handleException(result);
+
     return buildResponse("Role created successfully", result);
   }
 
@@ -88,14 +87,7 @@ export class RoleService {
       }),
     );
 
-    switch (result?.exception) {
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "Forbidden":
-        throw new ForbiddenException(result.message);
-      case "Conflict":
-        throw new ConflictException(result.message);
-    }
+    this.handleException(result);
 
     return buildResponse("Role updated successfully", result);
   }
@@ -111,15 +103,31 @@ export class RoleService {
       this.roleClient.send(ROLE_COMMANDS.DELETE_ROLE, id),
     );
 
-    switch (result?.exception) {
-      case "Forbidden":
-        throw new ForbiddenException(result.message);
-      case "NotFoundException":
-        throw new NotFoundException(result.message);
-      case "Conflict":
-        throw new ConflictException(result.message);
-    }
+    this.handleException(result);
 
     return buildResponse("Role deleted successfully", result);
+  }
+
+  /**
+   * Handle exceptions from the Workforce micro-service responses.
+   *
+   * @param result - The response result from the Workforce micro-service, which may contain an exception field indicating an error.
+   */
+  private handleException(result: any) {
+    if (result?.exception) {
+      switch (result.exception) {
+        case "NotFoundException":
+          throw new NotFoundException(result.message);
+        case "HttpException":
+          throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+        case "ConflictException":
+          throw new HttpException(result.message, HttpStatus.CONFLICT);
+        default:
+          throw new HttpException(
+            result.message,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+      }
+    }
   }
 }
