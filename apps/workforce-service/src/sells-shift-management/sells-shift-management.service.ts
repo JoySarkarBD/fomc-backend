@@ -493,8 +493,7 @@ export class SellsShiftManagementService {
   async getUserShiftExchanges(userId: UserIdDto["userId"]) {
     return await this.shiftExchangeModel
       .find({ user: new Types.ObjectId(userId) })
-      .sort({ exchangeDate: -1 })
-      .populate("shiftExchanges");
+      .sort({ exchangeDate: -1 });
   }
 
   /**
@@ -503,8 +502,7 @@ export class SellsShiftManagementService {
   async getPendingShiftExchanges() {
     return await this.shiftExchangeModel
       .find({ status: ShiftExchangeStatus.PENDING })
-      .sort({ createdAt: -1 })
-      .populate("shiftExchanges");
+      .sort({ createdAt: -1 });
   }
 
   /**
