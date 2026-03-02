@@ -261,45 +261,6 @@ export class SellsShiftManagementService {
       };
     }
 
-    // Check if the user has any exchange weekend dates that match the exchange date, if so, they cannot request exchange for that date
-    if (
-      existingShift.myWeekends?.exchangedWeekendDates?.some(
-        (d) => d.toDateString() === exchangeDate.toDateString(),
-      )
-    ) {
-      return {
-        message: "You have already exchanged your weekend for this date",
-        exception: "HttpException",
-      };
-    }
-
-    // Check if the user has any updated weekends that match the exchange date, if so, they cannot request exchange for that date
-    const exchangeDayOfWeek = exchangeDate
-      .toLocaleString("en-US", {
-        timeZone: "Asia/Dhaka",
-        weekday: "long",
-      })
-      .toUpperCase() as WeekEndOff;
-
-    if (
-      existingShift.myWeekends?.updatedWeekends?.includes(exchangeDayOfWeek)
-    ) {
-      return {
-        message: "You have already updated your weekend for this date",
-        exception: "HttpException",
-      };
-    }
-
-    // Check if the user has any current weekends that match the exchange date, if so, they cannot request exchange for that date
-    if (
-      existingShift.myWeekends?.currentWeekends?.includes(exchangeDayOfWeek)
-    ) {
-      return {
-        message: "You have already set this day as your weekend",
-        exception: "HttpException",
-      };
-    }
-
     // Check if there is already a pending exchange request for the same date
     const pendingExchange = await this.shiftExchangeModel.findOne({
       user: new Types.ObjectId(userId),
@@ -403,8 +364,6 @@ export class SellsShiftManagementService {
       weekEndDate: { $gte: exchange.exchangeDate },
       shiftType: exchange.originalShift,
     });
-
-    console.log(shift);
 
     if (shift) {
       // Keep the previous exchange records and add the new exchange to the array
