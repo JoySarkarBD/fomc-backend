@@ -25,6 +25,10 @@ import {
   ShiftTypeForSales,
 } from "../schemas/attendance.schema";
 import {
+  SalesShiftAssignment,
+  WeekEndOff,
+} from "../schemas/sales-shift-assignment.schema";
+import {
   WeekendExchange,
   WeekendExchangeDocument,
 } from "../schemas/weekend-exchange.schema";
@@ -50,6 +54,8 @@ export class AttendanceService {
     @InjectModel(WeekendExchange.name)
     private readonly weekendExchangeModel: Model<WeekendExchangeDocument>,
     private readonly sellsShiftManagementService: SellsShiftManagementService,
+    @InjectModel(SalesShiftAssignment.name)
+    private readonly salesShiftAssignmentModel: Model<SalesShiftAssignment>,
   ) {}
 
   /**
@@ -518,6 +524,41 @@ export class AttendanceService {
       newOffDate,
       exchangedBy: new Types.ObjectId(userId), // Assuming the manager is performing the exchange on behalf of the user
     });
+
+    const currentWeekStart = convertToBDDate(new Date()).setDate(
+      exchange.newOffDate.getDate() - exchange.newOffDate.getDay(),
+    ); // Sunday as start of the week
+
+    const currentWeekEnd = convertToBDDate(new Date()).setDate(
+      currentWeekStart + 6,
+    ); // Saturday as end of the week
+
+    // Find the shift which match the current week
+    const shift = await this.salesShiftAssignmentModel.findOne({
+      user: new Types.ObjectId(userId),
+      weekStart: { $lte: currentWeekStart },
+      weekEnd: { $gte: currentWeekEnd },
+    });
+
+    if (shift) {
+      shift.myWeekends = {
+        currentWeekends: shift.myWeekends?.currentWeekends || [],
+        updatedWeekends: [
+          ...(shift.myWeekends?.updatedWeekends || []),
+          exchange.newOffDate
+            .toLocaleString("en-US", {
+              timeZone: "Asia/Dhaka",
+              weekday: "long",
+            })
+            .toUpperCase() as WeekEndOff,
+        ],
+        exchangedWeekendDates: [
+          ...(shift.myWeekends?.exchangedWeekendDates || []),
+          exchange.originalWeekendDate,
+        ],
+      };
+      await shift.save();
+    }
 
     return await exchange.save();
   }

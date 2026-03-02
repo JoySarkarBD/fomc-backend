@@ -11,6 +11,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 import config from "@shared/config/app.config";
 import { Attendance, AttendanceSchema } from "../schemas/attendance.schema";
 import {
+  SalesShiftAssignment,
+  SalesShiftAssignmentSchema,
+} from "../schemas/sales-shift-assignment.schema";
+import {
   WeekendExchange,
   WeekendExchangeSchema,
 } from "../schemas/weekend-exchange.schema";
@@ -28,6 +32,7 @@ import { AttendanceService } from "./attendance.service";
     MongooseModule.forFeature([
       { name: Attendance.name, schema: AttendanceSchema },
       { name: WeekendExchange.name, schema: WeekendExchangeSchema },
+      { name: SalesShiftAssignment.name, schema: SalesShiftAssignmentSchema },
     ]),
 
     /**
