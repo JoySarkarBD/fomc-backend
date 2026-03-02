@@ -81,9 +81,10 @@ export class AttendanceService {
 
     // Prepare dates (Bangladesh time)
     const nowUTC = new Date();
-    const bdNow = convertToBDDate(nowUTC);
+    const bdNow = new Date(
+      nowUTC.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }),
+    );
     const today = new Date(bdNow);
-    today.setHours(0, 0, 0, 0);
 
     const todayDayUpper = bdNow
       .toLocaleString("en-US", { timeZone: "Asia/Dhaka", weekday: "long" })
@@ -233,34 +234,25 @@ export class AttendanceService {
     // Time-window & lateness check
     let currentMinutes = bdNow.getHours() * 60 + bdNow.getMinutes();
 
-    console.log("BD DATE TODAY:", bdNow);
-
-    console.log("CURRENT MIN:", currentMinutes);
-
-    console.log("CURRENT HOUR:", bdNow.getHours());
-
     // Handle night shift crossing midnight
     if (shiftType === ShiftTypeForSales.NIGHT && currentMinutes < 12 * 60) {
       currentMinutes += 24 * 60; // treat as continuation from previous day
     }
 
-    console.log(
-      "currentMinutes < shiftStartMinutes - 4 * 60:",
-      currentMinutes < shiftStartMinutes - 4 * 60,
-    );
-    console.log(
-      "currentMinutes > shiftStartMinutes + 4 * 60:",
-      currentMinutes > shiftStartMinutes + 4 * 60,
-    );
     const gracePeriodMinutes = 15;
-    // Allow check-in from 4 hours before shift start and 4 hours after shift start
-    if (
-      currentMinutes < shiftStartMinutes - 4 * 60 ||
-      currentMinutes > shiftStartMinutes + 4 * 60
-    ) {
+    // Allow check-in from 4 hours before shift start to 4 hours after shift start
+    const earlyAllowanceMinutes = 4 * 60; // 4 hours before shift start
+    const lateAllowanceMinutes = 4 * 60; // 24 hours after shift start
+
+    const diff = currentMinutes - shiftStartMinutes;
+
+    if (diff < -earlyAllowanceMinutes || diff > lateAllowanceMinutes) {
+      const startH = Math.floor(shiftStartMinutes / 60);
+      const startM = shiftStartMinutes % 60;
+      const startStr = `${startH.toString().padStart(2, "0")}:${startM.toString().padStart(2, "0")}`;
+
       return {
-        message:
-          "Check-in allowed only within 4 hours before or after shift start time",
+        message: `Outside allowed check-in window. Shift starts at ${startStr}`,
         exception: "HttpException",
       };
     }
