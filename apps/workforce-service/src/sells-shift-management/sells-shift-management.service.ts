@@ -361,6 +361,8 @@ export class SellsShiftManagementService {
       shiftType: exchange.originalShift,
     });
 
+    console.log(shift);
+
     if (shift) {
       // Keep the previous exchange records and add the new exchange to the array
       shift.shiftExchanges = [
