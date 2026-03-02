@@ -233,35 +233,34 @@ export class AttendanceService {
     // Time-window & lateness check
     let currentMinutes = bdNow.getHours() * 60 + bdNow.getMinutes();
 
+    console.log("BD DATE TODAY:", bdNow);
+
+    console.log("CURRENT MIN:", currentMinutes);
+
+    console.log("CURRENT HOUR:", bdNow.getHours());
+
     // Handle night shift crossing midnight
     if (shiftType === ShiftTypeForSales.NIGHT && currentMinutes < 12 * 60) {
       currentMinutes += 24 * 60; // treat as continuation from previous day
     }
 
+    console.log(
+      "currentMinutes < shiftStartMinutes - 4 * 60:",
+      currentMinutes < shiftStartMinutes - 4 * 60,
+    );
+    console.log(
+      "currentMinutes > shiftStartMinutes + 4 * 60:",
+      currentMinutes > shiftStartMinutes + 4 * 60,
+    );
     const gracePeriodMinutes = 15;
-    // Allow check-in from 4 hours before shift start to 4 hours after shift start
-    const earliestCheckIn = shiftStartMinutes - 4 * 60;
-    const latestCheckIn = shiftStartMinutes + 4 * 60;
-
-    if (currentMinutes < earliestCheckIn || currentMinutes > latestCheckIn) {
+    // Allow check-in from 4 hours before shift start and 4 hours after shift start
+    if (
+      currentMinutes < shiftStartMinutes - 4 * 60 ||
+      currentMinutes > shiftStartMinutes + 4 * 60
+    ) {
       return {
-        message: `Outside allowed check-in window. Shift starts at ${Math.floor(
-          shiftStartMinutes / 60,
-        )
-          .toString()
-          .padStart(2, "0")}:${(shiftStartMinutes % 60)
-          .toString()
-          .padStart(2, "0")}. You can check in from ${Math.floor(
-          earliestCheckIn / 60,
-        )
-          .toString()
-          .padStart(2, "0")}:${(earliestCheckIn % 60)
-          .toString()
-          .padStart(2, "0")} to ${Math.floor(latestCheckIn / 60)
-          .toString()
-          .padStart(2, "0")}:${(latestCheckIn % 60)
-          .toString()
-          .padStart(2, "0")}.`,
+        message:
+          "Check-in allowed only within 4 hours before or after shift start time",
         exception: "HttpException",
       };
     }
