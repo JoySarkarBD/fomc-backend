@@ -354,6 +354,24 @@ export class SellsShiftManagementService {
     exchange.approvedBy = new Types.ObjectId(approvedBy);
     await exchange.save();
 
+    const shift = await this.salesShiftAssignmentModel.findOne({
+      user: new Types.ObjectId(exchange.user),
+      weekStartDate: { $lte: exchange.exchangeDate },
+      weekEndDate: { $gte: exchange.exchangeDate },
+      shiftType: exchange.originalShift,
+    });
+
+    if (shift) {
+      // Keep the previous exchange records and add the new exchange to the array
+      shift.shiftExchanges = [
+        // convert into ObjectId array
+        ...(shift.shiftExchanges || []),
+        new Types.ObjectId(exchange._id),
+      ];
+
+      await shift.save();
+    }
+
     // Notify user
     await firstValueFrom(
       this.notificationClient.send(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {

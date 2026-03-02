@@ -70,8 +70,12 @@ export class AttendanceService {
     const userExist = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.GET_USER, { id: userId }),
     );
+
     if (userExist.exception) {
-      return { message: userExist.message, exception: userExist.exception };
+      return {
+        message: userExist.message,
+        exception: userExist.exception,
+      };
     }
 
     // Current time in Bangladesh
@@ -155,6 +159,8 @@ export class AttendanceService {
           exception: "HttpException",
         };
       }
+
+      // TODO: Shift exchange logic can be added here in the future, for now we assume the assigned shift is the one to validate against
 
       shiftType = assignedShift.shiftType;
 
@@ -531,17 +537,12 @@ export class AttendanceService {
     const originalWeekEnd = new Date(originalWeekStart);
     originalWeekEnd.setDate(originalWeekEnd.getDate() + 6); // Saturday
 
-    console.log(originalWeekStart);
-    console.log(originalWeekEnd);
-
     // Find the shift which match the current week
     const shift = await this.salesShiftAssignmentModel.findOne({
       user: new Types.ObjectId(userId),
       weekStartDate: { $lte: originalWeekStart },
       weekEndDate: { $gte: originalWeekStart, $lte: originalWeekEnd },
     });
-
-    console.log(shift);
 
     if (shift) {
       shift.myWeekends = {
