@@ -147,7 +147,7 @@ export class AttendanceService {
     }
 
     // From here: TODAY IS A WORKING DAY - need to determine shift and check-in time
-    let shiftType: string;
+    let shiftType: string | undefined;
     let shiftStartMinutes: number;
 
     // SALES department
@@ -182,7 +182,8 @@ export class AttendanceService {
 
       console.log("Has exchange today:", hasActiveExchangeToday);
 
-      if (hasActiveExchangeToday && !isTodayForcedWork) {
+      // If there's an active exchange today and today is a forced work day (originally weekend), we need to use the new shift from the exchange instead of the assigned shift
+      if (hasActiveExchangeToday && isTodayForcedWork) {
         const exchangeShiftToday = assignment.shiftExchanges?.find(
           (ex: any) => {
             return (
@@ -205,15 +206,23 @@ export class AttendanceService {
         }
       }
 
-      // Determine final shift type for today
+      // If there's an active exchange today, it overrides the assigned shift for today
+      if (hasActiveExchangeToday) {
+        const exchangeShiftToday = assignment.shiftExchanges?.find(
+          (ex: any) => {
+            return (
+              ex.status === ShiftExchangeStatus.APPROVED &&
+              new Date(ex.exchangeDate).toDateString() === today.toDateString()
+            );
+          },
+        ) as any;
+
+        shiftType = exchangeShiftToday.newShift;
+      }
+
+      // Priority for determining today's shift:
       if (isTodayForcedWork) {
-        shiftType = hasActiveExchangeToday
-          ? (exchangedShiftToday as string)
-          : assignment.shiftType;
-      } else {
-        shiftType = hasActiveExchangeToday
-          ? (exchangedShiftToday as string)
-          : assignment.shiftType;
+        shiftType = assignment.shiftType;
       }
 
       const shiftStartMap: Record<ShiftTypeForSales, number> = {
