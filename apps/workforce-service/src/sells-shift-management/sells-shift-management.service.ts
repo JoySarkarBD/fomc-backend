@@ -439,10 +439,18 @@ export class SellsShiftManagementService {
   async getPendingShiftExchanges() {
     return await this.shiftExchangeModel
       .find({ status: ShiftExchangeStatus.PENDING })
-      .populate("user", "name employeeId")
       .sort({ createdAt: -1 });
   }
 
+  /**
+   * Update user's weekend off and adjust their shift assignments accordingly.
+   *
+   * @param {string} userId - The ID of the user whose weekend off is being updated.
+   * @param {WeekEndOff} newWeekends - The new weekend off value to be set for the user.
+   * @param {Date} today - The current date (in BD time) to determine which shifts are in the current week and which are in future weeks.
+   * @return {Promise<any>} The result of the update operation, which may include the number of records matched and modified, or an error message if the user does not exist.
+   * @remarks This method updates the user's weekend off preference and then finds all their shift assignments that are in the current week or in future weeks. For shifts in the current week, it directly updates the currentWeekends field. For shifts in future weeks, it updates the updatedWeekends field so that the change takes effect when those weeks become current.
+   */
   async updateUserWeekend(
     userId: UserIdDto["userId"],
     newWeekends: WeekEndOff,
@@ -454,8 +462,53 @@ export class SellsShiftManagementService {
       weekEndDate: { $gte: today },
     });
 
-    console.log(shifts);
+    // For each shift, update the myWeekends fields with the new weekends and perform a bulkWrite
+    if (!shifts || shifts.length === 0) {
+      return { matchedCount: 0, modifiedCount: 0 };
+    }
 
-    return;
+    const newWeekendsArr = Array.isArray(newWeekends)
+      ? newWeekends
+      : [newWeekends];
+
+    const ops = shifts.map((shift) => {
+      const weekStart =
+        shift.weekStartDate instanceof Date
+          ? shift.weekStartDate.getTime()
+          : new Date(shift.weekStartDate).getTime();
+      const weekEnd =
+        shift.weekEndDate instanceof Date
+          ? shift.weekEndDate.getTime()
+          : new Date(shift.weekEndDate).getTime();
+      const todayTime =
+        today instanceof Date ? today.getTime() : new Date(today).getTime();
+
+      const isCurrentWeek = weekStart <= todayTime && weekEnd >= todayTime;
+
+      // Build set object depending on whether this is the current week or a future week
+      const setObj: any = {};
+      if (isCurrentWeek) {
+        // For the current week, directly update the currentWeekends to the new value
+        setObj["myWeekends.currentWeekends"] = newWeekendsArr;
+        // Optionally clear any previously queued updatedWeekends for the current week
+        setObj["myWeekends.updatedWeekends"] = [];
+      } else {
+        // For upcoming weeks, set the updatedWeekends so the change takes effect later
+        setObj["myWeekends.updatedWeekends"] = newWeekendsArr;
+      }
+
+      return {
+        updateOne: {
+          filter: { _id: shift._id },
+          update: { $set: setObj },
+        },
+      };
+    });
+
+    const result = await this.salesShiftAssignmentModel.bulkWrite(ops, {
+      ordered: false,
+    });
+
+    return result;
   }
 }

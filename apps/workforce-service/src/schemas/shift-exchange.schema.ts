@@ -41,7 +41,7 @@ export enum ShiftExchangeStatus {
  */
 @Schema({ timestamps: true, versionKey: false })
 export class ShiftExchange extends Document {
-  @Prop({ type: Types.ObjectId, required: true, ref: "User" })
+  @Prop({ type: Types.ObjectId, required: true })
   user!: mongo.ObjectId;
 
   @Prop({ required: true })
