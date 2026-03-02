@@ -525,13 +525,16 @@ export class AttendanceService {
       exchangedBy: new Types.ObjectId(userId), // Assuming the manager is performing the exchange on behalf of the user
     });
 
-    const currentWeekStart = convertToBDDate(new Date()).setDate(
-      exchange.newOffDate.getDate() - exchange.newOffDate.getDay(),
-    ); // Sunday as start of the week
+    // Current week start and end dates based
+    const currentWeekStart = convertToBDDate(new Date());
+    currentWeekStart.setDate(
+      currentWeekStart.getDate() - currentWeekStart.getDay(),
+    ); // Set to Sunday
 
-    const currentWeekEnd = convertToBDDate(new Date()).setDate(
-      currentWeekStart + 6,
-    ); // Saturday as end of the week
+    const currentWeekEnd = convertToBDDate(new Date());
+    currentWeekEnd.setDate(
+      currentWeekEnd.getDate() + (6 - currentWeekEnd.getDay()),
+    ); // Set to Saturday
 
     // Find the shift which match the current week
     const shift = await this.salesShiftAssignmentModel.findOne({
@@ -544,7 +547,6 @@ export class AttendanceService {
       shift.myWeekends = {
         currentWeekends: shift.myWeekends?.currentWeekends || [],
         updatedWeekends: [
-          ...(shift.myWeekends?.updatedWeekends || []),
           exchange.newOffDate
             .toLocaleString("en-US", {
               timeZone: "Asia/Dhaka",
