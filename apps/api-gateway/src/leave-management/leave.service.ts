@@ -68,6 +68,23 @@ export class LeaveService {
   /**
    * Retrieve a leave request by its ID.
    *
+   * @param {MongoIdDto["id"]} id - The ID of the leave request to be retrieved.
+   * @return Promise resolving to the leave document matching the specified ID, or null if no such document exists.
+   * @remarks This method sends a command to the Workforce micro-service to retrieve a leave request by its ID. It uses the `firstValueFrom` function to convert the observable response from the micro-service into a promise, and then handles any exceptions that may occur during the process. Finally, it returns a structured response containing a success message and the leave document matching the specified ID, or null if no such document exists.
+   */
+  async getLeaveById(id: MongoIdDto["id"]) {
+    const result = await firstValueFrom(
+      this.workforceClient.send(LEAVE_COMMANDS.GET_LEAVE_REQUEST_BY_ID, id),
+    );
+
+    handleException(result);
+
+    return buildResponse("Leave request retrieved successfully", result);
+  }
+
+  /**
+   * Retrieve a leave request by its ID.
+   *
    * @param {string} id - The ID of the leave request to be retrieved.
    * @return Promise resolving to the leave document matching the specified ID, or null if no such document exists.
    * @remarks This method sends a command to the Workforce micro-service to retrieve a leave request by its ID. It uses the `firstValueFrom` function to convert the observable response from the micro-service into a promise, and then handles any exceptions that may occur during the process. Finally, it returns the leave document matching the specified ID, or null if no such document exists.
