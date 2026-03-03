@@ -70,7 +70,7 @@ import {
   DesignationSuccessDto,
 } from "./dto/success/designation-success.dto";
 
-@ApiTags("Designation")
+@ApiTags("Designation Management")
 @Controller("designation")
 export class DesignationController {
   constructor(private readonly designationService: DesignationService) {}

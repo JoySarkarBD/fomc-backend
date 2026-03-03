@@ -73,7 +73,7 @@ import {
 } from "./dto/success/role-success.dto";
 import { RoleService } from "./role.service";
 
-@ApiTags("Role")
+@ApiTags("Role Management")
 @Controller("role")
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

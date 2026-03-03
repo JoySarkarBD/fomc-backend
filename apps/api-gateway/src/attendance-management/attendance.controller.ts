@@ -78,7 +78,7 @@ import {
   UpdateByAuthorityWeekendSetSuccessDto,
 } from "./dto/success/attendance-success.dto";
 
-@ApiTags("Attendance")
+@ApiTags("Attendance Management")
 @Controller("attendance")
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AttendanceController {

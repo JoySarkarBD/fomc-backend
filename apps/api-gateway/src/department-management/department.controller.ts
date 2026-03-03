@@ -72,7 +72,7 @@ import {
   DepartmentsListSuccessDto,
 } from "./dto/success/department-success.dto";
 
-@ApiTags("Department")
+@ApiTags("Department Management")
 @Controller("department")
 export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}

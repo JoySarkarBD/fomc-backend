@@ -74,7 +74,7 @@ import {
 } from "./dto/success/user-success.dto";
 import { UserService } from "./user.service";
 
-@ApiTags("User")
+@ApiTags("User Management")
 @UseGuards(JwtAuthGuard)
 @Controller("user")
 export class UserController {
