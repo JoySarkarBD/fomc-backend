@@ -48,6 +48,18 @@ export class LeaveController {
   }
 
   /**
+   * Retrieve all pending leave requests for authorities (e.g., SUPER ADMIN, PROJECT MANAGER).
+   *
+   * Message Pattern: { cmd: LEAVE_COMMANDS.GET_ALL_PENDING_LEAVE_REQUESTS_FOR_AUTHORITY }
+   *
+   * @return {Promise<any>} A list of all pending leave requests that require authority action.
+   */
+  @MessagePattern(LEAVE_COMMANDS.GET_ALL_PENDING_LEAVE_REQUESTS_FOR_AUTHORITY)
+  async getPendingLeaveRequestsForAuthority(): Promise<any> {
+    return await this.leaveService.getPendingLeaveRequestsForAuthority();
+  }
+
+  /**
    * Retrieve leave requests specific to a user based on the provided query parameters.
    *
    * Message Pattern: { cmd: LEAVE_COMMANDS.GET_USER_SPECIFIC_LEAVE_REQUESTS }

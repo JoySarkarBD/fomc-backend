@@ -12,6 +12,16 @@ export class LeaveRequestInternalErrorDto extends CustomInternalServerErrorDto {
   declare endpoint: string;
 }
 
+export class PendingLeaveRequestsForAuthorityInternalErrorDto extends CustomInternalServerErrorDto {
+  @ApiProperty({ example: Methods.GET })
+  declare method: Methods.GET;
+
+  @ApiProperty({
+    example: "api/leave/pending-approvals",
+  })
+  declare endpoint: string;
+}
+
 export class MyLeaveInternalErrorDto extends CustomInternalServerErrorDto {
   @ApiProperty({ example: Methods.GET })
   declare method: Methods.GET;

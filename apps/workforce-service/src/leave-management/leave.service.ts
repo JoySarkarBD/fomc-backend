@@ -22,6 +22,8 @@ import { Leave } from "../schemas/leave.schema";
 import { GetLeaveDto } from "./dto/get-leave.dto";
 import { LeaveRequestDto } from "./dto/leave-request.dto";
 
+// TODO: Notification to user when leave request is approved or rejected by authority
+// TODO: Notification to authority when user requests for leave and this will send to the SUPER ADMIN AND PROJECT MANGER of the user.
 @Injectable()
 export class LeaveService {
   constructor(
@@ -91,6 +93,20 @@ export class LeaveService {
     //
 
     return await newLeave.save();
+  }
+
+  /**
+   * Retrieves all pending leave requests that require approval from authorities.
+   *
+   * @returns A promise that resolves to an array of leave documents that are pending approval, or an empty array if there are no pending leave requests.
+   * @remarks This method performs a database query to find all leave documents where the `isApproved` field is set to false, indicating that they are pending approval. The method returns the retrieved leave documents as a promise, allowing the caller to handle the results asynchronously. If there are no pending leave requests, it will return an empty array.
+   */
+  async getPendingLeaveRequestsForAuthority() {
+    return await this.leaveModel
+      .find({
+        isApproved: false,
+      })
+      .exec();
   }
 
   /**

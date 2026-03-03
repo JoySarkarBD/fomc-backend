@@ -42,6 +42,26 @@ export class LeaveService {
   }
 
   /**
+   * Retrieve all pending leave requests for authority.
+   *
+   * @return Promise resolving to a list of all pending leave requests for authority.
+   * @remarks This method sends a command to the Workforce micro-service to retrieve all pending leave requests for authority. It uses the `firstValueFrom` function to convert the observable response from the micro-service into a promise, and then handles any exceptions that may occur during the process. Finally, it returns a structured response containing a success message and the list of all pending leave requests for authority.
+   */
+  async getAllPendingLeaveRequestsForAuthority() {
+    const result = await firstValueFrom(
+      this.workforceClient.send(
+        LEAVE_COMMANDS.GET_ALL_PENDING_LEAVE_REQUESTS_FOR_AUTHORITY,
+        {},
+      ),
+    );
+
+    return buildResponse(
+      "Pending leave requests for authority retrieved successfully",
+      result,
+    );
+  }
+
+  /**
    * Retrieve leave requests specific to a user based on the provided query parameters.
    *
    * @param {AuthUser} user - The authenticated user for whom to retrieve leave requests.

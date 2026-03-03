@@ -9,6 +9,10 @@ export const LEAVE_COMMANDS = {
   /** Create a new leave request. */
   CREATE_LEAVE_REQUEST: { cmd: "create_leave_request" },
 
+  GET_ALL_PENDING_LEAVE_REQUESTS_FOR_AUTHORITY: {
+    cmd: "get_all_pending_leave_requests_for_authority",
+  },
+
   /** Get leave requests specific to a user based on query parameters. */
   GET_USER_SPECIFIC_LEAVE_REQUESTS: { cmd: "get_user_specific_leave_requests" },
 

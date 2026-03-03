@@ -34,6 +34,40 @@ export class LeaveRequestSuccessDto extends SuccessResponseDto<any> {
   declare data: any;
 }
 
+export class PendingLeaveRequestsForAuthoritySuccessDto extends SuccessResponseDto<
+  any[]
+> {
+  @ApiProperty({
+    example: "Pending leave requests for authority retrieved successfully",
+  })
+  declare message: string;
+
+  @ApiProperty({ example: Methods.GET })
+  declare method: Methods.GET;
+
+  @ApiProperty({ example: "api/leave/pending-approvals" })
+  declare endpoint: string;
+
+  @ApiProperty({
+    example: [
+      {
+        _id: "699065646c98dffa195f7d7e",
+        user: "698ffc1ef75d367cc3e9d955",
+        type: LeaveType.CASUAL_LEAVE,
+        startDate: "2026-02-20T00:00:00.000Z",
+        endDate: "2026-02-22T00:00:00.000Z",
+        isApproved: null,
+        isRejected: null,
+        approvedBy: null,
+        rejectedBy: null,
+        createdAt: "2026-02-14T12:07:00.986Z",
+        updatedAt: "2026-02-14T12:07:00.986Z",
+      },
+    ],
+  })
+  declare data: any[];
+}
+
 export class MyLeavesSuccessDto extends SuccessResponseDto<any[]> {
   @ApiProperty({ example: "My leaves retrieved successfully" })
   declare message: string;

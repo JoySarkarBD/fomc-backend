@@ -44,6 +44,7 @@ import {
   LeaveRequestInternalErrorDto,
   LeaveRequestRejectionInternalErrorDto,
   MyLeaveInternalErrorDto,
+  PendingLeaveRequestsForAuthorityInternalErrorDto,
   SpecificLeaveRequestInternalErrorDto,
   UserSpecificLeaveInternalErrorDto,
 } from "./dto/error/leave-internal-error.dto";
@@ -76,6 +77,7 @@ import {
   LeaveRequestRejectionSuccessDto,
   LeaveRequestSuccessDto,
   MyLeavesSuccessDto,
+  PendingLeaveRequestsForAuthoritySuccessDto,
   SpecificLeaveRequestSuccessDto,
   UserSpecificLeaveSuccessDto,
 } from "./dto/success/leave-success.dto";
@@ -152,6 +154,31 @@ export class LeaveController {
       (user._id ?? user.id) as UserIdDto["userId"],
       query,
     );
+  }
+
+  /**
+   * Retrieve all pending leave requests for authority.
+   *
+   * @guards JwtAuthGuard, RolesGuard
+   * @returns A list of all pending leave requests for authority.
+   */
+  @ApiOperation({
+    summary: "Retrieve all pending leave requests for authority",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiSuccessResponse(PendingLeaveRequestsForAuthoritySuccessDto)
+  @ApiErrorResponses({
+    internal: PendingLeaveRequestsForAuthorityInternalErrorDto,
+  })
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
+  @Get("pending-approvals")
+  async getAllPendingLeaveRequestsForAuthority() {
+    return await this.leaveService.getAllPendingLeaveRequestsForAuthority();
   }
 
   /**
