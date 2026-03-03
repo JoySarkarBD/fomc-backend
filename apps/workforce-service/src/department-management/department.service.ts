@@ -5,12 +5,14 @@
  * Provides methods to create, retrieve (paginated), find by ID, update, and
  * delete departments with safety checks for system departments and associations.
  */
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
+import { USER_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto/mongo-id.dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
-import { User } from "apps/user-service/src/schemas/user.schema";
 import { Model, Types } from "mongoose";
+import { firstValueFrom } from "rxjs";
 import { Department, DepartmentDocument } from "../schemas/department.schema";
 import {
   Designation,
@@ -22,11 +24,11 @@ import { UpdateDepartmentDto } from "./dto/update-department.dto";
 @Injectable()
 export class DepartmentService {
   constructor(
+    @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
     @InjectModel(Department.name)
     private readonly departmentModel: Model<DepartmentDocument>,
     @InjectModel(Designation.name)
     private readonly designationModel: Model<DesignationDocument>,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
   /**
@@ -285,9 +287,9 @@ export class DepartmentService {
     }
 
     // If the department is associated with any user, we should not allow delete
-    const associatedUsers = await this.userModel.find({
-      departmentId: new Types.ObjectId(id),
-    });
+    const associatedUsers = await firstValueFrom(
+      this.userClient.send(USER_COMMANDS.GET_USERS_COUNT_BY_DEPARTMENT, id),
+    );
 
     if (associatedUsers.length > 0) {
       return {

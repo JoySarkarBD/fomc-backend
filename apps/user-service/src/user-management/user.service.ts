@@ -491,6 +491,18 @@ export class UserService {
   }
 
   /**
+   * Get the count of users associated with a specific department.
+   *
+   * @param {MongoIdDto} params - Object containing the department ID.
+   * @returns {Promise<number>} The count of users that have the specified department ID in their user document's department field, which is used to determine how many users are assigned to that particular department in the system.
+   */
+  async getUsersCountByDepartment(userId: MongoIdDto["id"]): Promise<number> {
+    return await this.userModel
+      .countDocuments({ department: new Types.ObjectId(userId) })
+      .exec();
+  }
+
+  /**
    * Update the authenticated user's profile (name and avatar only).
    *
    * @param {MongoIdDto} params - Object containing the user ID.

@@ -179,6 +179,7 @@ export class UserController {
   }
   /**
    * Get users count by designation ID.
+   *
    * Message Pattern: { cmd: USER_COMMANDS.GET_USERS_COUNT_BY_DESIGNATION }
    *
    * @param {MongoIdDto} payload - Object containing the designation ID.
@@ -187,6 +188,19 @@ export class UserController {
   @MessagePattern(USER_COMMANDS.GET_USERS_COUNT_BY_DESIGNATION)
   async getUsersCountByDesignation(designationId: MongoIdDto["id"]) {
     return await this.userService.getUsersCountByDesignation(designationId);
+  }
+
+  /**
+   * Get users count by department ID.
+   *
+   * Message Pattern: { cmd: USER_COMMANDS.GET_USERS_COUNT_BY_DEPARTMENT }
+   *
+   * @param {MongoIdDto} payload - Object containing the department ID.
+   * @returns {Promise<number>} Count of users in the specified department.
+   */
+  @MessagePattern(USER_COMMANDS.GET_USERS_COUNT_BY_DEPARTMENT)
+  async getUsersCountByDepartment(departmentId: MongoIdDto["id"]) {
+    return await this.userService.getUsersCountByDepartment(departmentId);
   }
 
   /**
