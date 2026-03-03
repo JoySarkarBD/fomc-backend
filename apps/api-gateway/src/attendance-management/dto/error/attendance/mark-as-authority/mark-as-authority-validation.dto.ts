@@ -4,6 +4,10 @@ import {
   ValidationErrorResponseDto,
 } from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
+import {
+  AttendanceInType,
+  ShiftTypeForOperations,
+} from "apps/workforce-service/src/schemas/attendance.schema";
 
 export class MarkAttendanceAsAuthorityValidationDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: Methods.PATCH })
@@ -35,11 +39,11 @@ export class MarkAttendanceAsAuthorityValidationDto extends ValidationErrorRespo
       },
       {
         field: "inType",
-        message: "inType must be a valid inType value",
+        message: `inType must be a valid inType value - ${Object.values(AttendanceInType).join(", ")}`,
       },
       {
         field: "shiftType",
-        message: "shiftType must be a valid shiftType value",
+        message: `shiftType must be a valid shiftType value - ${Object.values(ShiftTypeForOperations).join(", ")}`,
       },
       {
         field: "isLate",

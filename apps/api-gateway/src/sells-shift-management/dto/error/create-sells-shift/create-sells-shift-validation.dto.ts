@@ -4,6 +4,7 @@ import {
   ValidationErrorResponseDto,
 } from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
+import { ShiftTypeForSales } from "apps/workforce-service/src/schemas/attendance.schema";
 
 export class CreateSellsShiftValidationDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: Methods.POST })
@@ -25,7 +26,7 @@ export class CreateSellsShiftValidationDto extends ValidationErrorResponseDto {
       },
       {
         field: "shiftType",
-        message: "shiftType must be a valid ShiftTypeForSales",
+        message: `shiftType must be a valid ShiftTypeForSales - ${Object.values(ShiftTypeForSales).join(", ")}`,
       },
     ],
   })
