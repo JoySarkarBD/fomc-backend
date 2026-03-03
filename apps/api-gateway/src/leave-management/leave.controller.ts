@@ -177,7 +177,7 @@ export class LeaveController {
     notFound: UserSpecificLeaveNotFoundDto,
     internal: UserSpecificLeaveInternalErrorDto,
   })
-  @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Get("user-specific/:userId")
   async getUserSpecificLeaves(
     @Param() params: UserIdDto,
@@ -209,7 +209,7 @@ export class LeaveController {
     description: "Bearer token",
     required: true,
   })
-  @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Get(":id")
   async getLeaveById(@Param() params: MongoIdDto) {
     return await this.leaveService.getLeaveById(params.id);
@@ -239,7 +239,7 @@ export class LeaveController {
     notFound: LeaveRequestApprovalNotFoundDto,
     internal: LeaveRequestApprovalInternalErrorDto,
   })
-  @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Patch("approve/:id")
   async approveLeaveRequest(
     @Param() params: MongoIdDto,
@@ -274,7 +274,7 @@ export class LeaveController {
     notFound: LeaveRequestRejectionNotFoundDto,
     internal: LeaveRequestRejectionInternalErrorDto,
   })
-  @Roles("SUPER ADMIN", "HR", "PROJECT MANAGER", "TEAM LEADER", "EMPLOYEE")
+  @Roles("SUPER ADMIN", "PROJECT MANAGER")
   @Patch("reject/:id")
   async rejectLeaveRequest(
     @Param() params: MongoIdDto,

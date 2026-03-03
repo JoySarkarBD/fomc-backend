@@ -26,8 +26,8 @@ import { LeaveService } from "./leave.service";
     ]),
 
     /**
-     * Clients Module configured to register a microservice client for the User Service, enabling communication between the API Gateway and the User Service over TCP.
-     * This allows the LeaveController and LeaveService to interact with the User Service for operations such as retrieving user information, managing user data, and other user-related functionalities, facilitating a microservices architecture where different services can communicate seamlessly.
+     * Clients Module configured to register a microservice client for the User Service and Notification Service, enabling communication between the Workforce Service and these services over TCP.
+     * This allows the Leave Service to interact with the User Service and Notification Service microservices, facilitating operations such as retrieving user information and sending notifications related to leave management activities, while maintaining a decoupled architecture and promoting scalability within the API Gateway.
      */
     ClientsModule.register([
       {
@@ -36,6 +36,14 @@ import { LeaveService } from "./leave.service";
         options: {
           host: config.USER_SERVICE_HOST ?? "127.0.0.1",
           port: Number(config.USER_SERVICE_PORT ?? 3001),
+        },
+      },
+      {
+        name: "NOTIFICATION_SERVICE",
+        transport: Transport.TCP,
+        options: {
+          host: config.NOTIFICATION_SERVICE_HOST ?? "127.0.0.1",
+          port: Number(config.NOTIFICATION_SERVICE_PORT ?? 3002),
         },
       },
     ]),

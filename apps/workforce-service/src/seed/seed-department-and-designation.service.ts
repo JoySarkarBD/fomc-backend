@@ -49,7 +49,7 @@ export class SeedDepartmentAndDesignationService {
         isSystem: true,
       },
       {
-        name: "Sales",
+        name: "SALES",
         description: "Sales department",
         isSystem: true,
       },
@@ -98,12 +98,12 @@ export class SeedDepartmentAndDesignationService {
       {
         name: "Sales Executive",
         description: "Handles client sales",
-        departmentName: "Sales",
+        departmentName: "SALES",
       },
       {
         name: "Sales Manager",
         description: "Manages sales team",
-        departmentName: "Sales",
+        departmentName: "SALES",
       },
 
       // ================= Operations (All Software Roles) =================

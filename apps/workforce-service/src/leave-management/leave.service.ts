@@ -26,6 +26,8 @@ import { LeaveRequestDto } from "./dto/leave-request.dto";
 export class LeaveService {
   constructor(
     @Inject("USER_SERVICE") private readonly userClient: ClientProxy,
+    @Inject("NOTIFICATION_SERVICE")
+    private readonly notificationClient: ClientProxy,
     @InjectModel(Leave.name) private readonly leaveModel: Model<Leave>,
   ) {}
 
@@ -85,6 +87,8 @@ export class LeaveService {
       endDate: convertToBDDate(leaveRequestDto.endDate),
       reason: leaveRequestDto.reason,
     });
+
+    //
 
     return await newLeave.save();
   }

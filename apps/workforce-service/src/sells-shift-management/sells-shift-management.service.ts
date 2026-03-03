@@ -293,7 +293,7 @@ export class SellsShiftManagementService {
     });
 
     // Find Sales department ID
-    const salesDept = await this.departmentModel.findOne({ name: "Sales" });
+    const salesDept = await this.departmentModel.findOne({ name: "SALES" });
     const userIds: string[] = [];
 
     if (salesDept) {

@@ -21,7 +21,7 @@ export type DepartmentDocument = Department & Document;
  */
 @Schema({ timestamps: true, versionKey: false })
 export class Department extends Document {
-  // Name of the department (e.g., "Operations", "Sales")
+  // Name of the department (e.g., "Operations", "SALES")
   @Prop({ required: true, unique: true, uppercase: true })
   name!: string;
 
