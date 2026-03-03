@@ -45,6 +45,13 @@ export class ApprovedByDto {
   approvedBy!: string;
 }
 
+export class RejectedByDto {
+  /** A valid 24-character MongoDB ObjectId representing the ID of the user who rejected a shift exchange request. */
+  @IsMongoId({ message: "RejectedBy ID must be a valid MongoDB ObjectId" })
+  @IsNotEmpty({ message: "RejectedBy ID is required" })
+  rejectedBy!: string;
+}
+
 export class ExchangeIdDto {
   /** A valid 24-character MongoDB ObjectId representing the ID of a shift exchange request. */
   @IsMongoId({ message: "Exchange ID must be a valid MongoDB ObjectId" })

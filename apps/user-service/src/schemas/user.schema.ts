@@ -90,9 +90,6 @@ export class User extends Document {
   @Prop({ type: [String], enum: WeekEndOff, default: null })
   weekEndOff?: WeekEndOff[] | null;
 
-  @Prop({ type: Number, default: 0 })
-  leaveCount?: number;
-
   // Employment status (active/inactive)
   @Prop({ type: Boolean, default: true })
   employmentStatus!: boolean;

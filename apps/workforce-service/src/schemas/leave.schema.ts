@@ -59,15 +59,42 @@ export class Leave extends Document {
   @Prop()
   isApproved?: boolean;
 
-  // Optional field to indicate who approved the leave (could be a reference to a user or just a string)
+  // Optional field to indicate if the leave has been rejected
+  @Prop()
+  isRejected?: boolean;
+
+  // Optional field to indicate who approved the leave - reference to the user who approved the leave
   @Prop({
-    type: MongooseSchema.Types.Mixed, // Mixed type to allow both string and ObjectId for approver reference
-    required: true,
+    type: MongooseSchema.Types.Mixed,
   })
   approvedBy?: string | Types.ObjectId;
+
+  // Optional field to indicate who rejected the leave - reference to the user who rejected the leave
+  @Prop({
+    type: MongooseSchema.Types.Mixed,
+  })
+  rejectedBy?: string | Types.ObjectId;
 }
 
 /**
  * Mongoose schema for the Leave class
  */
 export const LeaveSchema = SchemaFactory.createForClass(Leave);
+
+/* 
+
+API LIST:
+
+1. POST /leaves - Create a new leave request
+2. GET /leaves-my - Get all leave requests (with optional filters for user, type, approval status)
+3. GET /leaves/:id - Get a specific leave request by ID
+
+
+1. GET /leaves-authority - Get all leave requests (with optional filters for user, type, approval status)
+2. PATCH /leaves/:id/approve - Approve a specific leave request by ID
+3. PATCH /leaves/:id/reject - Reject a specific leave request by ID
+
+
+
+
+*/
