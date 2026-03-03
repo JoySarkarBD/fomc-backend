@@ -283,6 +283,7 @@ export class SellsShiftManagementController {
       type: String,
       example: "65f1b2c3d4e5f67890123458",
     },
+    paramDto: ExchangeIdDto,
   })
   @ApiSuccessResponse(ApproveShiftExchangeSuccessDto, 200)
   @ApiErrorResponses({
@@ -333,6 +334,7 @@ export class SellsShiftManagementController {
       type: String,
       example: "65f1b2c3d4e5f67890123458",
     },
+    paramDto: ExchangeIdDto,
   })
   @ApiSuccessResponse(RejectShiftExchangeSuccessDto, 200)
   @ApiErrorResponses({

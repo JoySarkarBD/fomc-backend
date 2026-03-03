@@ -26,6 +26,7 @@ import type { AuthUser } from "@shared/interfaces";
 import { GetLeaveDto } from "apps/workforce-service/src/leave-management/dto/get-leave.dto";
 import { LeaveRequestDto } from "apps/workforce-service/src/leave-management/dto/leave-request.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
+import { ApiRequestDetails } from "../common/decorators/api-request.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
@@ -196,6 +197,16 @@ export class LeaveController {
     description: "Bearer token",
     required: true,
   })
+  @ApiRequestDetails({
+    params: {
+      name: "userId",
+      description: "The ID of the user to retrieve leave records for",
+      required: true,
+      type: String,
+      example: "698ffc1ef75d367cc3e9d955",
+    },
+    paramDto: UserIdDto,
+  })
   @ApiSuccessResponse(UserSpecificLeaveSuccessDto)
   @ApiErrorResponses({
     validation: UserSpecificLeaveValidationErrorDto,
@@ -223,6 +234,21 @@ export class LeaveController {
    */
   @ApiOperation({ summary: "Retrieve a specific leave request by ID" })
   @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiRequestDetails({
+    params: {
+      name: "id",
+      description: "The ID of the leave request to retrieve",
+      required: true,
+      type: String,
+      example: "698ffc1ef75d367cc3e9d955",
+    },
+    paramDto: MongoIdDto,
+  })
   @ApiSuccessResponse(SpecificLeaveRequestSuccessDto)
   @ApiErrorResponses({
     validation: SpecificLeaveRequestValidationErrorDto,
@@ -258,6 +284,16 @@ export class LeaveController {
     description: "Bearer token",
     required: true,
   })
+  @ApiRequestDetails({
+    params: {
+      name: "id",
+      description: "The ID of the leave request to approve",
+      required: true,
+      type: String,
+      example: "698ffc1ef75d367cc3e9d955",
+    },
+    paramDto: MongoIdDto,
+  })
   @ApiSuccessResponse(LeaveRequestApprovalSuccessDto)
   @ApiErrorResponses({
     validation: LeaveRequestApprovalValidationErrorDto,
@@ -292,6 +328,16 @@ export class LeaveController {
     name: "Authorization",
     description: "Bearer token",
     required: true,
+  })
+  @ApiRequestDetails({
+    params: {
+      name: "id",
+      description: "The ID of the leave request to reject",
+      required: true,
+      type: String,
+      example: "698ffc1ef75d367cc3e9d955",
+    },
+    paramDto: MongoIdDto,
   })
   @ApiSuccessResponse(LeaveRequestRejectionSuccessDto)
   @ApiErrorResponses({
