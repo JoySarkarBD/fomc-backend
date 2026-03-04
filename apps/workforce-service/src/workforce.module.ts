@@ -11,6 +11,7 @@ import { AttendanceModule } from "./attendance-management/attendance.module";
 import { DepartmentModule } from "./department-management/department.module";
 import { DesignationModule } from "./designation-management/designation.module";
 import { LeaveModule } from "./leave-management/leave.module";
+import { ProjectManagementModule } from "./project-management/project-management.module";
 import { SeedDepartmentAndDesignationModule } from "./seed/seed-department-and-designation.module";
 import { SellsShiftManagementModule } from "./sells-shift-management/sells-shift-management.module";
 import { TaskModule } from "./task-management/task.module";
@@ -30,6 +31,7 @@ import { TaskModule } from "./task-management/task.module";
     DesignationModule,
     SellsShiftManagementModule,
     LeaveModule,
+    ProjectManagementModule,
   ],
 })
 export class WorkforceModule {}
