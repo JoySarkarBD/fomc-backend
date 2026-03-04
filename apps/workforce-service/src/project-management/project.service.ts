@@ -10,6 +10,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { MongoIdDto } from "@shared/dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
 import { Model } from "mongoose";
+import { Department, DepartmentDocument } from "../schemas/department.schema";
 import {
   Client,
   Profile,
@@ -28,7 +29,49 @@ export class ProjectService {
     private readonly projectModel: Model<ProjectDocument>,
     @InjectModel(Client.name) private readonly clientModel: Model<Client>,
     @InjectModel(Profile.name) private readonly profileModel: Model<Profile>,
+    @InjectModel(Department.name)
+    private readonly departmentModel: Model<DepartmentDocument>,
   ) {}
+
+  /**
+   * Validates if the provided IDs for client, profile, and department exist.
+   *
+   * @param {Object} ids - Object containing optional IDs to validate.
+   * @returns {Promise<{ message: string; exception: string } | null>}
+   */
+  private async validateReferences(ids: {
+    client?: string;
+    profile?: string;
+    assignedDepartment?: string;
+  }) {
+    if (ids.client) {
+      const exists = await this.clientModel.findById(ids.client);
+      if (!exists) {
+        return { message: "Client not found", exception: "NotFoundException" };
+      }
+    }
+
+    if (ids.profile) {
+      const exists = await this.profileModel.findById(ids.profile);
+      if (!exists) {
+        return { message: "Profile not found", exception: "NotFoundException" };
+      }
+    }
+
+    if (ids.assignedDepartment) {
+      const exists = await this.departmentModel.findById(
+        ids.assignedDepartment,
+      );
+      if (!exists) {
+        return {
+          message: "Department not found",
+          exception: "NotFoundException",
+        };
+      }
+    }
+
+    return null;
+  }
 
   /**
    * Create a new project in the database.
@@ -47,6 +90,17 @@ export class ProjectService {
         message: "Project with the same orderId already exists",
         exception: "Conflict",
       };
+    }
+
+    // Validate references
+    const validationError = await this.validateReferences({
+      client: createProjectDto.client,
+      profile: createProjectDto.profile,
+      assignedDepartment: createProjectDto.assignedDepartment,
+    });
+
+    if (validationError) {
+      return validationError;
     }
 
     return await this.projectModel.create(createProjectDto);
@@ -146,6 +200,17 @@ export class ProjectService {
           exception: "Conflict",
         };
       }
+    }
+
+    // Validate references
+    const validationError = await this.validateReferences({
+      client: updateProjectDto.client,
+      profile: updateProjectDto.profile,
+      assignedDepartment: updateProjectDto.assignedDepartment,
+    });
+
+    if (validationError) {
+      return validationError;
     }
 
     return await this.projectModel.findByIdAndUpdate(id, updateProjectDto, {

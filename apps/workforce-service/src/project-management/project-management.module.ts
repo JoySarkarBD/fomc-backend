@@ -15,6 +15,7 @@ import {
 } from "../schemas/project.schema";
 import { ProjectController } from "./project.controller";
 import { ProjectService } from "./project.service";
+import { Department, DepartmentSchema } from "../schemas/department.schema";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProjectService } from "./project.service";
       { name: Project.name, schema: ProjectSchema },
       { name: Client.name, schema: ClientSchema },
       { name: Profile.name, schema: ProfileSchema },
+      { name: Department.name, schema: DepartmentSchema },
     ]),
   ],
   controllers: [ProjectController],
