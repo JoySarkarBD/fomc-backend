@@ -117,27 +117,54 @@ export class ProjectService {
     const searchKey =
       typeof query.searchKey === "string" ? query.searchKey : "";
 
-    const [projects, total] = await Promise.all([
-      this.projectModel
-        .find({
-          $or: [
-            { name: { $regex: searchKey, $options: "i" } },
-            { orderId: { $regex: searchKey, $options: "i" } },
-          ],
-        })
-        .populate("client")
-        .populate("profile")
-        .skip((pageNo - 1) * pageSize)
-        .limit(pageSize)
-        .sort({ createdAt: -1 })
-        .exec(),
-      this.projectModel.countDocuments({
-        $or: [
-          { name: { $regex: searchKey, $options: "i" } },
-          { orderId: { $regex: searchKey, $options: "i" } },
-        ],
-      }),
+    const matchStage = searchKey
+      ? {
+          $match: {
+            $or: [
+              { name: { $regex: searchKey, $options: "i" } },
+              { orderId: { $regex: searchKey, $options: "i" } },
+              { "client.name": { $regex: searchKey, $options: "i" } },
+              { "profile.name": { $regex: searchKey, $options: "i" } },
+            ],
+          },
+        }
+      : { $match: {} };
+
+    const aggregation = await this.projectModel.aggregate([
+      {
+        $lookup: {
+          from: "clients", // collection name (lowercase plural)
+          localField: "client",
+          foreignField: "_id",
+          as: "client",
+        },
+      },
+      { $unwind: { path: "$client", preserveNullAndEmptyArrays: true } },
+
+      {
+        $lookup: {
+          from: "profiles",
+          localField: "profile",
+          foreignField: "_id",
+          as: "profile",
+        },
+      },
+      { $unwind: { path: "$profile", preserveNullAndEmptyArrays: true } },
+
+      matchStage,
+
+      { $sort: { createdAt: -1 } },
+
+      {
+        $facet: {
+          data: [{ $skip: (pageNo - 1) * pageSize }, { $limit: pageSize }],
+          totalCount: [{ $count: "count" }],
+        },
+      },
     ]);
+
+    const projects = aggregation[0].data;
+    const total = aggregation[0].totalCount[0]?.count || 0;
 
     return {
       projects,

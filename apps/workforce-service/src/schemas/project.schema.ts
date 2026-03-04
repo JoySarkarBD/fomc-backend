@@ -150,3 +150,7 @@ export class Project extends Document {
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
+
+ProjectSchema.index({ name: "text", orderId: "text" });
+ClientSchema.index({ name: "text" });
+ProfileSchema.index({ name: "text" });
