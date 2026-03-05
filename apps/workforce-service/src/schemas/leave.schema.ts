@@ -6,7 +6,7 @@
  * maternity, paternity, government festival holiday) with approval tracking.
  */
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Schema as MongooseSchema, Types } from "mongoose";
+import { Document, Types } from "mongoose";
 export type LeaveDocument = Leave & Document;
 
 /**
@@ -32,7 +32,7 @@ export enum LeaveType {
 export class Leave extends Document {
   // Reference to the user requesting leave
   @Prop({
-    type: MongooseSchema.Types.Mixed, // Mixed type to allow both string and ObjectId for user reference
+    type: Types.ObjectId, // Mixed type to allow both string and ObjectId for user reference
     required: true,
   })
   user!: string | Types.ObjectId;
@@ -58,20 +58,20 @@ export class Leave extends Document {
   isApproved?: boolean;
 
   // Optional field to indicate if the leave has been rejected
-  @Prop({ default: null, nullable: true })
+  @Prop()
   isRejected?: boolean;
 
   // Optional field to indicate who approved the leave - reference to the user who approved the leave
   @Prop({
-    type: MongooseSchema.Types.Mixed,
+    type: Types.ObjectId,
   })
-  approvedBy?: string | Types.ObjectId;
+  approvedBy?: Types.ObjectId;
 
   // Optional field to indicate who rejected the leave - reference to the user who rejected the leave
   @Prop({
-    type: MongooseSchema.Types.Mixed,
+    type: Types.ObjectId,
   })
-  rejectedBy?: string | Types.ObjectId;
+  rejectedBy?: Types.ObjectId;
 }
 
 /**

@@ -9,6 +9,7 @@ import { convertToBDDate } from "./../../../../libs/shared/src/utils/convert-to-
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
+import { NOTIFICATION_COMMANDS } from "@shared/constants";
 import { USER_COMMANDS } from "@shared/constants/user-command.constants";
 import {
   ApprovedByDto,
@@ -18,12 +19,12 @@ import {
 } from "@shared/dto/mongo-id.dto";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
+import { NotificationType } from "../../../notification-service/src/schema/notification.schema";
 import { Leave } from "../schemas/leave.schema";
 import { GetLeaveDto } from "./dto/get-leave.dto";
 import { LeaveRequestDto } from "./dto/leave-request.dto";
 
-// TODO: Notification to user when leave request is approved or rejected by authority
-// TODO: Notification to authority when user requests for leave and this will send to the SUPER ADMIN AND PROJECT MANGER of the user.
+
 @Injectable()
 export class LeaveService {
   constructor(
@@ -114,9 +115,36 @@ export class LeaveService {
       reason: leaveRequestDto.reason,
     });
 
-    //
+    const savedLeave = await newLeave.save();
 
-    return await newLeave.save();
+    // Fetch authorities to notify (SUPER ADMIN and PROJECT MANAGER of the user's department)
+    // Only send notifications if the user has a department assigned
+
+    const authorities = await firstValueFrom(
+      this.userClient.send(
+        USER_COMMANDS.GET_ADMIN_AND_SELLS_PROJECT_MANAGER_USER,
+        userDoc.departmentId,
+      ),
+    );
+ 
+
+    const receiverIds = Array.isArray(authorities)
+      ? authorities.map((auth: any) => new Types.ObjectId(auth._id))
+      : [];
+
+    if (receiverIds.length > 0) {
+      this.notificationClient.emit(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {
+        receiver: receiverIds,
+        sender: new Types.ObjectId(userId),
+        title: "Leave Request",
+        message: `${userDoc.name} has requested for a ${leaveRequestDto.type} leave.`,
+        type: NotificationType.LEAVE_REQUEST,
+        referenceModel: "Leave",
+        referenceId: new Types.ObjectId(savedLeave._id),
+      });
+    }
+
+    return savedLeave;
   }
 
   /**
@@ -239,8 +267,26 @@ export class LeaveService {
     }
 
     leave.isApproved = true;
+    delete leave.rejectedBy; // Remove rejectedBy field if it exists
     leave.approvedBy = new Types.ObjectId(approvedBy);
-    return await leave.save();
+    const updatedLeave = await leave.save();
+
+    // Notify the user about leave approval
+    this.notificationClient.emit(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {
+      receiver: [new Types.ObjectId(leave.user as any)],
+      sender: new Types.ObjectId(approvedBy),
+      title: "Leave Request Approved",
+      message: `Your ${leave.type} leave request from ${new Date(
+        leave.startDate,
+      ).toDateString()} to ${new Date(
+        leave.endDate,
+      ).toDateString()} has been approved.`,
+      type: NotificationType.LEAVE_APPROVED,
+      referenceModel: "Leave",
+      referenceId: new Types.ObjectId(leave._id),
+    });
+
+    return updatedLeave;
   }
 
   /**
@@ -295,8 +341,26 @@ export class LeaveService {
     }
 
     // Mark the leave request as rejected
+    delete leave.approvedBy; // Remove approvedBy field if it exists
     leave.isRejected = true;
     leave.rejectedBy = new Types.ObjectId(rejectedBy);
-    return await leave.save();
+    const updatedLeave = await leave.save();
+
+    // Notify the user about leave rejection
+    this.notificationClient.emit(NOTIFICATION_COMMANDS.CREATE_NOTIFICATION, {
+      receiver: [new Types.ObjectId(leave.user as any)],
+      sender: new Types.ObjectId(rejectedBy),
+      title: "Leave Request Rejected",
+      message: `Your ${leave.type} leave request from ${new Date(
+        leave.startDate,
+      ).toDateString()} to ${new Date(
+        leave.endDate,
+      ).toDateString()} has been rejected.`,
+      type: NotificationType.LEAVE_REJECTED,
+      referenceModel: "Leave",
+      referenceId: new Types.ObjectId(leave._id),
+    });
+
+    return updatedLeave;
   }
 }

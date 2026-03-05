@@ -1,7 +1,7 @@
 /**
  * @fileoverview Notification Microservice Bootstrap
  *
- * Entry point for the Notification microservice. Initializes a TCP-based
+ * Entry point for the Notification microservice. Initializes a RabbitMQ-based
  * NestJS microservice for handling notification-related operations.
  */
 import { ValidationPipe } from "@nestjs/common";
@@ -13,33 +13,29 @@ import { NotificationServiceModule } from "./notification.module";
 /**
  * Bootstrap function
  *
- * Initializes and starts the Notification microservice using TCP transport.
+ * Initializes and starts the Notification microservice using RabbitMQ transport.
  * Configures:
- * - Environment-based host and port
+ * - RabbitMQ connection URL and queue
  * - Global validation pipe
  * - Microservice transport layer
  */
 async function bootstrap(): Promise<void> {
   /**
-   * Resolve service host and port from environment variables.
-   * Fallbacks are provided for local development.
-   */
-  const host = config.NOTIFICATION_SERVICE_HOST ?? "127.0.0.1";
-  const port = Number(config.NOTIFICATION_SERVICE_PORT ?? 8083);
-
-  /**
    * Create NestJS microservice instance.
    *
-   * Transport: TCP
-   * Suitable for internal service-to-service communication.
+   * Transport: RMQ (RabbitMQ)
+   * Suitable for asynchronous, decoupled service-to-service communication.
    */
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     NotificationServiceModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.RMQ,
       options: {
-        host,
-        port,
+        urls: [config.RABBITMQ_URL],
+        queue: config.NOTIFICATION_QUEUE,
+        queueOptions: {
+          durable: false,
+        },
       },
     },
   );
@@ -61,13 +57,11 @@ async function bootstrap(): Promise<void> {
   );
 
   /**
-   * Start listening for incoming microservice messages.
+   * Start listening for incoming RabbitMQ messages.
    */
   await app.listen();
 
-  console.log(
-    `🚀 Notification Service is running at ${host}:${port} (TCP transport)`,
-  );
+  console.log(`🚀 Notification Service is running with RabbitMQ transport`);
 }
 
 // Call the bootstrap function to start the application.

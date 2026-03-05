@@ -103,13 +103,8 @@ export async function getSignedUrl(
   try {
     // MinIO/Minio-js enforces a maximum expiry of 7 days (in seconds).
     const MAX_EXPIRES = 7 * 24 * 60 * 60; // 7 days in seconds
-    const defaultExpires = Number(
-      config.MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR || 3600,
-    );
-    const expires = Math.min(
-      typeof expiresInSeconds === "number" ? expiresInSeconds : defaultExpires,
-      MAX_EXPIRES,
-    );
+
+    const expires = Math.min(MAX_EXPIRES);
 
     if (expiresInSeconds && expiresInSeconds > MAX_EXPIRES) {
       console.warn(

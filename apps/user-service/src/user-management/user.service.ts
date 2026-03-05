@@ -145,12 +145,7 @@ export class UserService {
         return {
           _id: user._id,
           name: user.name,
-          avatar: user.avatar
-            ? await getSignedUrl(
-                user.avatar,
-                config.MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR,
-              )
-            : null,
+          avatar: user.avatar ? await getSignedUrl(user.avatar) : null,
           employeeId: user.employeeId,
           phoneNumber: user.phoneNumber,
           email: user.email,
@@ -309,18 +304,16 @@ export class UserService {
         : null;
     userObj.designation = designation?.name || null;
     userObj.department = designation?.departmentName || null;
-    userObj.avatar = userObj.avatar
-      ? await getSignedUrl(
-          userObj.avatar,
-          config.MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR,
-        )
-      : null;
+    userObj.departmentId = designation?.departmentId || null;
+    userObj.avatar = userObj.avatar ? await getSignedUrl(userObj.avatar) : null;
 
     return userObj;
   }
 
   /**
    * Retrieve admin and project manager users for sales shift management.
+   * - All SUPER ADMINs are returned (they oversee all departments)
+   * - PROJECT MANAGERs are filtered by the specific department
    */
   async getAdminAndSellsProjectManagerUser(
     salesDeptId: SalesDeptIdDto["salesDeptId"],
@@ -330,16 +323,25 @@ export class UserService {
       this.roleModel.findOne({ name: "PROJECT MANAGER" }).lean(),
     ]);
 
-    const roleIds = [superAdminRole?._id, projectManagerRole?._id].filter(
-      Boolean,
-    );
+    const queries: any[] = [];
 
-    // Users should have to be SUPER ADMIN or PROJECT MANGER - He should also belong to sales department
+    // Get all SUPER ADMINs (regardless of department)
+    if (superAdminRole?._id) {
+      queries.push({ role: superAdminRole._id });
+    }
+
+    // Get PROJECT MANAGERs from the specific department only
+    if (projectManagerRole?._id && salesDeptId) {
+      queries.push({
+        role: projectManagerRole._id,
+        department: new Types.ObjectId(salesDeptId),
+      });
+    }
+
+    if (queries.length === 0) return [];
+
     const users = await this.userModel
-      .find({
-        role: { $in: roleIds.filter((id): id is Types.ObjectId => !!id) },
-        department: salesDeptId,
-      })
+      .find({ $or: queries })
       .select("_id")
       .lean();
 

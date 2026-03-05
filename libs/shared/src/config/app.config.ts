@@ -45,8 +45,6 @@ interface AppConfig {
   MINIO_BUCKET: string;
   /** Minio Self Hosted S3 Public URL **/
   MINIO_PUBLIC_URL: string;
-  /** Minio object expiration time in seconds for avatar uploads */
-  MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR: number;
 
   /** JWT token lifetime in seconds (default: 30 days). */
   JWT_EXPIRES_IN: number;
@@ -76,6 +74,11 @@ interface AppConfig {
 
   /** MongoDB connection URI. */
   MONGO_URI: string;
+
+  /** RabbitMQ connection URL. */
+  RABBITMQ_URL: string;
+  /** RabbitMQ queue name for notifications. */
+  NOTIFICATION_QUEUE: string;
 
   /** Redis server hostname. */
   REDIS_HOST: string;
@@ -127,9 +130,6 @@ const config: AppConfig = {
   MINIO_SECRET_KEY: str("MINIO_SECRET_KEY"),
   MINIO_BUCKET: str("MINIO_BUCKET"),
   MINIO_PUBLIC_URL: str("MINIO_PUBLIC_URL"),
-  MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR: int(
-    "MINIO_OBJECT_EXPIRATION_SECONDS_FOR_AVATAR",
-  ),
 
   JWT_EXPIRES_IN: int("JWT_EXPIRES_IN"),
   JWT_SECRET: str("JWT_SECRET"),
@@ -147,6 +147,9 @@ const config: AppConfig = {
   MAIL_FROM_EMAIL: str("MAIL_FROM_EMAIL"),
 
   MONGO_URI: str("MONGO_URI"),
+
+  RABBITMQ_URL: str("RABBITMQ_URL") || "amqp://localhost:5672",
+  NOTIFICATION_QUEUE: str("NOTIFICATION_QUEUE") || "notification_queue",
 
   REDIS_HOST: str("REDIS_HOST"),
   REDIS_PORT: int("REDIS_PORT"),

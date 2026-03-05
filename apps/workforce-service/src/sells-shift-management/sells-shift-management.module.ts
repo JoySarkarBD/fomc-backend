@@ -56,10 +56,13 @@ import { SellsShiftManagementService } from "./sells-shift-management.service";
       },
       {
         name: "NOTIFICATION_SERVICE",
-        transport: Transport.TCP,
+        transport: Transport.RMQ,
         options: {
-          host: config.NOTIFICATION_SERVICE_HOST ?? "127.0.0.1",
-          port: Number(config.NOTIFICATION_SERVICE_PORT ?? 3004),
+          urls: [config.RABBITMQ_URL],
+          queue: config.NOTIFICATION_QUEUE,
+          queueOptions: {
+            durable: false,
+          },
         },
       },
     ]),
