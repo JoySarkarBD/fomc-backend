@@ -121,6 +121,15 @@ export class TaskController {
     return await this.taskService.create(user, createTaskDto);
   }
 
+  /**
+   * Get all tasks.
+   *
+   * Message Pattern: { cmd: TASK_COMMANDS.GET_TASKS }
+   *
+   * @param {AuthUser} user - The authenticated user requesting the tasks.
+   * @param {SearchQueryDto} query - The search query parameters for filtering tasks.
+   * @returns {Promise<any>} A list of all tasks matching the search criteria.
+   */
   @ApiOperation({
     summary: "Get all tasks",
     description:
@@ -145,6 +154,15 @@ export class TaskController {
     return await this.taskService.findAll(user, query);
   }
 
+  /**
+   * Get a task by ID.
+   *
+   * Message Pattern: { cmd: TASK_COMMANDS.GET_TASK }
+   *
+   * @param {AuthUser} user - The authenticated user requesting the task.
+   * @param {MongoIdDto["id"]} id - The ID of the task to retrieve.
+   * @returns {Promise<any>} The details of the task with the specified ID.
+   */
   @ApiOperation({
     summary: "Get a task by ID",
     description:
@@ -170,6 +188,16 @@ export class TaskController {
     return await this.taskService.findOne(user, param.id);
   }
 
+  /**
+   * Update a task by ID.
+   *
+   * Message Pattern: { cmd: TASK_COMMANDS.UPDATE_TASK }
+   *
+   * @param {AuthUser} user - The authenticated user updating the task.
+   * @param {MongoIdDto["id"]} id - The ID of the task to update.
+   * @param {UpdateTaskDto} updateTaskDto - The updated details of the task.
+   * @returns {Promise<any>} The updated task details.
+   */
   @ApiOperation({
     summary: "Update a task by ID",
     description:
@@ -199,6 +227,16 @@ export class TaskController {
     return await this.taskService.update(user, param.id, updateTaskDto);
   }
 
+  /**
+   * Update a task's status by ID.
+   *
+   * Message Pattern: { cmd: TASK_COMMANDS.UPDATE_TASK_STATUS }
+   *
+   * @param {AuthUser} user - The authenticated user updating the task status.
+   * @param {MongoIdDto["id"]} id - The ID of the task to update.
+   * @param {UpdateTaskStatusDto} updateTaskStatusDto - The updated status of the task.
+   * @returns {Promise<any>} The updated task details with the new status.
+   */
   @ApiOperation({
     summary: "Update a task's status by ID",
     description:
@@ -232,6 +270,15 @@ export class TaskController {
     );
   }
 
+  /**
+   * Delete a task by ID.
+   *
+   * Message Pattern: { cmd: TASK_COMMANDS.DELETE_TASK }
+   *
+   * @param {AuthUser} user - The authenticated user deleting the task.
+   * @param {MongoIdDto["id"]} id - The ID of the task to delete.
+   * @returns {Promise<any>} A message indicating the result of the delete operation.
+   */
   @ApiOperation({
     summary: "Delete a task by ID",
     description:
