@@ -16,7 +16,7 @@ import { IsArray, IsEnum } from "class-validator";
 export class UpdateByAuthorityWeekendSetDto {
   @ApiProperty({
     required: true,
-    description: "The weekend off value(s) to be set for the user",
+    description: `The weekend off value(s) to be set for the user - ${Object.values(WeekEndOff).join(", ")}`,
     example: ["SUNDAY", "SATURDAY"],
     type: "string",
     isArray: true,
@@ -25,7 +25,7 @@ export class UpdateByAuthorityWeekendSetDto {
   @IsArray({ message: "weekEndOff must be an array" })
   @IsEnum(WeekEndOff, {
     each: true,
-    message: "Each value must be a valid WeekEndOff",
+    message: `Each value must be a valid WeekEndOff - ${Object.values(WeekEndOff).join(", ")}`,
   })
   weekEndOff!: WeekEndOff[];
 }

@@ -28,21 +28,25 @@ export class RequestShiftExchangeDto {
   exchangeDate!: string;
 
   @ApiProperty({
-    description: "Current assigned shift",
+    description: `Current assigned shift - ${Object.values(ShiftTypeForSales).join(", ")}`,
     enum: ShiftTypeForSales,
     example: ShiftTypeForSales.MORNING,
   })
   @IsNotEmpty()
-  @IsEnum(ShiftTypeForSales)
+  @IsEnum(ShiftTypeForSales, {
+    message: `Invalid originalShift value - ${Object.values(ShiftTypeForSales).join(", ")}`,
+  })
   originalShift!: ShiftTypeForSales;
 
   @ApiProperty({
-    description: "Requested new shift",
+    description: `Requested new shift - ${Object.values(ShiftTypeForSales).join(", ")}`,
     enum: ShiftTypeForSales,
     example: ShiftTypeForSales.EVENING,
   })
   @IsNotEmpty()
-  @IsEnum(ShiftTypeForSales)
+  @IsEnum(ShiftTypeForSales, {
+    message: `Invalid newShift value - ${Object.values(ShiftTypeForSales).join(", ")}`,
+  })
   newShift!: ShiftTypeForSales;
 
   @ApiPropertyOptional({

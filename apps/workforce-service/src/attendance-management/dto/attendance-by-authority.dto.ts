@@ -54,12 +54,12 @@ export class AttendanceByAuthorityDto {
 
   @ApiProperty({
     required: true,
-    description: "The type of attendance to mark for the user",
+    description: `The type of attendance to mark for the user - ${Object.values(AttendanceInType).join(", ")}`,
     example: AttendanceInType.PRESENT,
     enum: AttendanceInType,
   })
   @IsEnum(AttendanceInType, {
-    message: "inType must be a valid AttendanceInType",
+    message: `inType must be a valid AttendanceInType - ${Object.values(AttendanceInType).join(", ")}`,
   })
   inType!: AttendanceInType;
 
@@ -69,7 +69,9 @@ export class AttendanceByAuthorityDto {
       ...Object.values(ShiftTypeForSales),
       ...Object.values(ShiftTypeForOperations),
     ],
-    { message: "shiftType must be a valid ShiftType for Sales or Operations" },
+    {
+      message: `shiftType must be a valid ShiftType for Sales or Operations - ${[...Object.values(ShiftTypeForSales), ...Object.values(ShiftTypeForOperations)].join(", ")}`,
+    },
   )
   shiftType?: string;
 

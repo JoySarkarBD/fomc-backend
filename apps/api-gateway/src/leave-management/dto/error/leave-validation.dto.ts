@@ -4,6 +4,7 @@ import {
   ValidationErrorResponseDto,
 } from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
+import { LeaveType } from "apps/workforce-service/src/schemas/leave.schema";
 
 export class LeaveRequestValidationErrorDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: Methods.POST })
@@ -17,8 +18,7 @@ export class LeaveRequestValidationErrorDto extends ValidationErrorResponseDto {
     example: [
       {
         field: "type",
-        message:
-          "type must be a valid enum SICK_LEAVE, CASUAL_LEAVE, GOVERNMENT_FESTIVAL_HOLIDAY",
+        message: `type must be a valid enum ${Object.values(LeaveType).join(", ")}`,
       },
       {
         field: "startDate",

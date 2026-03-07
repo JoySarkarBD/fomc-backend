@@ -38,12 +38,12 @@ export class CreateSellsShiftManagementDto {
 
   @ApiProperty({
     required: true,
-    description: "The type of shift for the sells shift management",
+    description: `The type of shift for the sells shift management - ${Object.values(ShiftTypeForSales).join(", ")}`,
     example: ShiftTypeForSales.MORNING,
     enum: ShiftTypeForSales,
   })
   @IsEnum(ShiftTypeForSales, {
-    message: "shiftType must be a valid ShiftTypeForSales",
+    message: `shiftType must be a valid ShiftTypeForSales - ${Object.values(ShiftTypeForSales).join(", ")}`,
   })
   shiftType!: ShiftTypeForSales;
 

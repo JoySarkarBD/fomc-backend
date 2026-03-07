@@ -81,6 +81,30 @@ export class LeaveService {
       };
     }
 
+    // Check the overlap of the leave request with existing approved leaves for the user
+    const overlappingLeaves = await this.leaveModel.countDocuments({
+      user: new Types.ObjectId(userId),
+      isApproved: true,
+      $or: [
+        {
+          startDate: {
+            $lte: convertToBDDate(leaveRequestDto.endDate),
+          },
+          endDate: {
+            $gte: convertToBDDate(leaveRequestDto.startDate),
+          },
+        },
+      ],
+    });
+
+    if (overlappingLeaves > 0) {
+      return {
+        message:
+          "The requested leave period overlaps with an existing approved leave.",
+        exception: "BadRequestException",
+      };
+    }
+
     // Create new leave request
     const newLeave = new this.leaveModel({
       user: new Types.ObjectId(userId),

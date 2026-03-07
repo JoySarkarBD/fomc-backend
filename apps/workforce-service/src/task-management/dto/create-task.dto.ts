@@ -109,11 +109,13 @@ export class CreateTaskDto {
   dueDate!: Date;
 
   @ApiProperty({
-    description: "The priority level of the task",
+    description: `The priority level of the task - ${Object.values(TaskPriority).join(", ")}`,
     enum: TaskPriority,
     example: TaskPriority.HIGH,
   })
-  @IsEnum(TaskPriority, { message: "Invalid priority level" })
+  @IsEnum(TaskPriority, {
+    message: `Invalid priority level - ${Object.values(TaskPriority).join(", ")}`,
+  })
   @IsOptional()
   priority?: TaskPriority;
 
@@ -127,11 +129,13 @@ export class CreateTaskDto {
   description?: string;
 
   @ApiProperty({
-    description: "The current status of the task",
+    description: `The current status of the task - ${Object.values(TaskStatus).join(", ")}`,
     enum: TaskStatus,
     example: TaskStatus.WIP,
   })
-  @IsEnum(TaskStatus, { message: "Invalid status" })
+  @IsEnum(TaskStatus, {
+    message: `Invalid status - ${Object.values(TaskStatus).join(", ")}`,
+  })
   @IsOptional()
   status?: TaskStatus;
 

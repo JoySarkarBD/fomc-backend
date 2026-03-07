@@ -6,6 +6,7 @@
  */
 
 import { ApiProperty } from "@nestjs/swagger";
+import { IsDateString, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { LeaveType } from "../../schemas/leave.schema";
 
 /**
@@ -17,10 +18,14 @@ import { LeaveType } from "../../schemas/leave.schema";
 export class LeaveRequestDto {
   @ApiProperty({
     required: true,
-    description: "The type of the leave request",
+    description: `The type of the leave request - ${Object.values(LeaveType).join(", ")}`,
     enum: LeaveType,
     example: LeaveType.SICK_LEAVE,
   })
+  @IsEnum(LeaveType, {
+    message: `type must be a valid enum ${Object.values(LeaveType).join(", ")}`,
+  })
+  @IsNotEmpty({ message: "type is required" })
   type!: LeaveType;
 
   @ApiProperty({
@@ -28,6 +33,7 @@ export class LeaveRequestDto {
     description: "The start date of the leave request UTC format",
     example: "2024-07-01T00:00:00.000Z",
   })
+  @IsDateString({}, { message: "Date must be a valid UTC date string" })
   startDate!: Date;
 
   @ApiProperty({
@@ -35,6 +41,7 @@ export class LeaveRequestDto {
     description: "The end date of the leave request UTC format",
     example: "2024-07-05T00:00:00.000Z",
   })
+  @IsDateString({}, { message: "Date must be a valid UTC date string" })
   endDate!: Date;
 
   @ApiProperty({
@@ -42,5 +49,6 @@ export class LeaveRequestDto {
     description: "The reason for the leave request",
     example: "Personal reasons",
   })
+  @IsString({ message: "reason must be a string" })
   reason!: string;
 }

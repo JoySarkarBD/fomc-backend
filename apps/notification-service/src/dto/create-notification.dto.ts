@@ -59,12 +59,12 @@ export class CreateNotificationDto {
 
   @ApiProperty({
     required: true,
-    description: "Notification type",
+    description: `Notification type - ${Object.values(NotificationType).join(", ")}`,
     enum: NotificationType,
     example: NotificationType.SHIFT_EXCHANGE_REQUEST,
   })
   @IsEnum(NotificationType, {
-    message: "Type must be a valid NotificationType",
+    message: `Type must be a valid NotificationType ${Object.values(NotificationType).join(", ")}`,
   })
   type!: NotificationType;
 

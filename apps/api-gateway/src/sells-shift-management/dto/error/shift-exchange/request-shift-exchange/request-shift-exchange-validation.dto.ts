@@ -4,6 +4,7 @@ import {
   ValidationErrorResponseDto,
 } from "apps/api-gateway/src/common/dto/validation-error.dto";
 import { Methods } from "apps/api-gateway/src/common/enum/methods.enum";
+import { ShiftTypeForSales } from "apps/workforce-service/src/schemas/attendance.schema";
 
 export class RequestShiftExchangeValidationDto extends ValidationErrorResponseDto {
   @ApiProperty({ example: Methods.POST })
@@ -21,13 +22,11 @@ export class RequestShiftExchangeValidationDto extends ValidationErrorResponseDt
       },
       {
         field: "originalShift",
-        message:
-          "originalShift must be one of the following values: MORNING, EVENING, NIGHT",
+        message: `originalShift must be one of the following values ${Object.values(ShiftTypeForSales).join(", ")}`,
       },
       {
         field: "newShift",
-        message:
-          "newShift must be one of the following values: MORNING, EVENING, NIGHT",
+        message: `newShift must be one of the following values ${Object.values(ShiftTypeForSales).join(", ")}`,
       },
       {
         field: "reason",
