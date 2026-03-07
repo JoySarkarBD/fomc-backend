@@ -16,6 +16,7 @@ import { LeaveModule } from "./leave-management/leave.module";
 import { ProjectModule } from "./project-management/project.module";
 import { RoleModule } from "./role-management/role.module";
 import { SellsShiftManagementModule } from "./sells-shift-management/sells-shift-management.module";
+import { TaskModule } from "./task-management/task.module";
 import { UserModule } from "./user-management/user.module";
 
 @Module({
@@ -29,6 +30,7 @@ import { UserModule } from "./user-management/user.module";
     SellsShiftManagementModule,
     LeaveModule,
     ProjectModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,7 +9,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { MongoIdDto } from "@shared/dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
-import { Model } from "mongoose";
+import type { AuthUser } from "@shared/interfaces/auth-user.interface";
+import { Model, Types } from "mongoose";
 import { Department, DepartmentDocument } from "../schemas/department.schema";
 import {
   Client,
@@ -76,10 +77,11 @@ export class ProjectService {
   /**
    * Create a new project in the database.
    *
+   * @param {AuthUser} user - The authenticated user creating the project.
    * @param {CreateProjectDto} createProjectDto - The data transfer object containing the details of the project to be created.
    * @returns {Promise<any>} The newly created project or an error message if a project with the same orderId already exists.
    */
-  async create(createProjectDto: CreateProjectDto) {
+  async create(user: AuthUser, createProjectDto: CreateProjectDto) {
     // Check if project with the same orderId already exists
     const existingProject = await this.projectModel.findOne({
       orderId: createProjectDto.orderId,
@@ -103,7 +105,10 @@ export class ProjectService {
       return validationError;
     }
 
-    return await this.projectModel.create(createProjectDto);
+    return await this.projectModel.create({
+      ...createProjectDto,
+      createdBy: new Types.ObjectId(user.id),
+    });
   }
 
   /**

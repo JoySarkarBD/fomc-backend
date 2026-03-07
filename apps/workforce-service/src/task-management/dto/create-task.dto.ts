@@ -12,17 +12,11 @@ import {
   IsDateString,
   IsEnum,
   IsMongoId,
-  isMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
-  registerDecorator,
-  ValidationOptions,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
 } from "class-validator";
 import { TaskPriority, TaskStatus } from "../../schemas/task.schema";
-
 
 /**
  * Data Transfer Object for creating a new task.
@@ -99,15 +93,6 @@ export class CreateTaskDto {
   })
   @IsOptional()
   status?: TaskStatus;
-
-  @ApiProperty({
-    required: true,
-    description: "The ID of the user creating the task",
-    example: "60c72b2f9b1d8e5a5c8f9e7d",
-  })
-  @IsMongoId({ message: "createdBy must be a valid ObjectId" })
-  @IsNotEmpty({ message: "Creator ID is required" })
-  createdBy!: string;
 
   @ApiProperty({
     description: "List of user IDs to assign the task to",

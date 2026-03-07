@@ -22,6 +22,7 @@ import {
 } from "@nestjs/swagger";
 import { MongoIdDto } from "@shared/dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
+import type { AuthUser } from "@shared/interfaces";
 import {
   CreateClientDto,
   UpdateClientDto,
@@ -34,6 +35,7 @@ import {
 import { UpdateProjectDto } from "apps/workforce-service/src/project-management/dto/update-project.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";
+import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
@@ -152,8 +154,8 @@ export class ProjectController {
   })
   @Roles("SALES")
   @Post()
-  async create(@Body() data: CreateProjectDto) {
-    return await this.projectService.createProject(data);
+  async create(@GetUser() user: AuthUser, @Body() data: CreateProjectDto) {
+    return await this.projectService.createProject(user, data);
   }
 
   /**

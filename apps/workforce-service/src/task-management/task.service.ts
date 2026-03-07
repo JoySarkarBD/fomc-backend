@@ -11,7 +11,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { USER_COMMANDS } from "@shared/constants/user-command.constants";
 import { MongoIdDto, SearchQueryDto } from "@shared/dto";
 import { AuthUser } from "@shared/interfaces";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import {
   Client,
@@ -121,10 +121,15 @@ export class TaskService {
    * @param {CreateTaskDto} createTaskDto - The details of the task to create.
    * @returns {Promise<any>} The created task or an error message if validation fails.
    */
-  async findAll(query: SearchQueryDto) {
-    const { pageNo = 1, pageSize = 10, searchKey } = query;
-
+  async findAll(user: AuthUser, query: SearchQueryDto) {
     const filter: any = {};
+
+    // If the user is employee then he can only see the tasks assigned to him or created by him
+    if (user.role === "EMPLOYEE") {
+      filter.$or = [{ createdBy: user.id }, { assignTo: { $in: [user.id] } }];
+    }
+
+    const { pageNo = 1, pageSize = 10, searchKey } = query;
 
     if (searchKey) {
       filter.$or = [
@@ -136,13 +141,61 @@ export class TaskService {
     const skip = (pageNo - 1) * pageSize;
 
     const [tasks, total] = await Promise.all([
-      this.taskModel
-        .find(filter)
-        .populate("client", "name")
-        .populate("project", "name")
-        .skip(skip)
-        .limit(pageSize)
-        .lean(),
+      this.taskModel.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: "clients",
+            localField: "client",
+            foreignField: "_id",
+            as: "client",
+          },
+        },
+        { $unwind: { path: "$client", preserveNullAndEmptyArrays: true } },
+        {
+          $lookup: {
+            from: "projects",
+            localField: "project",
+            foreignField: "_id",
+            as: "project",
+          },
+        },
+        { $unwind: { path: "$project", preserveNullAndEmptyArrays: true } },
+        {
+          $addFields: {
+            statusOrder: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ["$status", TaskStatus.PENDING] }, then: 1 },
+                  { case: { $eq: ["$status", TaskStatus.WIP] }, then: 2 },
+                  { case: { $eq: ["$status", TaskStatus.COMPLETED] }, then: 3 },
+                  { case: { $eq: ["$status", TaskStatus.BLOCKED] }, then: 4 },
+                  { case: { $eq: ["$status", TaskStatus.DELIVERED] }, then: 5 },
+                ],
+                default: 6,
+              },
+            },
+          },
+        },
+        { $sort: { statusOrder: 1, createdAt: -1 } },
+        { $skip: skip },
+        { $limit: pageSize },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            client: { name: "$client.name" },
+            project: { name: "$project.name" },
+            dueDate: 1,
+            priority: 1,
+            description: 1,
+            status: 1,
+            createdBy: 1,
+            assignTo: 1,
+            createdAt: 1,
+          },
+        },
+      ]),
       this.taskModel.countDocuments(filter),
     ]);
 
@@ -203,9 +256,19 @@ export class TaskService {
    * @param {MongoIdDto["id"]} id - The ID of the task to find.
    * @returns {Promise<any>} The found task or an error message if not found.
    */
-  async findOne(id: MongoIdDto["id"]) {
+  async findOne(user: AuthUser, id: MongoIdDto["id"]) {
     const task = (await this.taskModel
-      .findById(id)
+      .findOne({
+        _id: new Types.ObjectId(id),
+        $or: [
+          { createdBy: user.id },
+          {
+            assignTo: {
+              $in: [user.id],
+            },
+          },
+        ],
+      })
       .populate("client", "name")
       .populate("project", "name")
       .lean()) as any;
@@ -256,12 +319,30 @@ export class TaskService {
    * @param {UpdateTaskDto} updateTaskDto - The details to update the task with.
    * @returns {Promise<any>} The updated task or an error message if not found.
    */
-  async update(id: MongoIdDto["id"], updateTaskDto: UpdateTaskDto) {
+  async update(
+    user: AuthUser,
+    id: MongoIdDto["id"],
+    updateTaskDto: UpdateTaskDto,
+  ) {
     const task = (await this.taskModel
-      .findByIdAndUpdate(id, updateTaskDto, {
-        new: true,
-        runValidators: true,
-      })
+      .findOneAndUpdate(
+        {
+          _id: new Types.ObjectId(id),
+          $or: [
+            { createdBy: user.id },
+            {
+              assignTo: {
+                $in: [user.id],
+              },
+            },
+          ],
+        },
+        updateTaskDto,
+        {
+          new: true,
+          runValidators: true,
+        },
+      )
       .populate("client", "name")
       .populate("project", "name")
       .lean()) as any;
@@ -313,13 +394,28 @@ export class TaskService {
    * @returns {Promise<any>} The updated task or an error message if not found.
    */
   async updateTaskStatus(
+    user: AuthUser,
     id: MongoIdDto["id"],
     updateTaskStatusDto: UpdateTaskStatusDto,
   ) {
     const task = (await this.taskModel
-      .findByIdAndUpdate(id, updateTaskStatusDto, {
-        new: true,
-      })
+      .findOneAndUpdate(
+        {
+          _id: new Types.ObjectId(id),
+          $or: [
+            { createdBy: user.id },
+            {
+              assignTo: {
+                $in: [user.id],
+              },
+            },
+          ],
+        },
+        updateTaskStatusDto,
+        {
+          new: true,
+        },
+      )
       .populate("client", "name")
       .populate("project", "name")
       .lean()) as any;
@@ -369,8 +465,20 @@ export class TaskService {
    * @param {MongoIdDto["id"]} id - The ID of the task to delete.
    * @returns {Promise<any>} A success message or an error message if not found or if deletion is not allowed.
    */
-  async remove(id: MongoIdDto["id"]) {
-    const task = await this.taskModel.findById(id).lean();
+  async remove(user: AuthUser, id: MongoIdDto["id"]) {
+    const task = await this.taskModel
+      .findOne({
+        _id: new Types.ObjectId(id),
+        $or: [
+          { createdBy: user.id },
+          {
+            assignTo: {
+              $in: [user.id],
+            },
+          },
+        ],
+      })
+      .lean();
 
     if (!task) {
       return {
@@ -393,6 +501,8 @@ export class TaskService {
       };
     }
 
-    return await this.taskModel.deleteOne({ _id: id }).lean();
+    return await this.taskModel
+      .deleteOne({ _id: new Types.ObjectId(id) })
+      .lean();
   }
 }

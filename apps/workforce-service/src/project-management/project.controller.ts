@@ -8,6 +8,7 @@ import { MessagePattern, Payload } from "@nestjs/microservices";
 import { PROJECT_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
+import type { AuthUser } from "@shared/interfaces/auth-user.interface";
 import { CreateClientDto, UpdateClientDto } from "./dto/client.dto";
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { CreateProfileDto, UpdateProfileDto } from "./dto/profile.dto";
@@ -33,8 +34,13 @@ export class ProjectController {
    * @returns {Promise<any>}
    */
   @MessagePattern(PROJECT_COMMANDS.CREATE_PROJECT)
-  async create(@Payload() createProjectDto: CreateProjectDto) {
-    return await this.projectService.create(createProjectDto);
+  async create(
+    @Payload() payload: { user: AuthUser; createProjectDto: CreateProjectDto },
+  ) {
+    return await this.projectService.create(
+      payload.user,
+      payload.createProjectDto,
+    );
   }
 
   /**

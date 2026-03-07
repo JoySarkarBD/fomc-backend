@@ -8,6 +8,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { PROJECT_COMMANDS } from "@shared/constants";
 import { MongoIdDto } from "@shared/dto";
 import { SearchQueryDto } from "@shared/dto/search-query.dto";
+import type { AuthUser } from "@shared/interfaces";
 import { handleException } from "@shared/utils/handle.exception";
 import {
   CreateClientDto,
@@ -31,12 +32,16 @@ export class ProjectService {
   /**
    * Create a new project.
    *
+   * @param {AuthUser} user - The authenticated user creating the project.
    * @param {CreateProjectDto} data - The project data.
    * @returns {Promise<any>}
    */
-  async createProject(data: CreateProjectDto) {
+  async createProject(user: AuthUser, data: CreateProjectDto) {
     const result = await firstValueFrom(
-      this.workforceClient.send(PROJECT_COMMANDS.CREATE_PROJECT, data),
+      this.workforceClient.send(PROJECT_COMMANDS.CREATE_PROJECT, {
+        user,
+        data,
+      }),
     );
 
     handleException(result);

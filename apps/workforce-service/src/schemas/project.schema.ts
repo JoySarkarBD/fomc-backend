@@ -151,6 +151,9 @@ export class Project extends Document {
   // Project status
   @Prop({ enum: ProjectStatus, default: ProjectStatus.NULL })
   status!: ProjectStatus;
+
+  @Prop({ type: Types.ObjectId, required: true })
+  createdBy!: Types.ObjectId;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
