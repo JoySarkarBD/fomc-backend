@@ -46,19 +46,21 @@ export class Task extends Document {
   @Prop({ required: true })
   name!: string;
 
-  // For now it will be a string but in future it will be a reference to the client collection
+  // Reference to the client collection
   @Prop({
-    type: MongooseSchema.Types.Mixed, // Mixed type to allow both string and ObjectId for client reference
+    type: Types.ObjectId,
+    ref: "Client",
     required: true,
   })
-  client!: string | Types.ObjectId;
+  client!: Types.ObjectId;
 
-  // For now it will be a string but in future it will be a reference to the project collection
+  // Reference to the project collection
   @Prop({
-    type: MongooseSchema.Types.Mixed, // Mixed type to allow both string and ObjectId for project reference
+    type: Types.ObjectId,
+    ref: "Project",
     required: true,
   })
-  project!: string | Types.ObjectId;
+  project!: Types.ObjectId;
 
   // Due date for the task
   @Prop()
