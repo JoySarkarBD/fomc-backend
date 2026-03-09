@@ -128,8 +128,13 @@ export class ProjectService {
    * @returns {Promise<{ projects: any[]; total: number; totalPages: number }>}
    */
   async findAll(query: SearchQueryDto & { status?: ProjectStatus }) {
-    const { pageNo, pageSize, status } = query;
-    const searchKey = typeof query.searchKey === "string" ? query.searchKey : "";
+    let { pageNo, pageSize, status } = query;
+    const searchKey =
+      typeof query.searchKey === "string" ? query.searchKey : "";
+
+    // Ensure pageNo and pageSize are numbers
+    pageNo = Number(pageNo) || 1;
+    pageSize = Number(pageSize) || 10;
 
     // Build $match filter
     const matchFilter: any = {};
