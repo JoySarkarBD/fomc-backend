@@ -214,6 +214,7 @@ export class ProjectService {
       .findById(id)
       .populate("client")
       .populate("profile")
+      .populate("assignedDepartment")
       .exec();
 
     if (!project) {
@@ -270,9 +271,45 @@ export class ProjectService {
       return validationError;
     }
 
-    return await this.projectModel.findByIdAndUpdate(id, updateProjectDto, {
-      new: true,
-    });
+    return await this.projectModel.findByIdAndUpdate(
+      id,
+      {
+        name: updateProjectDto.name ? updateProjectDto.name : project.name,
+        client: updateProjectDto.client
+          ? updateProjectDto.client
+          : project.client,
+        orderId: updateProjectDto.orderId
+          ? updateProjectDto.orderId
+          : project.orderId,
+        profile: updateProjectDto.profile
+          ? updateProjectDto.profile
+          : project.profile,
+        assignedDepartment: updateProjectDto.assignedDepartment
+          ? updateProjectDto.assignedDepartment
+          : project.assignedDepartment,
+        projectTeam: updateProjectDto.projectTeam
+          ? updateProjectDto.projectTeam
+          : project.projectTeam,
+        projectFiles: updateProjectDto.projectFiles
+          ? updateProjectDto.projectFiles
+          : project.projectFiles,
+        projectRemarks: updateProjectDto.projectRemarks
+          ? updateProjectDto.projectRemarks
+          : project.projectRemarks,
+        dueDate: updateProjectDto.dueDate
+          ? updateProjectDto.dueDate
+          : project.dueDate,
+        deliveryDate: updateProjectDto.deliveryDate
+          ? updateProjectDto.deliveryDate
+          : project.deliveryDate,
+        status: updateProjectDto.status
+          ? updateProjectDto.status
+          : project.status,
+      },
+      {
+        new: true,
+      },
+    );
   }
 
   /**
