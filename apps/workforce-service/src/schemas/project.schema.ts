@@ -1,4 +1,3 @@
-import { Project } from "./project.schema";
 /**
  * @fileoverview Project Schema
  *
@@ -26,6 +25,9 @@ export enum ProjectStatus {
   REVISION = "REVISION",
 }
 
+/**
+ * Enum for project teams within the workforce management system.
+ */
 export enum ProjectTeam {
   WORDPRESS = "Wordpress",
   SHOPIFY = "Shopify",
