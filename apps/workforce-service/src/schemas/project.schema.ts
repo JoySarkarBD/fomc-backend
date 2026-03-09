@@ -130,6 +130,7 @@ export class Project extends Document {
   // Departments currently assigned to handle the project. (Transfer history not required as we will maintain)
   @Prop({
     type: Types.ObjectId,
+    ref: "Department",
     required: false,
   })
   assignedDepartment?: Types.ObjectId;

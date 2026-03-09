@@ -168,7 +168,21 @@ export class ProjectService {
           as: "profile",
         },
       },
+      {
+        $lookup: {
+          from: "departments",
+          localField: "assignedDepartment",
+          foreignField: "_id",
+          as: "assignedDepartment",
+        },
+      },
       { $unwind: { path: "$profile", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$assignedDepartment",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       { $match: matchFilter },
       { $sort: { createdAt: -1 } },
       {
