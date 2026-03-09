@@ -35,11 +35,11 @@ import {
 import { UpdateProjectDto } from "apps/workforce-service/src/project-management/dto/update-project.dto";
 import { ApiErrorResponses } from "../common/decorators/api-error-response.decorator";
 import { ApiSuccessResponse } from "../common/decorators/api-success-response.decorator";
+import { SalesOnly } from "../common/decorators/department.decorator";
 import { GetUser } from "../common/decorators/get-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
-import { SalesOnly } from "../common/decorators/department.decorator";
-import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { AccessGuard } from "../common/guards/access.guard";
+import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import {
   ClientCreateForbiddenDto,
   ClientDeleteForbiddenDto,
@@ -190,6 +190,110 @@ export class ProjectController {
   }
 
   /**
+   * Create a new client.
+   */
+  @ApiOperation({
+    summary: "Create client",
+    description: "Creates a new client record.",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiSuccessResponse(ClientCreateSuccessDto, 201)
+  @ApiErrorResponses({
+    validation: ClientCreateValidationDto,
+    unauthorized: ClientCreateUnauthorizedDto,
+    forbidden: ClientCreateForbiddenDto,
+    internal: ClientCreateInternalErrorDto,
+  })
+  @SalesOnly()
+  @Post("client")
+  async createClient(@Body() data: CreateClientDto) {
+    return await this.projectService.createClient(data);
+  }
+
+  /**
+   * Get all clients.
+   */
+  @ApiOperation({
+    summary: "List clients",
+    description: "Retrieves all clients.",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiSuccessResponse(ClientListSuccessDto, 200)
+  @ApiErrorResponses({
+    unauthorized: ClientListUnauthorizedDto,
+    forbidden: ClientListForbiddenDto,
+    internal: ClientListInternalErrorDto,
+  })
+  @SalesOnly()
+  @Roles("PROJECT MANAGER", "TEAM LEADER")
+  @Get("client")
+  async getClients() {
+    return await this.projectService.getClients();
+  }
+
+  /**
+   * Create a new profile.
+   */
+  @ApiOperation({
+    summary: "Create profile",
+    description: "Creates a new profile record.",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiSuccessResponse(ProfileCreateSuccessDto, 201)
+  @ApiErrorResponses({
+    validation: ProfileCreateValidationDto,
+    unauthorized: ProfileCreateUnauthorizedDto,
+    forbidden: ProfileCreateForbiddenDto,
+    internal: ProfileCreateInternalErrorDto,
+  })
+  @SalesOnly()
+  @Post("profile")
+  async createProfile(@Body() data: CreateProfileDto) {
+    return await this.projectService.createProfile(data);
+  }
+
+  /**
+   * Get all profiles.
+   */
+  @ApiOperation({
+    summary: "List profiles",
+    description: "Retrieves all profiles.",
+  })
+  @ApiBearerAuth("Authorization")
+  @ApiHeader({
+    name: "Authorization",
+    description: "Bearer token",
+    required: true,
+  })
+  @ApiSuccessResponse(ProfileListSuccessDto, 200)
+  @ApiErrorResponses({
+    unauthorized: ProfileListUnauthorizedDto,
+    forbidden: ProfileListForbiddenDto,
+    internal: ProfileListInternalErrorDto,
+  })
+  @SalesOnly()
+  @Roles("PROJECT MANAGER", "TEAM LEADER")
+  @Get("profile")
+  async getProfiles() {
+    return await this.projectService.getProfiles();
+  }
+
+  /**
    * Get a single project by its ID.
    *
    * @param {MongoIdDto} params - Object containing the project ID.
@@ -282,58 +386,6 @@ export class ProjectController {
   }
 
   /**
-   * Create a new client.
-   */
-  @ApiOperation({
-    summary: "Create client",
-    description: "Creates a new client record.",
-  })
-  @ApiBearerAuth("Authorization")
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token",
-    required: true,
-  })
-  @ApiSuccessResponse(ClientCreateSuccessDto, 201)
-  @ApiErrorResponses({
-    validation: ClientCreateValidationDto,
-    unauthorized: ClientCreateUnauthorizedDto,
-    forbidden: ClientCreateForbiddenDto,
-    internal: ClientCreateInternalErrorDto,
-  })
-  @SalesOnly()
-  @Post("client")
-  async createClient(@Body() data: CreateClientDto) {
-    return await this.projectService.createClient(data);
-  }
-
-  /**
-   * Get all clients.
-   */
-  @ApiOperation({
-    summary: "List clients",
-    description: "Retrieves all clients.",
-  })
-  @ApiBearerAuth("Authorization")
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token",
-    required: true,
-  })
-  @ApiSuccessResponse(ClientListSuccessDto, 200)
-  @ApiErrorResponses({
-    unauthorized: ClientListUnauthorizedDto,
-    forbidden: ClientListForbiddenDto,
-    internal: ClientListInternalErrorDto,
-  })
-  @SalesOnly()
-  @Roles("PROJECT MANAGER", "TEAM LEADER")
-  @Get("client")
-  async getClients() {
-    return await this.projectService.getClients();
-  }
-
-  /**
    * Update a client.
    */
   @ApiOperation({
@@ -388,58 +440,6 @@ export class ProjectController {
   @Delete("client/:id")
   async deleteClient(@Param() params: MongoIdDto) {
     return await this.projectService.deleteClient(params.id);
-  }
-
-  /**
-   * Create a new profile.
-   */
-  @ApiOperation({
-    summary: "Create profile",
-    description: "Creates a new profile record.",
-  })
-  @ApiBearerAuth("Authorization")
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token",
-    required: true,
-  })
-  @ApiSuccessResponse(ProfileCreateSuccessDto, 201)
-  @ApiErrorResponses({
-    validation: ProfileCreateValidationDto,
-    unauthorized: ProfileCreateUnauthorizedDto,
-    forbidden: ProfileCreateForbiddenDto,
-    internal: ProfileCreateInternalErrorDto,
-  })
-  @SalesOnly()
-  @Post("profile")
-  async createProfile(@Body() data: CreateProfileDto) {
-    return await this.projectService.createProfile(data);
-  }
-
-  /**
-   * Get all profiles.
-   */
-  @ApiOperation({
-    summary: "List profiles",
-    description: "Retrieves all profiles.",
-  })
-  @ApiBearerAuth("Authorization")
-  @ApiHeader({
-    name: "Authorization",
-    description: "Bearer token",
-    required: true,
-  })
-  @ApiSuccessResponse(ProfileListSuccessDto, 200)
-  @ApiErrorResponses({
-    unauthorized: ProfileListUnauthorizedDto,
-    forbidden: ProfileListForbiddenDto,
-    internal: ProfileListInternalErrorDto,
-  })
-  @SalesOnly()
-  @Roles("PROJECT MANAGER", "TEAM LEADER")
-  @Get("profile")
-  async getProfiles() {
-    return await this.projectService.getProfiles();
   }
 
   /**
