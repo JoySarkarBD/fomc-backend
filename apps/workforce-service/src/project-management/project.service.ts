@@ -158,6 +158,7 @@ export class ProjectService {
         .populate("assignedDepartment")
         .skip((pageNo - 1) * pageSize)
         .limit(pageSize)
+        .sort({ createdAt: -1 })
         .exec(),
       this.projectModel.countDocuments(matchFilter).exec(),
     ]);
