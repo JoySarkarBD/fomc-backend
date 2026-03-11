@@ -499,6 +499,20 @@ export class TaskService {
       };
     }
 
+    // Prevent update if task is in progress, blocked, delivered or completed
+    if (
+      TaskStatus.WIP === task.status ||
+      TaskStatus.BLOCKED === task.status ||
+      TaskStatus.DELIVERED === task.status ||
+      TaskStatus.COMPLETED === task.status
+    ) {
+      return {
+        message:
+          "Cannot update task that is in progress, blocked, delivered or completed",
+        exception: "BadRequestException",
+      };
+    }
+
     // Collect all user ids
     const users = await firstValueFrom(
       this.userClient.send(USER_COMMANDS.GET_USERS_BY_IDS, {
