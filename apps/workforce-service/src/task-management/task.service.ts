@@ -67,8 +67,10 @@ export class TaskService {
       };
     }
 
+    let assignees;
+
     if (createTaskDto.assignTo?.length) {
-      const assignees = await firstValueFrom(
+      assignees = await firstValueFrom(
         this.userClient.send(USER_COMMANDS.GET_USERS_BY_IDS, {
           ids: createTaskDto.assignTo,
         }),
@@ -95,18 +97,18 @@ export class TaskService {
 
     const result = await this.taskModel.create({
       ...createTaskDto,
-      createdBy: userId,
+      createdBy: new Types.ObjectId(userId),
     });
 
     return {
       _id: result._id,
       name: result.name,
-      project: project.name,
+      project: project,
       dueDate: result.dueDate,
       priority: result.priority,
       description: result.description,
       status: result.status,
-      createdBy: userId,
+      createdBy: userDoc.name,
       dcrLinks: result.dcrLinks
         ? await Promise.all(
             result.dcrLinks.map(async (link) => {
@@ -118,7 +120,7 @@ export class TaskService {
       dcrApprovedBy: result.dcrApprovedBy,
       dcrRejectedBy: result.dcrRejectedBy,
       reviewReply: result.reviewReply,
-      assignTo: createTaskDto.assignTo,
+      assignTo: assignees.map((a) => a.name),
     };
   }
 
@@ -223,14 +225,6 @@ export class TaskService {
       this.taskModel.countDocuments(filter),
     ]);
 
-    if (!tasks.length) {
-      return {
-        tasks: [],
-        total: 0,
-        totalPages: 0,
-      };
-    }
-
     /**
      * Collect all user IDs
      */
@@ -319,8 +313,6 @@ export class TaskService {
           comment: reply.comment,
           createdAt: reply.createdAt,
         })),
-
-        createdAt: task.createdAt,
       })),
     );
 
@@ -443,9 +435,6 @@ export class TaskService {
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
-
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
     };
   }
 
@@ -573,9 +562,6 @@ export class TaskService {
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
-
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
     };
   }
 
@@ -717,9 +703,6 @@ export class TaskService {
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
-
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
     };
   }
 
