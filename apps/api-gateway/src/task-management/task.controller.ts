@@ -174,6 +174,35 @@ export class TaskController {
     description: "Bearer token",
     required: true,
   })
+  @ApiRequestDetails({
+    queries: [
+      {
+        name: "pageNo",
+        description: "The page number for pagination (1-based index)",
+        required: true,
+        type: Number,
+      },
+      {
+        name: "pageSize",
+        description: "The number of items per page for pagination",
+        required: true,
+        type: Number,
+      },
+      {
+        name: "searchKey",
+        description: "Search term to filter projects by name or order ID",
+        required: false,
+        type: String,
+      },
+      {
+        name: "status",
+        description: "Filter projects by status",
+        required: false,
+        type: String,
+        enum: Object.values(TaskStatus),
+      },
+    ],
+  })
   @ApiSuccessResponse(TaskListSuccessDto, 200)
   @ApiErrorResponses({
     unauthorized: TaskListUnauthorizedDto,
