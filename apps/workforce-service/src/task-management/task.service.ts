@@ -137,7 +137,10 @@ export class TaskService {
 
     // If the user is employee then he can only see the tasks assigned to him or created by him
     if (user.role === "EMPLOYEE") {
-      filter.$or = [{ createdBy: user.id }, { assignTo: { $in: [user.id] } }];
+      filter.$or = [
+        { createdBy: new Types.ObjectId(user.id) },
+        { assignTo: { $in: [new Types.ObjectId(user.id)] } },
+      ];
     }
 
     let { pageNo = 1, pageSize = 10, searchKey, status } = query;
@@ -193,7 +196,7 @@ export class TaskService {
           $project: {
             _id: 1,
             name: 1,
-            project: { name: "$project.name" },
+            project: 1,
             dueDate: 1,
             priority: 1,
             description: 1,
