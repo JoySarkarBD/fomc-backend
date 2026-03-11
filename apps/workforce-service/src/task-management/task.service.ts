@@ -140,7 +140,10 @@ export class TaskService {
       filter.$or = [{ createdBy: user.id }, { assignTo: { $in: [user.id] } }];
     }
 
-    const { pageNo = 1, pageSize = 10, searchKey, status } = query;
+    let { pageNo = 1, pageSize = 10, searchKey, status } = query;
+
+    pageNo = Number(pageNo);
+    pageSize = Number(pageSize);
 
     if (searchKey) {
       filter.$or = [
