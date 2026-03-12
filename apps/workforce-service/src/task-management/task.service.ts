@@ -703,22 +703,6 @@ export class TaskService {
     }
 
     /**
-     * Prevent update if task already in locked status
-     */
-    if (
-      existingTask.status === TaskStatus.WIP ||
-      existingTask.status === TaskStatus.BLOCKED ||
-      existingTask.status === TaskStatus.DELIVERED ||
-      existingTask.status === TaskStatus.COMPLETED
-    ) {
-      return {
-        message:
-          "Cannot update task that is in progress, blocked, delivered or completed",
-        exception: "BadRequestException",
-      };
-    }
-
-    /**
      * Update task
      */
     const task = (await this.taskModel
