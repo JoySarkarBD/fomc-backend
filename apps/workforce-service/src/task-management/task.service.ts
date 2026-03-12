@@ -518,6 +518,21 @@ export class TaskService {
       };
     }
 
+    if (user.role === "EMPLOYEE") {
+      if (
+        existingTask.status === TaskStatus.WIP ||
+        existingTask.status === TaskStatus.BLOCKED ||
+        existingTask.status === TaskStatus.DELIVERED ||
+        existingTask.status === TaskStatus.COMPLETED
+      ) {
+        return {
+          message:
+            "Cannot update task that is in progress, blocked, delivered or completed",
+          exception: "BadRequestException",
+        };
+      }
+    }
+
     const task = (await this.taskModel
       .findByIdAndUpdate(
         id,
