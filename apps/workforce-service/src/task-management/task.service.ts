@@ -112,7 +112,7 @@ export class TaskService {
       priority: result.priority,
       description: result.description,
       status: result.status,
-      createdBy: userDoc.name,
+      createdBy: { _id: userDoc._id, name: userDoc.name },
       dcrLinks: result.dcrLinks
         ? await Promise.all(
             result.dcrLinks.map(async (link) => {
@@ -124,7 +124,9 @@ export class TaskService {
       dcrApprovedBy: result.dcrApprovedBy,
       dcrRejectedBy: result.dcrRejectedBy,
       reviewReply: result.reviewReply,
-      assignTo: assignees?.map((a) => a.name),
+      assignTo: assignees?.map((a) => {
+        return { _id: a._id, name: a.name };
+      }),
     };
   }
 
@@ -290,12 +292,18 @@ export class TaskService {
         description: task.description,
         status: task.status,
 
-        createdBy: userMap.get(task.createdBy?.toString())?.name || null,
+        createdBy: userMap.get(task.createdBy?.toString())
+          ? {
+              _id: task.createdBy,
+              name: userMap.get(task.createdBy?.toString())?.name,
+            }
+          : null,
 
         assignTo:
-          task.assignTo?.map(
-            (id: any) => userMap.get(id.toString())?.name || null,
-          ) || [],
+          task.assignTo?.map((id: any) => {
+            const user = userMap.get(id.toString());
+            return user ? { _id: user._id, name: user.name } : null;
+          }) || [],
 
         dcrLinks: task.dcrLinks
           ? await Promise.all(
@@ -308,15 +316,24 @@ export class TaskService {
         dcrSubmissionStatus: task.dcrSubmissionStatus,
 
         dcrApprovedBy: task.dcrApprovedBy
-          ? userMap.get(task.dcrApprovedBy.toString())?.name
+          ? task.dcrApprovedBy.map((user: any) => {
+              const u = userMap.get(user.toString());
+              return u ? { _id: u._id, name: u.name } : null;
+            })
           : null,
 
         dcrRejectedBy: task.dcrRejectedBy
-          ? userMap.get(task.dcrRejectedBy.toString())?.name
+          ? task.dcrRejectedBy.map((user: any) => {
+              const u = userMap.get(user.toString());
+              return u ? { _id: u._id, name: u.name } : null;
+            })
           : null,
 
         reviewReply: task.reviewReply?.map((reply: any) => ({
-          reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+          reviewer: {
+            _id: reply.reviewer,
+            name: userMap.get(reply.reviewer.toString())?.name || null,
+          },
           comment: reply.comment,
           createdAt: reply.createdAt,
         })),
@@ -415,12 +432,18 @@ export class TaskService {
       description: task.description,
       status: task.status,
 
-      createdBy: userMap.get(task.createdBy?.toString())?.name || null,
+      createdBy: userMap.get(task.createdBy?.toString())
+        ? {
+            _id: task.createdBy,
+            name: userMap.get(task.createdBy?.toString())?.name,
+          }
+        : null,
 
       assignTo:
-        task.assignTo?.map(
-          (id: any) => userMap.get(id.toString())?.name || null,
-        ) || [],
+        task.assignTo?.map((id: any) => {
+          const user = userMap.get(id.toString());
+          return user ? { _id: user._id, name: user.name } : null;
+        }) || [],
 
       dcrLinks: task.dcrLinks
         ? await Promise.all(
@@ -433,15 +456,24 @@ export class TaskService {
       dcrSubmissionStatus: task.dcrSubmissionStatus,
 
       dcrApprovedBy: task.dcrApprovedBy
-        ? userMap.get(task.dcrApprovedBy.toString())?.name
+        ? task.dcrApprovedBy.map((user: any) => {
+            const u = userMap.get(user.toString());
+            return u ? { _id: u._id, name: u.name } : null;
+          })
         : null,
 
       dcrRejectedBy: task.dcrRejectedBy
-        ? userMap.get(task.dcrRejectedBy.toString())?.name
+        ? task.dcrRejectedBy.map((user: any) => {
+            const u = userMap.get(user.toString());
+            return u ? { _id: u._id, name: u.name } : null;
+          })
         : null,
 
       reviewReply: task.reviewReply?.map((reply: any) => ({
-        reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+        reviewer: {
+          _id: reply.reviewer,
+          name: userMap.get(reply.reviewer.toString())?.name || null,
+        },
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
@@ -545,12 +577,18 @@ export class TaskService {
       description: task.description,
       status: task.status,
 
-      createdBy: userMap.get(task.createdBy?.toString())?.name || null,
+      createdBy: userMap.get(task.createdBy?.toString())
+        ? {
+            _id: task.createdBy,
+            name: userMap.get(task.createdBy?.toString())?.name,
+          }
+        : null,
 
       assignTo:
-        task.assignTo?.map(
-          (id: any) => userMap.get(id.toString())?.name || null,
-        ) || [],
+        task.assignTo?.map((id: any) => {
+          const user = userMap.get(id.toString());
+          return user ? { _id: user._id, name: user.name } : null;
+        }) || [],
 
       dcrLinks: task.dcrLinks
         ? await Promise.all(
@@ -563,15 +601,30 @@ export class TaskService {
       dcrSubmissionStatus: task.dcrSubmissionStatus,
 
       dcrApprovedBy: task.dcrApprovedBy
-        ? userMap.get(task.dcrApprovedBy.toString())?.name
+        ? userMap.get(task.dcrApprovedBy.toString())
+          ? {
+              _id: task.dcrApprovedBy,
+              name: userMap.get(task.dcrApprovedBy.toString())?.name,
+            }
+          : null
         : null,
 
       dcrRejectedBy: task.dcrRejectedBy
-        ? userMap.get(task.dcrRejectedBy.toString())?.name
+        ? userMap.get(task.dcrRejectedBy.toString())
+          ? {
+              _id: task.dcrRejectedBy,
+              name: userMap.get(task.dcrRejectedBy.toString())?.name,
+            }
+          : null
         : null,
 
       reviewReply: task.reviewReply?.map((reply: any) => ({
-        reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+        reviewer: userMap.get(reply.reviewer.toString())
+          ? {
+              _id: reply.reviewer,
+              name: userMap.get(reply.reviewer.toString())?.name,
+            }
+          : null,
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
@@ -689,12 +742,18 @@ export class TaskService {
       description: task.description,
       status: task.status,
 
-      createdBy: userMap.get(task.createdBy?.toString())?.name || null,
+      createdBy: userMap.get(task.createdBy?.toString())
+        ? {
+            _id: task.createdBy,
+            name: userMap.get(task.createdBy?.toString())?.name,
+          }
+        : null,
 
       assignTo:
-        task.assignTo?.map(
-          (id: any) => userMap.get(id.toString())?.name || null,
-        ) || [],
+        task.assignTo?.map((id: any) => {
+          const user = userMap.get(id.toString());
+          return user ? { _id: user._id, name: user.name } : null;
+        }) || [],
 
       dcrLinks: task.dcrLinks
         ? await Promise.all(
@@ -707,15 +766,30 @@ export class TaskService {
       dcrSubmissionStatus: task.dcrSubmissionStatus,
 
       dcrApprovedBy: task.dcrApprovedBy
-        ? userMap.get(task.dcrApprovedBy.toString())?.name
+        ? userMap.get(task.dcrApprovedBy.toString())
+          ? {
+              _id: task.dcrApprovedBy,
+              name: userMap.get(task.dcrApprovedBy.toString())?.name,
+            }
+          : null
         : null,
 
       dcrRejectedBy: task.dcrRejectedBy
-        ? userMap.get(task.dcrRejectedBy.toString())?.name
+        ? userMap.get(task.dcrRejectedBy.toString())
+          ? {
+              _id: task.dcrRejectedBy,
+              name: userMap.get(task.dcrRejectedBy.toString())?.name,
+            }
+          : null
         : null,
 
       reviewReply: task.reviewReply?.map((reply: any) => ({
-        reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+        reviewer: userMap.get(reply.reviewer.toString())
+          ? {
+              _id: reply.reviewer,
+              name: userMap.get(reply.reviewer.toString())?.name,
+            }
+          : null,
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
@@ -881,12 +955,18 @@ export class TaskService {
       description: result.description,
       status: result.status,
 
-      createdBy: userMap.get(result.createdBy?.toString())?.name || null,
+      createdBy: userMap.get(result.createdBy?.toString())
+        ? {
+            _id: result.createdBy,
+            name: userMap.get(result.createdBy?.toString())?.name,
+          }
+        : null,
 
       assignTo:
-        result.assignTo?.map(
-          (id: any) => userMap.get(id.toString())?.name || null,
-        ) || [],
+        result.assignTo?.map((id: any) => {
+          const user = userMap.get(id.toString());
+          return user ? { _id: user._id, name: user.name } : null;
+        }) || [],
 
       dcrLinks: result.dcrLinks
         ? await Promise.all(
@@ -899,15 +979,30 @@ export class TaskService {
       dcrSubmissionStatus: result.dcrSubmissionStatus,
 
       dcrApprovedBy: result.dcrApprovedBy
-        ? userMap.get(result.dcrApprovedBy.toString())?.name
+        ? userMap.get(result.dcrApprovedBy.toString())
+          ? {
+              _id: result.dcrApprovedBy,
+              name: userMap.get(result.dcrApprovedBy.toString())?.name,
+            }
+          : null
         : null,
 
       dcrRejectedBy: result.dcrRejectedBy
-        ? userMap.get(result.dcrRejectedBy.toString())?.name
+        ? userMap.get(result.dcrRejectedBy.toString())
+          ? {
+              _id: result.dcrRejectedBy,
+              name: userMap.get(result.dcrRejectedBy.toString())?.name,
+            }
+          : null
         : null,
 
       reviewReply: result.reviewReply?.map((reply: any) => ({
-        reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+        reviewer: userMap.get(reply.reviewer.toString())
+          ? {
+              _id: reply.reviewer,
+              name: userMap.get(reply.reviewer.toString())?.name,
+            }
+          : null,
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
@@ -1025,12 +1120,18 @@ export class TaskService {
       description: result.description,
       status: result.status,
 
-      createdBy: userMap.get(result.createdBy?.toString())?.name || null,
+      createdBy: userMap.get(result.createdBy?.toString())
+        ? {
+            _id: result.createdBy,
+            name: userMap.get(result.createdBy?.toString())?.name,
+          }
+        : null,
 
       assignTo:
-        result.assignTo?.map(
-          (id: any) => userMap.get(id.toString())?.name || null,
-        ) || [],
+        result.assignTo?.map((id: any) => {
+          const user = userMap.get(id.toString());
+          return user ? { _id: user._id, name: user.name } : null;
+        }) || [],
 
       dcrLinks: result.dcrLinks
         ? await Promise.all(
@@ -1043,15 +1144,30 @@ export class TaskService {
       dcrSubmissionStatus: result.dcrSubmissionStatus,
 
       dcrApprovedBy: result.dcrApprovedBy
-        ? userMap.get(result.dcrApprovedBy.toString())?.name
+        ? userMap.get(result.dcrApprovedBy.toString())
+          ? {
+              _id: result.dcrApprovedBy,
+              name: userMap.get(result.dcrApprovedBy.toString())?.name,
+            }
+          : null
         : null,
 
       dcrRejectedBy: result.dcrRejectedBy
-        ? userMap.get(result.dcrRejectedBy.toString())?.name
+        ? userMap.get(result.dcrRejectedBy.toString())
+          ? {
+              _id: result.dcrRejectedBy,
+              name: userMap.get(result.dcrRejectedBy.toString())?.name,
+            }
+          : null
         : null,
 
       reviewReply: result.reviewReply?.map((reply: any) => ({
-        reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+        reviewer: userMap.get(reply.reviewer.toString())
+          ? {
+              _id: reply.reviewer,
+              name: userMap.get(reply.reviewer.toString())?.name,
+            }
+          : null,
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
@@ -1165,12 +1281,18 @@ export class TaskService {
       description: result.description,
       status: result.status,
 
-      createdBy: userMap.get(result.createdBy?.toString())?.name || null,
+      createdBy: userMap.get(result.createdBy?.toString())
+        ? {
+            _id: result.createdBy,
+            name: userMap.get(result.createdBy?.toString())?.name,
+          }
+        : null,
 
       assignTo:
-        result.assignTo?.map(
-          (id: any) => userMap.get(id.toString())?.name || null,
-        ) || [],
+        result.assignTo?.map((id: any) => {
+          const user = userMap.get(id.toString());
+          return user ? { _id: user._id, name: user.name } : null;
+        }) || [],
 
       dcrLinks: result.dcrLinks
         ? await Promise.all(
@@ -1183,15 +1305,30 @@ export class TaskService {
       dcrSubmissionStatus: result.dcrSubmissionStatus,
 
       dcrApprovedBy: result.dcrApprovedBy
-        ? userMap.get(result.dcrApprovedBy.toString())?.name
+        ? userMap.get(result.dcrApprovedBy.toString())
+          ? {
+              _id: result.dcrApprovedBy,
+              name: userMap.get(result.dcrApprovedBy.toString())?.name,
+            }
+          : null
         : null,
 
       dcrRejectedBy: result.dcrRejectedBy
-        ? userMap.get(result.dcrRejectedBy.toString())?.name
+        ? userMap.get(result.dcrRejectedBy.toString())
+          ? {
+              _id: result.dcrRejectedBy,
+              name: userMap.get(result.dcrRejectedBy.toString())?.name,
+            }
+          : null
         : null,
 
       reviewReply: result.reviewReply?.map((reply: any) => ({
-        reviewer: userMap.get(reply.reviewer.toString())?.name || null,
+        reviewer: userMap.get(reply.reviewer.toString())
+          ? {
+              _id: reply.reviewer,
+              name: userMap.get(reply.reviewer.toString())?.name,
+            }
+          : null,
         comment: reply.comment,
         createdAt: reply.createdAt,
       })),
