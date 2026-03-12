@@ -524,6 +524,9 @@ export class TaskService {
         {
           ...existingTask,
           name: updateTaskDto.name ? updateTaskDto.name : existingTask.name,
+          project: updateTaskDto.project
+            ? new Types.ObjectId(updateTaskDto.project)
+            : existingTask.project,
           dueDate: updateTaskDto.dueDate
             ? updateTaskDto.dueDate
             : existingTask.dueDate,
@@ -537,7 +540,7 @@ export class TaskService {
             ? updateTaskDto.status
             : existingTask.status,
           assignTo: updateTaskDto.assignTo
-            ? updateTaskDto.assignTo
+            ? updateTaskDto.assignTo.map((id) => new Types.ObjectId(id))
             : existingTask.assignTo,
         },
         { new: true },

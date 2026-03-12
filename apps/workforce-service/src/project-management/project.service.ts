@@ -203,7 +203,7 @@ export class ProjectService {
    */
   async update(id: MongoIdDto["id"], updateProjectDto: UpdateProjectDto) {
     const project = await this.projectModel.findById(id);
-    
+
     if (!project) {
       return {
         message: "Project not found",
@@ -243,16 +243,16 @@ export class ProjectService {
       {
         name: updateProjectDto.name ? updateProjectDto.name : project.name,
         client: updateProjectDto.client
-          ? updateProjectDto.client
+          ? new Types.ObjectId(updateProjectDto.client)
           : project.client,
         orderId: updateProjectDto.orderId
           ? updateProjectDto.orderId
           : project.orderId,
         profile: updateProjectDto.profile
-          ? updateProjectDto.profile
+          ? new Types.ObjectId(updateProjectDto.profile)
           : project.profile,
         assignedDepartment: updateProjectDto.assignedDepartment
-          ? updateProjectDto.assignedDepartment
+          ? new Types.ObjectId(updateProjectDto.assignedDepartment)
           : project.assignedDepartment,
         projectTeam: updateProjectDto.projectTeam
           ? updateProjectDto.projectTeam
