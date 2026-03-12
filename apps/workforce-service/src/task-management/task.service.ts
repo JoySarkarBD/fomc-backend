@@ -316,17 +316,17 @@ export class TaskService {
         dcrSubmissionStatus: task.dcrSubmissionStatus,
 
         dcrApprovedBy: task.dcrApprovedBy
-          ? task.dcrApprovedBy.map((user: any) => {
-              const u = userMap.get(user.toString());
-              return u ? { _id: u._id, name: u.name } : null;
-            })
+          ? {
+              _id: task.dcrApprovedBy,
+              name: userMap.get(task.dcrApprovedBy.toString())?.name || null,
+            }
           : null,
 
         dcrRejectedBy: task.dcrRejectedBy
-          ? task.dcrRejectedBy.map((user: any) => {
-              const u = userMap.get(user.toString());
-              return u ? { _id: u._id, name: u.name } : null;
-            })
+          ? {
+              _id: task.dcrRejectedBy,
+              name: userMap.get(task.dcrRejectedBy.toString())?.name || null,
+            }
           : null,
 
         reviewReply: task.reviewReply?.map((reply: any) => ({
@@ -354,17 +354,19 @@ export class TaskService {
    * @returns {Promise<any>} The found task or an error message if not found.
    */
   async findOne(user: AuthUser, id: MongoIdDto["id"]) {
+    const filter: any = {};
+
+    if (user.role === "EMPLOYEE") {
+      filter.$or = [
+        { createdBy: new Types.ObjectId(user._id) },
+        { assignTo: { $in: [new Types.ObjectId(user._id)] } },
+      ];
+    }
+
     const task = (await this.taskModel
       .findOne({
         _id: new Types.ObjectId(id),
-        $or: [
-          { createdBy: new Types.ObjectId(user._id) },
-          {
-            assignTo: {
-              $in: [new Types.ObjectId(user._id)],
-            },
-          },
-        ],
+        ...filter,
       })
       .populate("project")
       .lean()) as any;
@@ -456,17 +458,17 @@ export class TaskService {
       dcrSubmissionStatus: task.dcrSubmissionStatus,
 
       dcrApprovedBy: task.dcrApprovedBy
-        ? task.dcrApprovedBy.map((user: any) => {
-            const u = userMap.get(user.toString());
-            return u ? { _id: u._id, name: u.name } : null;
-          })
+        ? {
+            _id: task.dcrApprovedBy,
+            name: userMap.get(task.dcrApprovedBy.toString())?.name || null,
+          }
         : null,
 
       dcrRejectedBy: task.dcrRejectedBy
-        ? task.dcrRejectedBy.map((user: any) => {
-            const u = userMap.get(user.toString());
-            return u ? { _id: u._id, name: u.name } : null;
-          })
+        ? {
+            _id: task.dcrRejectedBy,
+            name: userMap.get(task.dcrRejectedBy.toString())?.name || null,
+          }
         : null,
 
       reviewReply: task.reviewReply?.map((reply: any) => ({
@@ -492,34 +494,46 @@ export class TaskService {
     id: MongoIdDto["id"],
     updateTaskDto: UpdateTaskDto,
   ) {
-    const task = (await this.taskModel
-      .findOneAndUpdate(
-        {
-          _id: new Types.ObjectId(id),
-          $or: [
-            { createdBy: new Types.ObjectId(user._id) },
-            {
-              assignTo: {
-                $in: [new Types.ObjectId(user._id)],
-              },
-            },
-          ],
-        },
-        updateTaskDto,
-        {
-          new: true,
-          runValidators: true,
-        },
-      )
+    const filter: any = {};
+
+    if (user.role === "EMPLOYEE") {
+      filter.$or = [
+        { createdBy: new Types.ObjectId(user._id) },
+        { assignTo: { $in: [new Types.ObjectId(user._id)] } },
+      ];
+    }
+
+    const existingTask = (await this.taskModel
+      .findOne({
+        _id: new Types.ObjectId(id),
+        ...filter,
+      })
       .populate("project")
       .lean()) as any;
 
-    if (!task) {
+    if (!existingTask) {
       return {
         message: "Task not found",
         exception: "NotFoundException",
       };
     }
+
+    const task = (await this.taskModel
+      .findByIdAndUpdate(
+        id,
+        {
+          ...existingTask,
+          name: updateTaskDto.name ?? existingTask.name,
+          dueDate: updateTaskDto.dueDate ?? existingTask.dueDate,
+          priority: updateTaskDto.priority ?? existingTask.priority,
+          description: updateTaskDto.description ?? existingTask.description,
+          status: updateTaskDto.status ?? existingTask.status,
+          assignTo: updateTaskDto.assignTo ?? existingTask.assignTo,
+        },
+        { new: true },
+      )
+      .populate("project")
+      .lean()) as any;
 
     /**
      * Collect user IDs
@@ -601,21 +615,17 @@ export class TaskService {
       dcrSubmissionStatus: task.dcrSubmissionStatus,
 
       dcrApprovedBy: task.dcrApprovedBy
-        ? userMap.get(task.dcrApprovedBy.toString())
-          ? {
-              _id: task.dcrApprovedBy,
-              name: userMap.get(task.dcrApprovedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: task.dcrApprovedBy,
+            name: userMap.get(task.dcrApprovedBy.toString())?.name || null,
+          }
         : null,
 
       dcrRejectedBy: task.dcrRejectedBy
-        ? userMap.get(task.dcrRejectedBy.toString())
-          ? {
-              _id: task.dcrRejectedBy,
-              name: userMap.get(task.dcrRejectedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: task.dcrRejectedBy,
+            name: userMap.get(task.dcrRejectedBy.toString())?.name || null,
+          }
         : null,
 
       reviewReply: task.reviewReply?.map((reply: any) => ({
@@ -643,16 +653,18 @@ export class TaskService {
     id: MongoIdDto["id"],
     updateTaskStatusDto: UpdateTaskStatusDto,
   ) {
+    const filter: any = {};
+
+    if (user.role === "EMPLOYEE") {
+      filter.$or = [
+        { createdBy: new Types.ObjectId(user._id) },
+        { assignTo: { $in: [new Types.ObjectId(user._id)] } },
+      ];
+    }
+
     const existingTask = await this.taskModel.findOne({
       _id: new Types.ObjectId(id),
-      $or: [
-        { createdBy: new Types.ObjectId(user._id) },
-        {
-          assignTo: {
-            $in: [new Types.ObjectId(user._id)],
-          },
-        },
-      ],
+      ...filter,
     });
 
     if (!existingTask) {
@@ -766,21 +778,17 @@ export class TaskService {
       dcrSubmissionStatus: task.dcrSubmissionStatus,
 
       dcrApprovedBy: task.dcrApprovedBy
-        ? userMap.get(task.dcrApprovedBy.toString())
-          ? {
-              _id: task.dcrApprovedBy,
-              name: userMap.get(task.dcrApprovedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: task.dcrApprovedBy,
+            name: userMap.get(task.dcrApprovedBy.toString())?.name || null,
+          }
         : null,
 
       dcrRejectedBy: task.dcrRejectedBy
-        ? userMap.get(task.dcrRejectedBy.toString())
-          ? {
-              _id: task.dcrRejectedBy,
-              name: userMap.get(task.dcrRejectedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: task.dcrRejectedBy,
+            name: userMap.get(task.dcrRejectedBy.toString())?.name || null,
+          }
         : null,
 
       reviewReply: task.reviewReply?.map((reply: any) => ({
@@ -803,17 +811,19 @@ export class TaskService {
    * @returns {Promise<any>} A success message or an error message if not found or if deletion is not allowed.
    */
   async remove(user: AuthUser, id: MongoIdDto["id"]) {
+    const filter: any = {};
+
+    if (user.role === "EMPLOYEE") {
+      filter.$or = [
+        { createdBy: new Types.ObjectId(user._id) },
+        { assignTo: { $in: [new Types.ObjectId(user._id)] } },
+      ];
+    }
+
     const task = await this.taskModel
       .findOne({
         _id: new Types.ObjectId(id),
-        $or: [
-          { createdBy: new Types.ObjectId(user._id) },
-          {
-            assignTo: {
-              $in: [new Types.ObjectId(user._id)],
-            },
-          },
-        ],
+        ...filter,
       })
       .lean();
 
@@ -979,21 +989,17 @@ export class TaskService {
       dcrSubmissionStatus: result.dcrSubmissionStatus,
 
       dcrApprovedBy: result.dcrApprovedBy
-        ? userMap.get(result.dcrApprovedBy.toString())
-          ? {
-              _id: result.dcrApprovedBy,
-              name: userMap.get(result.dcrApprovedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: result.dcrApprovedBy,
+            name: userMap.get(result.dcrApprovedBy.toString())?.name || null,
+          }
         : null,
 
       dcrRejectedBy: result.dcrRejectedBy
-        ? userMap.get(result.dcrRejectedBy.toString())
-          ? {
-              _id: result.dcrRejectedBy,
-              name: userMap.get(result.dcrRejectedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: result.dcrRejectedBy,
+            name: userMap.get(result.dcrRejectedBy.toString())?.name || null,
+          }
         : null,
 
       reviewReply: result.reviewReply?.map((reply: any) => ({
@@ -1144,21 +1150,17 @@ export class TaskService {
       dcrSubmissionStatus: result.dcrSubmissionStatus,
 
       dcrApprovedBy: result.dcrApprovedBy
-        ? userMap.get(result.dcrApprovedBy.toString())
-          ? {
-              _id: result.dcrApprovedBy,
-              name: userMap.get(result.dcrApprovedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: result.dcrApprovedBy,
+            name: userMap.get(result.dcrApprovedBy.toString())?.name || null,
+          }
         : null,
 
       dcrRejectedBy: result.dcrRejectedBy
-        ? userMap.get(result.dcrRejectedBy.toString())
-          ? {
-              _id: result.dcrRejectedBy,
-              name: userMap.get(result.dcrRejectedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: result.dcrRejectedBy,
+            name: userMap.get(result.dcrRejectedBy.toString())?.name || null,
+          }
         : null,
 
       reviewReply: result.reviewReply?.map((reply: any) => ({
@@ -1189,7 +1191,20 @@ export class TaskService {
   ) {
     const userId = (user.id ?? user._id) as string;
 
-    const task = await this.taskModel.findById(id).lean();
+    const filter: any = {};
+    if (user.role === "EMPLOYEE") {
+      filter.$or = [
+        { createdBy: new Types.ObjectId(userId) },
+        { assignTo: { $in: [new Types.ObjectId(userId)] } },
+      ];
+    }
+
+    const task = await this.taskModel
+      .findOne({
+        _id: new Types.ObjectId(id),
+        ...filter,
+      })
+      .lean();
 
     if (!task) {
       return {
@@ -1305,21 +1320,17 @@ export class TaskService {
       dcrSubmissionStatus: result.dcrSubmissionStatus,
 
       dcrApprovedBy: result.dcrApprovedBy
-        ? userMap.get(result.dcrApprovedBy.toString())
-          ? {
-              _id: result.dcrApprovedBy,
-              name: userMap.get(result.dcrApprovedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: result.dcrApprovedBy,
+            name: userMap.get(result.dcrApprovedBy.toString())?.name || null,
+          }
         : null,
 
       dcrRejectedBy: result.dcrRejectedBy
-        ? userMap.get(result.dcrRejectedBy.toString())
-          ? {
-              _id: result.dcrRejectedBy,
-              name: userMap.get(result.dcrRejectedBy.toString())?.name,
-            }
-          : null
+        ? {
+            _id: result.dcrRejectedBy,
+            name: userMap.get(result.dcrRejectedBy.toString())?.name || null,
+          }
         : null,
 
       reviewReply: result.reviewReply?.map((reply: any) => ({
